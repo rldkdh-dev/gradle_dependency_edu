@@ -1,4 +1,4 @@
-package kr.go.tech.protection.admin.common.response;
+package kr.go.tech.protection.admin.global.response;
 
 public class ApiResult<T> extends CommonResult {
     private T data;
