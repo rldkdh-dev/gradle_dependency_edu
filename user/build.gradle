@@ -46,6 +46,10 @@ dependencies {
     implementation 'org.json:json:20220320'
 
     implementation fileTree(dir: 'libs', includes: ['*.jar'])
+
+    //jasypt
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
+
 }
 
 tasks.named('test') {

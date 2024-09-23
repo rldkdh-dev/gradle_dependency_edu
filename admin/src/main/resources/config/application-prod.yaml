@@ -6,9 +6,14 @@ spring:
     activate:
       on-profile: prod
   application:
-    name: user
+    name: admin
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://210.126.8.225:1560/postgres
-    username: root
-    password: saycore12#$
+    url: ENC(z0E3pVgdYTl8xTsqcbpggeQ/BaMXhChyeMTarbk3bSvirnupXdEzbLHR+zCD0+BqFWyqryeiFFc=)
+    username: ENC(zjtt39UJAPnH8koc9erOsw==)
+    password: ENC(RtOuXeSNC8cQUNXmddy4Q70a9uH9XWbZ)
+
+#jasypt
+jasypt:
+  encryptor:
+    bean: jasyptStringEncryptor
