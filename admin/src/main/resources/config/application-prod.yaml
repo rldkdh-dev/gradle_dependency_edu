@@ -1,0 +1,14 @@
+#################
+####   PROD  ####
+#################
+spring:
+  config:
+    activate:
+      on-profile: prod
+  application:
+    name: user
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://210.126.8.225:1560/postgres
+    username: root
+    password: saycore12#$

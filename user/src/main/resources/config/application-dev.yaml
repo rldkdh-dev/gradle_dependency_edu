@@ -1,0 +1,38 @@
+#################
+####   DEV   ####
+#################
+spring:
+  config:
+    activate:
+      on-profile: dev
+  application:
+    name: user
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://210.126.8.225:1560/postgres
+    username: root
+    password: saycore12#$
+
+#  servlet:
+#    multipart:
+#      enabled: false
+# KUPLOAD
+license:
+  product_key: PHK8U-8062-86LU-FYF11
+  license_key: yvPknayZnuh9lQ51mSVzkywwqRvVt+MlOnWSSAWbRnMbRAWsZnWfPA9gSAMOJAWALnMkKhTKMkuYQjuLY2xZGkOO2gB82wsJdnWOFAMXZn9wFnWkHnWjJn9aHhZ0E0DMEsV5gfeJkGETkGZWtXvUluhUtXdUlRpZlxhZlulkzzilx5avt8lkyUYWlud5kxh6kxhXtXdUlxO=
+
+setting:
+  runtimes: 3
+  width: 800
+  height: 600
+  skin_name: default
+  lang: ko
+  mode: production
+
+uploader_setting:
+  develop_language: JAVA
+
+server:
+  compression:
+    enabled: true
+    mime-types: text/html
