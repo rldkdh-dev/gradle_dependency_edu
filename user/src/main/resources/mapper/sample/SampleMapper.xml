@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.go.tech.protection.user.domain.sample.dao.SampleDAO">
+
+    <select id="test" resultType="kr.go.tech.protection.user.domain.commonCode.vo.CommonCodeVO">
+        SELECT
+            "CMN_CD",
+            "CMN_CD_DTL_CD",
+            "CMN_CD_DTL_NM"
+        FROM
+            "CMN_CD_DTL_TB"
+        ORDER BY "CMN_CD"
+    </select>
+</mapper>
