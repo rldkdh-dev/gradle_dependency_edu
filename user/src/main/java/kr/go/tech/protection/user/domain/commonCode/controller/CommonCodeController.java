@@ -1,34 +1,28 @@
 package kr.go.tech.protection.user.domain.commonCode.controller;
 
+import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import kr.go.tech.protection.user.domain.commonCode.service.CommonCodeService;
 import kr.go.tech.protection.user.domain.commonCode.vo.CommonCodeRequestVO;
-import kr.go.tech.protection.user.global.common.ResponseWrapper;
+import kr.go.tech.protection.user.global.response.ApiResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/cmnCode")
+@RequestMapping("/api/v1/codes")
 public class CommonCodeController {
     private final CommonCodeService commonCodeService;
 
-    @RequestMapping(value="/getCode", method = RequestMethod.POST)
-    public ResponseEntity<ResponseWrapper> selectCmnCode(@RequestBody CommonCodeRequestVO.RequestCodeVO requestCodeVO) {
-        List<CommonCodeRequestVO.RequestList> data = commonCodeService.selectComCodeList(requestCodeVO);
-        ResponseWrapper responseWrapper = ResponseWrapper.builder()
-                .code(200)
-                .message("200")
-                .data(data)
-                .build();
-        return ResponseEntity.ok(responseWrapper);
+    @GetMapping(value="")
+    public ApiResult<List<CommonCodeRequestVO.RequestList>> selectCmnCode(CommonCodeRequestVO.RequestCodeVO requestCodeVO) {
+        List<CommonCodeRequestVO.RequestList> responses = commonCodeService.selectComCodeList(requestCodeVO);
+
+        return ApiResult.success(responses);
     }
 }
