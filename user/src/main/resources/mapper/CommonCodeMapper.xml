@@ -4,6 +4,7 @@
 <mapper namespace="kr.go.tech.protection.user.domain.commonCode.mapper.CommonCodeMapper">
 
     <select id="selectComCodeListAll" resultType="kr.go.tech.protection.user.domain.commonCode.vo.CommonCodeVO">
+        /* selectComCodeListAll [공통코드 조회 쿼리] */
         SELECT
             "CMN_CD",
             "CMN_CD_DTL_CD",
