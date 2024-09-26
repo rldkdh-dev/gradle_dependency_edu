@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.go.tech.protection.admin.domain.member.dao.AdminDAO">
+    <select id="selectAdminMemberList" resultType="kr.go.tech.protection.admin.domain.member.dto.AdminVO$ListResponseVO" parameterType="kr.go.tech.protection.admin.domain.member.dto.AdminPO$ResearchPO">
+        /* selectAdminMemberList [관리자 회원 리스트 조회 쿼리] */
+        SELECT
+            d."DEPT_NM",
+            a.*
+        FROM
+            "DEPT_INFO_TB" d RIGHT JOIN "MNGR_MBR_INFO_TB" a
+        ON
+            d."DEPT_NO" = a."DEPT_NO"
+        LEFT JOIN
+            "MENU_AUTHRT_INFO_TB" m
+        ON
+            a."DEPT_NO" = m."DEPT_NO"
+
+        WHERE
+            a."USE_YN" = 'Y'
+        <if test="authNo != null">
+            AND
+                m."AUTHRT_NO" = #{authNo}
+        </if>
+        <if test="searchType != null and searchKeyword != null">
+            <choose>
+                <when test="searchType == 'searchId'">
+                    AND
+                        a."MNGR_ID" LIKE '%'||#{searchKeyword}||'%'
+                </when>
+                <when test="searchType == 'searchName'">
+                    AND
+                        a."MNGR_NM" LIKE '%'||#{searchKeyword}||'%'
+                </when>
+            </choose>
+        </if>
+        ORDER BY
+            a."FRST_RGTR_ID" DESC
+    </select>
+</mapper>
