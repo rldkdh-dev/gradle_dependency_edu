@@ -21,4 +21,20 @@ public class AdminVO extends BaseColumn {
         private String mngrEml;
         private String useYn;
     }
+
+    @Getter
+    public static class MemberVO extends BaseColumn {
+        private Integer mngrNo;
+        private Integer deptNo;
+        private String deptNm;
+        private String mngrNm;
+        private String mngrId;
+        private String mngrPswd;
+        private String mngrTmprPswd;
+        private String tmprPswdYn;
+        private String mngrTelno;
+        private String mngrMblTelno;
+        private String mngrEml;
+        private String useYn;
+    }
 }

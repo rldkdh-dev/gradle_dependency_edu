@@ -8,5 +8,7 @@ import java.util.List;
 
 @Mapper
 public interface AdminDAO {
-    List<AdminVO.ListResponseVO> selectAdminMemberList(AdminPO.ResearchPO researchPO);
+    List<AdminVO.ListResponseVO> selectAdminMemberList(AdminPO.SearchPO searchPO);
+
+    AdminVO.MemberVO selectAdminMemberByNo(int no);
 }

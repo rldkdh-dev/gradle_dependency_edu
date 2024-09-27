@@ -32,9 +32,34 @@ public class AdminPO {
 
     @Getter
     @Setter
-    public static class ResearchPO {
+    public static class SearchPO {
         private Integer authNo;
         private String searchType;
         private String searchKeyword;
+    }
+
+    @Getter
+    @Setter
+    public static class SearchIdRequestPO {
+        private String searchId;
+    }
+
+    @Getter
+    @Builder
+    public static class SearchIdResponsePO {
+        private Boolean idAvailable;
+    }
+
+    @Getter
+    @Builder
+    public static class DetailResponsePO{
+        private Integer managerNo;
+        private String managerId;
+        private String managerName;
+        private String telNo;
+        private String phoneNo;
+        private String email;
+        private String deptName;
+        private Integer deptNo;
     }
 }

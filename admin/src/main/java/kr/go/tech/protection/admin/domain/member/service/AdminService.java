@@ -1,8 +1,8 @@
 package kr.go.tech.protection.admin.domain.member.service;
 
 import kr.go.tech.protection.admin.domain.member.dao.AdminDAO;
-import kr.go.tech.protection.admin.domain.member.dto.AdminVO;
 import kr.go.tech.protection.admin.domain.member.dto.AdminPO;
+import kr.go.tech.protection.admin.domain.member.dto.AdminVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 public class AdminService {
     private final AdminDAO adminDao;
 
-    public AdminPO.ListResponsePO selectAdminMemberList(AdminPO.ResearchPO researchPO) {
-        List<AdminVO.ListResponseVO> adminList = adminDao.selectAdminMemberList(researchPO);
+    public AdminPO.ListResponsePO selectAdminMemberList(AdminPO.SearchPO searchPO) {
+        List<AdminVO.ListResponseVO> adminList = adminDao.selectAdminMemberList(searchPO);
         AtomicReference<Integer> rowNum = new AtomicReference<>(1);
 
         return AdminPO.ListResponsePO.builder()
@@ -37,5 +37,26 @@ public class AdminService {
                         .build()).collect(Collectors.toList())
                 )
                 .build();
+    }
+
+    public AdminPO.DetailResponsePO selectAdminMemberByNo(int no) {
+        AdminVO.MemberVO member = adminDao.selectAdminMemberByNo(no);
+
+        if(member == null) {
+            // TODO null 처리
+            log.info("FAILED");
+        }
+
+        return AdminPO.DetailResponsePO.builder()
+                .managerNo(member.getMngrNo())
+                .managerId(member.getMngrId())
+                .managerName(member.getMngrNm())
+                .telNo(member.getMngrTelno())
+                .phoneNo(member.getMngrMblTelno())
+                .email(member.getMngrEml())
+                .deptName(member.getDeptNm())
+                .deptNo(member.getDeptNo())
+                .build();
+
     }
 }

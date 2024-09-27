@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="kr.go.tech.protection.admin.domain.member.dao.AdminDAO">
-    <select id="selectAdminMemberList" resultType="kr.go.tech.protection.admin.domain.member.dto.AdminVO$ListResponseVO" parameterType="kr.go.tech.protection.admin.domain.member.dto.AdminPO$ResearchPO">
+    <select id="selectAdminMemberList" resultType="kr.go.tech.protection.admin.domain.member.dto.AdminVO$ListResponseVO" parameterType="kr.go.tech.protection.admin.domain.member.dto.AdminPO$SearchPO">
         /* selectAdminMemberList [관리자 회원 리스트 조회 쿼리] */
         SELECT
             d."DEPT_NM",
@@ -36,5 +36,34 @@
         </if>
         ORDER BY
             a."FRST_RGTR_ID" DESC
+    </select>
+
+    <select id="selectAdminMemberById" resultType="kr.go.tech.protection.admin.domain.member.dto.AdminVO$MemberVO">
+        /* selectAdminMemberById [관리자 회원 아이디 중복 체크 쿼리] */
+        SELECT
+            "MNGR_ID"
+        FROM
+            "MNGR_MBR_INFO_TB"
+        WHERE
+            "MNGR_ID" = #{searchId}
+    </select>
+
+    <select id="selectAdminMemberByNo" resultType="kr.go.tech.protection.admin.domain.member.dto.AdminVO$MemberVO">
+        /* selectAdminMemberByNo [관리자 회원 상세조회 쿼리] */
+        SELECT
+            a."MNGR_NO",
+            a."MNGR_ID",
+            d."DEPT_NM",
+            a."MNGR_TELNO",
+            a."MNGR_MBL_TELNO",
+            a."MNGR_EML",
+            a."MNGR_NM",
+            a."DEPT_NO"
+        FROM
+            "DEPT_INFO_TB" d RIGHT JOIN "MNGR_MBR_INFO_TB" a
+        ON
+            a."DEPT_NO" = d."DEPT_NO"
+        WHERE
+            a."MNGR_NO" = #{no}
     </select>
 </mapper>
