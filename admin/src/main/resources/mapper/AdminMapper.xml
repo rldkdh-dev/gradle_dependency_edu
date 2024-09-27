@@ -66,4 +66,13 @@
         WHERE
             a."MNGR_NO" = #{no}
     </select>
+
+    <delete id="deleteAdminMember">
+        /* deleteAdminMember [관리자 회원 삭제 쿼리] */
+        DELETE
+        FROM
+            "MNGR_MBR_INFO_TB"
+        WHERE
+            "MNGR_NO" = #{no}
+    </delete>
 </mapper>

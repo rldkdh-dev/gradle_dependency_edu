@@ -6,6 +6,7 @@ import kr.go.tech.protection.admin.domain.member.dto.AdminVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -58,5 +59,33 @@ public class AdminService {
                 .deptNo(member.getDeptNo())
                 .build();
 
+    }
+
+    public AdminPO.SearchIdResponsePO selectAdminMemberById(AdminPO.SearchIdRequestPO searchIdRequestPO) {
+        if(searchIdRequestPO.getSearchId() == null) {
+            // TODO null 처리
+        }
+
+        AdminVO.MemberVO member = adminDao.selectAdminMemberById(searchIdRequestPO.getSearchId());
+
+        return AdminPO.SearchIdResponsePO.builder()
+                .idAvailable(member==null)
+                .build();
+    }
+
+    @Transactional
+    public void deleteAdminMember(int no) {
+        AdminVO.MemberVO member = adminDao.selectAdminMemberByNo(no);
+
+        if(member == null) {
+            log.info("FAILED");
+            // TODO null 처리
+        }
+
+        Integer result = adminDao.deleteAdminMember(no);
+        if(result < 1) {
+            log.info("FAILED");
+            // TODO 삭제 실패 처리
+        }
     }
 }

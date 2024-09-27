@@ -25,4 +25,17 @@ public class AdminController {
         AdminPO.DetailResponsePO data = adminService.selectAdminMemberByNo(no);
         return ApiResult.success(data);
     }
+
+    @GetMapping("/checkId")
+    public ApiResult<AdminPO.SearchIdResponsePO> selectAdminMemberById(AdminPO.SearchIdRequestPO searchIdRequestPO) throws Exception {
+        AdminPO.SearchIdResponsePO data = adminService.selectAdminMemberById(searchIdRequestPO);
+        return ApiResult.success(data);
+    }
+
+    @DeleteMapping("/{no}")
+    public ApiResult<String> deleteAdminMember(@PathVariable int no) {
+        adminService.deleteAdminMember(no);
+        return ApiResult.success("");
+    }
+
 }
