@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.go.tech.protection.admin.domain.auth.dao.AuthDAO">
+    <select id="selectAuthNameList" resultType="kr.go.tech.protection.admin.domain.auth.dto.AuthVO$NameListResponseVO">
+        /* selectAuthNameList [관리자 권한명 리스트 조회 쿼리] */
+        SELECT
+            a."AUTHRT_NO",
+            a."AUTHRT_NM",
+            m."MENU_NO",
+            m."DEPT_NO",
+            m."MENU_CD",
+            m."INQ_AUTHRT_YN",
+            m."WHOL_AUTHRT_YN"
+        FROM
+            "AUTHRT_INFO_TB" a JOIN "MENU_AUTHRT_INFO_TB" m
+        ON
+            a."AUTHRT_NO" = m."AUTHRT_NO"
+        WHERE
+            m."USE_YN" = 'Y' AND
+            a."USE_YN" = 'Y'
+    </select>
+</mapper>
