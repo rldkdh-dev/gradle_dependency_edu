@@ -10,10 +10,5 @@ public class AuthVO {
     public static class NameListResponseVO {
         private Integer authrtNo;
         private String authrtNm;
-        private Integer menuNo;
-        private Integer deptNo;
-        private String menuCd;
-        private String inqAuthrtYn;
-        private String wholAuthrtYn;
     }
 }

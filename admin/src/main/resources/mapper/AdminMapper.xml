@@ -5,22 +5,30 @@
     <select id="selectAdminMemberList" resultType="kr.go.tech.protection.admin.domain.member.dto.AdminVO$ListResponseVO" parameterType="kr.go.tech.protection.admin.domain.member.dto.AdminPO$SearchPO">
         /* selectAdminMemberList [관리자 회원 리스트 조회 쿼리] */
         SELECT
-            d."DEPT_NM",
-            a.*
+            a."MNGR_NO",
+            a."MNGR_NM",
+            a."MNGR_ID",
+            a."MNGR_PSWD",
+            a."TMPR_PSWD_YN",
+            a."MNGR_TELNO",
+            a."MNGR_MBL_TELNO",
+            a."MNGR_EML",
+            a."USE_YN",
+            a."FRST_REG_DT",
+            a."LAST_MDFCN_DT",
+            ag."AUTHRT_NO",
+            ag."AUTHRT_NM"
         FROM
-            "DEPT_INFO_TB" d RIGHT JOIN "MNGR_MBR_INFO_TB" a
+            "MNGR_MBR_INFO_TB" a
+        JOIN
+            "AUTHRT_GROUP_INFO_TB" ag
         ON
-            d."DEPT_NO" = a."DEPT_NO"
-        LEFT JOIN
-            "MENU_AUTHRT_INFO_TB" m
-        ON
-            a."DEPT_NO" = m."DEPT_NO"
-
+            ag."AUTHRT_NO" = a."AUTHRT_NO"
         WHERE
             a."USE_YN" = 'Y'
-        <if test="authNo != null">
+        <if test="authGroupNo != null">
             AND
-                m."AUTHRT_NO" = #{authNo}
+                ag."AUTHRT_NO" = #{authGroupNo}
         </if>
         <if test="searchType != null and searchKeyword != null">
             <choose>
@@ -41,28 +49,43 @@
     <select id="selectAdminMemberById" resultType="kr.go.tech.protection.admin.domain.member.dto.AdminVO$MemberVO">
         /* selectAdminMemberById [관리자 회원 아이디 중복 체크 쿼리] */
         SELECT
-            "MNGR_ID"
+            a."MNGR_NO",
+            a."MNGR_NM",
+            a."MNGR_ID",
+            a."MNGR_PSWD",
+            a."TMPR_PSWD_YN",
+            a."MNGR_TELNO",
+            a."MNGR_MBL_TELNO",
+            a."MNGR_EML",
+            ag."AUTHRT_NO",
+            ag."AUTHRT_NM"
         FROM
-            "MNGR_MBR_INFO_TB"
+            "AUTHRT_GROUP_INFO_TB" ag JOIN "MNGR_MBR_INFO_TB" a
+        ON
+            a."AUTHRT_NO" = ag."AUTHRT_NO"
         WHERE
-            "MNGR_ID" = #{searchId}
+            a."MNGR_ID" = #{searchId}
     </select>
 
     <select id="selectAdminMemberByNo" resultType="kr.go.tech.protection.admin.domain.member.dto.AdminVO$MemberVO">
         /* selectAdminMemberByNo [관리자 회원 상세조회 쿼리] */
         SELECT
             a."MNGR_NO",
+            a."MNGR_NM",
             a."MNGR_ID",
-            d."DEPT_NM",
+            a."MNGR_PSWD",
+            a."TMPR_PSWD_YN",
             a."MNGR_TELNO",
             a."MNGR_MBL_TELNO",
             a."MNGR_EML",
-            a."MNGR_NM",
-            a."DEPT_NO"
+            ag."AUTHRT_NO",
+            ag."AUTHRT_NM"
         FROM
-            "DEPT_INFO_TB" d RIGHT JOIN "MNGR_MBR_INFO_TB" a
+            "AUTHRT_GROUP_INFO_TB" ag
+        JOIN
+            "MNGR_MBR_INFO_TB" a
         ON
-            a."DEPT_NO" = d."DEPT_NO"
+            ag."AUTHRT_NO" = a."AUTHRT_NO"
         WHERE
             a."MNGR_NO" = #{no}
     </select>
@@ -75,4 +98,88 @@
         WHERE
             "MNGR_NO" = #{no}
     </delete>
+
+    <insert id="insertAdminMember" parameterType="kr.go.tech.protection.admin.domain.member.dto.AdminVO$RegRequestVO" useGeneratedKeys="true" keyProperty="mngrNo">
+        /* insertAdminMember [관리자 회원 추가 쿼리] */
+        INSERT INTO "MNGR_MBR_INFO_TB"
+            (
+                "AUTHRT_NO",
+                "MNGR_NM",
+                "MNGR_ID",
+                "MNGR_PSWD",
+                "TMPR_PSWD_YN",
+                "MNGR_TELNO",
+                "MNGR_MBL_TELNO",
+                "MNGR_EML",
+                "USE_YN",
+                "FRST_REG_DT",
+                "FRST_RGTR_ID",
+                "LAST_MDFCN_DT",
+                "LAST_MDFR_ID"
+            ) VALUES (
+                #{authrtNo},
+                #{mngrNm},
+                #{mngrId},
+                #{mngrPswd},
+                #{tmprPswdYn},
+                #{mngrTelNo},
+                #{mngrMblTelNo},
+                #{mngrEml},
+                #{useYn},
+                #{frstRegDt},
+                #{frstRgtrId},
+                #{lastMdfcnDt},
+                #{lastMdfrId}
+            )
+    </insert>
+
+    <update id="updatePassword" parameterType="kr.go.tech.protection.admin.domain.member.dto.AdminVO$PasswordRequestVO">
+    /* updatePassword [관리자회원 비밀번호 변경 쿼리] */
+        UPDATE
+            "MNGR_MBR_INFO_TB"
+        SET
+            "MNGR_PSWD" = #{mngrPswd},
+            "TMPR_PSWD_YN" = #{tmprPswdYn},
+            "LAST_MDFCN_DT" = #{lastMdfcnDt},
+            "LAST_MDFR_ID" = #{lastMdfrId}
+        WHERE
+            "MNGR_ID" = #{mngrId}
+    </update>
+
+    <select id="selectLoginMemberById" resultType="kr.go.tech.protection.admin.domain.member.dto.BaseAdminVO">
+    /* selectLoginMemberById [관리자회원 ID로 회원 정보 조회 쿼리] */
+        SELECT
+            a."MNGR_NO",
+            a."MNGR_NM",
+            a."MNGR_ID",
+            a."MNGR_PSWD",
+            a."TMPR_PSWD_YN",
+            a."MNGR_TELNO",
+            a."MNGR_MBL_TELNO",
+            a."MNGR_EML",
+            a."USE_YN",
+            ag."AUTHRT_NO",
+            ag."AUTHRT_NM"
+        FROM
+            "AUTHRT_GROUP_INFO_TB" ag
+        JOIN
+            "MNGR_MBR_INFO_TB" a
+        ON
+            ag."AUTHRT_NO" = a."AUTHRT_NO"
+        WHERE
+            a."MNGR_ID" = #{id}
+    </select>
+
+    <update id="resetPassword" parameterType="kr.go.tech.protection.admin.domain.member.dto.AdminVO$ResetPasswordRequestVO">
+        /* resetPassword [관리자회원 비밀번호 초기화 쿼리] */
+        UPDATE
+            "MNGR_MBR_INFO_TB"
+        SET
+            "MNGR_PSWD" = #{mngrPswd},
+            "TMPR_PSWD_YN" = #{tmprPswdYn},
+            "LAST_MDFCN_DT" = #{lastMdfcnDt},
+            "LAST_MDFR_ID" = #{lastMdfrId}
+        WHERE
+            "MNGR_ID" = #{mngrId}
+    </update>
 </mapper>
