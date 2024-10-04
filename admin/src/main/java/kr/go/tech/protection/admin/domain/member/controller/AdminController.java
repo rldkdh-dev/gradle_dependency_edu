@@ -57,4 +57,10 @@ public class AdminController {
         AdminPO.ResetPasswordResponsePO response = adminService.resetPassword(requestPO);
         return ApiResult.success(response);
     }
+
+    @PutMapping("")
+    public ApiResult<AdminPO.UpdateResponsePO> updateAdminMember(@Valid @RequestBody AdminPO.UpdateRequestPO requestPO) {
+        AdminPO.UpdateResponsePO response = adminService.updateAdminMember(requestPO);
+        return ApiResult.success(response);
+    }
 }

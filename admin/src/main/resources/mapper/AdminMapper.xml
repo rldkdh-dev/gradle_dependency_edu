@@ -182,4 +182,20 @@
         WHERE
             "MNGR_ID" = #{mngrId}
     </update>
+
+    <update id="updateAdminMember" parameterType="kr.go.tech.protection.admin.domain.member.dto.AdminVO$UpdateRequestVO">
+        /* updateAdminMember [관리자 회원 업데이트 쿼리] */
+        UPDATE
+            "MNGR_MBR_INFO_TB"
+        SET
+            "MNGR_NM" = #{mngrNm},
+            "MNGR_TELNO" = #{mngrTelno},
+            "MNGR_MBL_TELNO" = #{mngrMblTelno},
+            "MNGR_EML" = #{mngrEml},
+            "AUTHRT_NO" = #{authrtNo},
+            "LAST_MDFCN_DT" = #{lastMdfcnDt},
+            "LAST_MDFR_ID" = #{lastMdfrId}
+        WHERE
+            "MNGR_ID" = #{mngrId}
+    </update>
 </mapper>

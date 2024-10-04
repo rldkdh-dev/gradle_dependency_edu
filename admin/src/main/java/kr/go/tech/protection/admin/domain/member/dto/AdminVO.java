@@ -68,4 +68,14 @@ public class AdminVO {
         private String tmprPswdYn;
     }
 
+    @Getter
+    @Builder
+    public static class UpdateRequestVO extends BaseColumn{
+        private String mngrId;
+        private String mngrNm;
+        private String mngrTelno;
+        private String mngrMblTelno;
+        private String mngrEml;
+        private Integer authrtNo;
+    }
 }

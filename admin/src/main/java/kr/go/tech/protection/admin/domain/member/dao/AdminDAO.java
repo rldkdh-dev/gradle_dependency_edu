@@ -26,4 +26,6 @@ public interface AdminDAO {
     Optional<BaseAdminVO> selectLoginMemberById(String id);
 
     int resetPassword(AdminVO.ResetPasswordRequestVO param);
+
+    int updateAdminMember(AdminVO.UpdateRequestVO param);
 }

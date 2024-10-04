@@ -129,7 +129,7 @@ public class AdminService {
 
         return AdminPO.RegResponsePO
                 .builder()
-                .no(memberVO.getMngrNo())
+                .adminNo(memberVO.getMngrNo())
                 .adminId(memberVO.getMngrId())
                 .adminName(memberVO.getMngrNm())
                 .telNo(memberVO.getMngrTelno())
@@ -169,7 +169,7 @@ public class AdminService {
     public AdminPO.PasswordResponsePO updatePassword(AdminPO.PasswordRequestPO requestPO) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-        AdminVO.MemberVO member = adminDao.selectAdminMemberById(requestPO.getId());
+        AdminVO.MemberVO member = adminDao.selectAdminMemberById(requestPO.getAdminId());
         if (member == null) {
             // TODO null 체크
         }
@@ -186,7 +186,7 @@ public class AdminService {
         BaseAdminVO admin = (BaseAdminVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         AdminVO.PasswordRequestVO param = AdminVO.PasswordRequestVO.builder()
-                .mngrId(requestPO.getId())
+                .mngrId(requestPO.getAdminId())
                 .mngrPswd(encoder.encode(requestPO.getPassword()))
                 .tmprPswdYn("N")
                 .build();
@@ -198,7 +198,7 @@ public class AdminService {
         }
 
         return AdminPO.PasswordResponsePO.builder()
-                .adminId(requestPO.getId())
+                .adminId(requestPO.getAdminId())
                 .build();
     }
 
@@ -231,4 +231,38 @@ public class AdminService {
                 .build();
     }
 
+    @Transactional
+    public AdminPO.UpdateResponsePO updateAdminMember(AdminPO.UpdateRequestPO requestPO) {
+        BaseAdminVO admin = (BaseAdminVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        AdminVO.MemberVO member = adminDao.selectAdminMemberById(requestPO.getAdminId());
+        if (member == null) {
+            // TODO null 체크
+        }
+
+        AdminVO.UpdateRequestVO param = AdminVO.UpdateRequestVO.builder()
+                .mngrId(requestPO.getAdminId())
+                .mngrNm(requestPO.getAdminName())
+                .mngrTelno(requestPO.getTelNo())
+                .mngrMblTelno(requestPO.getPhoneNo())
+                .mngrEml(requestPO.getEmail())
+                .authrtNo(requestPO.getAuthGroupNo())
+                .build();
+        param.setLast(admin.getMngrId());
+
+        int result = adminDao.updateAdminMember(param);
+        if(result < 1) {
+            // TODO 업데이트 에러 처리
+        }
+
+        return AdminPO.UpdateResponsePO.builder()
+                .adminNo(requestPO.getAdminNo())
+                .adminId(requestPO.getAdminId())
+                .adminName(requestPO.getAdminName())
+                .telNo(requestPO.getTelNo())
+                .phoneNo(requestPO.getPhoneNo())
+                .email(requestPO.getEmail())
+                .authGroupNo(requestPO.getAuthGroupNo())
+                .authGroupName(requestPO.getAuthGroupName())
+                .build();
+    }
 }

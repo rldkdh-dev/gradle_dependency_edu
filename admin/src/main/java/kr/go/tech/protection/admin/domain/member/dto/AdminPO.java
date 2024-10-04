@@ -87,7 +87,7 @@ public class AdminPO {
     @Getter
     @Builder
     public static class RegResponsePO {
-        private Integer no;
+        private Integer adminNo;
         private String adminId;
         private String adminName;
         private String telNo;
@@ -99,14 +99,14 @@ public class AdminPO {
 
     @Getter
     public static class PasswordRequestPO{
-        @NotNull
+        @NotEmpty(message = "임시 비밀번호는 공백일 수 없습니다.")
         private String tempPassword;
-        @NotNull
+        @NotEmpty(message = "비밀번호는 공백일 수 없습니다.")
         private String password;
-        @NotNull
+        @NotEmpty(message = "비밀번호 확인은 공백일 수 없습니다.")
         private String passwordCheck;
-        @NotNull
-        private String id;
+        @NotEmpty(message = "아이디는 공백일 수 없습니다.")
+        private String adminId;
     }
 
     @Getter
@@ -117,6 +117,7 @@ public class AdminPO {
 
     @Getter
     public static class ResetPasswordRequestPO {
+        @NotEmpty(message = "아이디는 공백일 수 없습니다.")
         private String adminId;
     }
 
@@ -125,5 +126,42 @@ public class AdminPO {
     public static class ResetPasswordResponsePO {
         private String adminId;
         private Integer adminNo;
+    }
+
+    @Getter
+    public static class UpdateRequestPO {
+        @NotNull(message = "회원번호는 null일 수 없습니다.")
+        private Integer adminNo;
+        @NotEmpty(message = "아이디는 공백일 수 없습니다.")
+        private String adminId;
+        @NotEmpty(message = "이름은 공백일 수 없습니다.")
+        @Size(min = 1, max = 100)
+        private String adminName;
+        @NotEmpty(message = "내선 연락처는 공백일 수 없습니다.")
+        @Size(max = 11)
+        private String telNo;
+        @NotEmpty(message = "관리자 개인 연락처는 공백일 수 없습니다.")
+        @Size(max = 11)
+        private String phoneNo;
+        @NotEmpty
+        @Pattern(regexp = "^[\\w!#$%&'*+/=?`{|}~^.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$", message = "이메일 형식이 올바르지 않습니다.")
+        private String email;
+        @NotNull(message = "그룹번호는 null일 수 없습니다.")
+        private Integer authGroupNo;
+        @NotEmpty(message = "그룹명은 공백일 수 없습니다.")
+        private String authGroupName;
+    }
+
+    @Getter
+    @Builder
+    public static class UpdateResponsePO {
+        private Integer adminNo;
+        private String adminId;
+        private String adminName;
+        private String telNo;
+        private String phoneNo;
+        private String email;
+        private Integer authGroupNo;
+        private String authGroupName;
     }
 }
