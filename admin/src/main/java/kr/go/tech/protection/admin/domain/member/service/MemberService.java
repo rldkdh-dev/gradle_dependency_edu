@@ -1,9 +1,9 @@
 package kr.go.tech.protection.admin.domain.member.service;
 
-import kr.go.tech.protection.admin.domain.member.dao.AdminDAO;
-import kr.go.tech.protection.admin.domain.member.dto.AdminPO;
-import kr.go.tech.protection.admin.domain.member.dto.AdminVO;
-import kr.go.tech.protection.admin.domain.member.dto.BaseAdminVO;
+import kr.go.tech.protection.admin.domain.member.dao.MemberDAO;
+import kr.go.tech.protection.admin.domain.member.dto.BaseMemberVO;
+import kr.go.tech.protection.admin.domain.member.dto.MemberPO;
+import kr.go.tech.protection.admin.domain.member.dto.MemberVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,40 +22,40 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AdminService {
-    private final AdminDAO adminDao;
+public class MemberService {
+    private final MemberDAO adminDao;
 
-    public AdminPO.ListResponsePO selectAdminMemberList(AdminPO.SearchPO searchPO) {
-        List<AdminVO.ListResponseVO> adminList = adminDao.selectAdminMemberList(searchPO);
+    public MemberPO.ListResponsePO selectAdminMemberList(MemberPO.SearchPO searchPO) {
+        List<MemberVO.ListResponseVO> adminList = adminDao.selectAdminMemberList(searchPO);
         AtomicReference<Integer> rowNum = new AtomicReference<>(1);
 
-        return AdminPO.ListResponsePO.builder()
+        return MemberPO.ListResponsePO.builder()
                 .totalCount(adminList.size())
                 .list(
-                    adminList.stream().map(admin-> AdminPO.ListData.builder()
-                        .no(rowNum.getAndSet(rowNum.get() + 1))
-                        .adminNo(admin.getMngrNo())
-                        .authGroupName(admin.getAuthrtNm())
-                        .adminId(admin.getMngrId())
-                        .name(admin.getMngrNm())
-                        .phone(admin.getMngrMblTelno())
-                        .email(admin.getMngrEml())
-                        .regDt(admin.getFrstRegDt())
-                        .modDt(admin.getLastMdfcnDt())
-                        .build()).collect(Collectors.toList())
+                        adminList.stream().map(admin-> MemberPO.ListData.builder()
+                                .no(rowNum.getAndSet(rowNum.get() + 1))
+                                .adminNo(admin.getMngrNo())
+                                .authGroupName(admin.getAuthrtNm())
+                                .adminId(admin.getMngrId())
+                                .name(admin.getMngrNm())
+                                .phone(admin.getMngrMblTelno())
+                                .email(admin.getMngrEml())
+                                .regDt(admin.getFrstRegDt())
+                                .modDt(admin.getLastMdfcnDt())
+                                .build()).collect(Collectors.toList())
                 )
                 .build();
     }
 
-    public AdminPO.DetailResponsePO selectAdminMemberByNo(int no) {
-        AdminVO.MemberVO member = adminDao.selectAdminMemberByNo(no);
+    public MemberPO.DetailResponsePO selectAdminMemberByNo(int no) {
+        MemberVO.DefaultMemberVO member = adminDao.selectAdminMemberByNo(no);
 
         if(member == null) {
             // TODO null 처리
             log.info("FAILED");
         }
 
-        return AdminPO.DetailResponsePO.builder()
+        return MemberPO.DetailResponsePO.builder()
                 .adminNo(member.getMngrNo())
                 .adminId(member.getMngrId())
                 .adminName(member.getMngrNm())
@@ -67,17 +67,21 @@ public class AdminService {
                 .build();
     }
 
-    public AdminPO.SearchIdResponsePO selectAdminMemberById(AdminPO.SearchIdRequestPO searchIdRequestPO) {
-        AdminVO.MemberVO member = adminDao.selectAdminMemberById(searchIdRequestPO.getSearchId());
+    public MemberPO.SearchIdResponsePO selectAdminMemberById(MemberPO.SearchIdRequestPO searchIdRequestPO) {
+        if(searchIdRequestPO.getSearchId() == null) {
+            // TODO null 처리
+        }
 
-        return AdminPO.SearchIdResponsePO.builder()
+        MemberVO.DefaultMemberVO member = adminDao.selectAdminMemberById(searchIdRequestPO.getSearchId());
+
+        return MemberPO.SearchIdResponsePO.builder()
                 .idAvailable(member==null)
                 .build();
     }
 
     @Transactional
     public void deleteAdminMember(int no) {
-        AdminVO.MemberVO member = adminDao.selectAdminMemberByNo(no);
+        MemberVO.DefaultMemberVO member = adminDao.selectAdminMemberByNo(no);
 
         if(member == null) {
             log.info("FAILED");
@@ -92,16 +96,16 @@ public class AdminService {
     }
 
     @Transactional
-    public AdminPO.RegResponsePO insertAdminMember(@Valid @RequestBody AdminPO.RegRequestPO responsePO) {
+    public MemberPO.RegResponsePO insertAdminMember(@Valid @RequestBody MemberPO.RegRequestPO responsePO) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        BaseAdminVO admin = (BaseAdminVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        BaseMemberVO admin = (BaseMemberVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        AdminVO.MemberVO member = adminDao.selectAdminMemberById(responsePO.getAdminId());
+        MemberVO.DefaultMemberVO member = adminDao.selectAdminMemberById(responsePO.getAdminId());
         if(member != null){
             // TODO 중복 확인 체크
         }
 
-        AdminVO.RegRequestVO requestVO = AdminVO.RegRequestVO.builder()
+        MemberVO.RegRequestVO requestVO = MemberVO.RegRequestVO.builder()
                 .authrtNo(responsePO.getAuthGroupNo())
                 .mngrNm(responsePO.getAdminName())
                 .mngrId(responsePO.getAdminId())
@@ -121,13 +125,13 @@ public class AdminService {
             log.info("FAIL");
         }
 
-        AdminVO.MemberVO memberVO = adminDao.selectAdminMemberById(requestVO.getMngrId());
+        MemberVO.DefaultMemberVO memberVO = adminDao.selectAdminMemberById(requestVO.getMngrId());
         if(memberVO==null) {
             // TODO null 처리
             log.info("FAIL");
         }
 
-        return AdminPO.RegResponsePO
+        return MemberPO.RegResponsePO
                 .builder()
                 .adminNo(memberVO.getMngrNo())
                 .adminId(memberVO.getMngrId())
@@ -166,10 +170,10 @@ public class AdminService {
     }
 
     @Transactional
-    public AdminPO.PasswordResponsePO updatePassword(AdminPO.PasswordRequestPO requestPO) {
+    public MemberPO.PasswordResponsePO updatePassword(MemberPO.PasswordRequestPO requestPO) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-        AdminVO.MemberVO member = adminDao.selectAdminMemberById(requestPO.getAdminId());
+        MemberVO.DefaultMemberVO member = adminDao.selectAdminMemberById(requestPO.getAdminId());
         if (member == null) {
             // TODO null 체크
         }
@@ -183,9 +187,9 @@ public class AdminService {
             // TODO 입력한 비밀번호, 비밀번호 확인 일치여부 확인
         }
 
-        BaseAdminVO admin = (BaseAdminVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        BaseMemberVO admin = (BaseMemberVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        AdminVO.PasswordRequestVO param = AdminVO.PasswordRequestVO.builder()
+        MemberVO.PasswordRequestVO param = MemberVO.PasswordRequestVO.builder()
                 .mngrId(requestPO.getAdminId())
                 .mngrPswd(encoder.encode(requestPO.getPassword()))
                 .tmprPswdYn("N")
@@ -197,49 +201,49 @@ public class AdminService {
             // TODO update 에러 처리
         }
 
-        return AdminPO.PasswordResponsePO.builder()
+        return MemberPO.PasswordResponsePO.builder()
                 .adminId(requestPO.getAdminId())
                 .build();
     }
 
     @Transactional
-    public AdminPO.ResetPasswordResponsePO resetPassword(AdminPO.ResetPasswordRequestPO requestPO) {
+    public MemberPO.ResetPasswordResponsePO resetPassword(MemberPO.ResetPasswordRequestPO requestPO) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-        AdminVO.MemberVO member = adminDao.selectAdminMemberById(requestPO.getAdminId());
+        MemberVO.DefaultMemberVO member = adminDao.selectAdminMemberById(requestPO.getAdminId());
         if (member == null) {
             // TODO null 체크
         }
 
-        BaseAdminVO admin = (BaseAdminVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        BaseMemberVO admin = (BaseMemberVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        AdminVO.ResetPasswordRequestVO param = AdminVO.ResetPasswordRequestVO.builder()
+        MemberVO.ResetPasswordRequestVO param = MemberVO.ResetPasswordRequestVO.builder()
                 .mngrId(requestPO.getAdminId())
                 .mngrPswd(encoder.encode(getTempPassword()))
                 .tmprPswdYn("Y")
                 .build();
         param.setLast(admin.getMngrId());
-        
+
         int result = adminDao.resetPassword(param);
         if(result < 1) {
             // TODO UPDATE 에러 처리
         }
 
-        return AdminPO.ResetPasswordResponsePO.builder()
+        return MemberPO.ResetPasswordResponsePO.builder()
                 .adminId(requestPO.getAdminId())
                 .adminNo(member.getMngrNo())
                 .build();
     }
 
     @Transactional
-    public AdminPO.UpdateResponsePO updateAdminMember(AdminPO.UpdateRequestPO requestPO) {
-        BaseAdminVO admin = (BaseAdminVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        AdminVO.MemberVO member = adminDao.selectAdminMemberById(requestPO.getAdminId());
+    public MemberPO.UpdateResponsePO updateAdminMember(MemberPO.UpdateRequestPO requestPO) {
+        BaseMemberVO admin = (BaseMemberVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        MemberVO.DefaultMemberVO member = adminDao.selectAdminMemberById(requestPO.getAdminId());
         if (member == null) {
             // TODO null 체크
         }
 
-        AdminVO.UpdateRequestVO param = AdminVO.UpdateRequestVO.builder()
+        MemberVO.UpdateRequestVO param = MemberVO.UpdateRequestVO.builder()
                 .mngrId(requestPO.getAdminId())
                 .mngrNm(requestPO.getAdminName())
                 .mngrTelno(requestPO.getTelNo())
@@ -254,7 +258,7 @@ public class AdminService {
             // TODO 업데이트 에러 처리
         }
 
-        return AdminPO.UpdateResponsePO.builder()
+        return MemberPO.UpdateResponsePO.builder()
                 .adminNo(requestPO.getAdminNo())
                 .adminId(requestPO.getAdminId())
                 .adminName(requestPO.getAdminName())

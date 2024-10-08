@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class AdminVO {
+public class MemberVO {
 
     @Getter
     public static class ListResponseVO extends BaseColumn{
@@ -23,8 +23,7 @@ public class AdminVO {
     }
 
     @Getter
-    @Builder
-    public static class MemberVO extends BaseColumn {
+    public static class DefaultMemberVO extends BaseColumn {
         private Integer mngrNo;
         private String mngrNm;
         private String mngrId;

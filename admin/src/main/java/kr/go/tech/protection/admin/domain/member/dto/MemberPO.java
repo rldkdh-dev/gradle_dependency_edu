@@ -8,8 +8,7 @@ import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-
-public class AdminPO {
+public class MemberPO {
 
     @Getter
     @Builder

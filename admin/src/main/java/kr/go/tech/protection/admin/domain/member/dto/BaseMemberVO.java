@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Builder
-public class BaseAdminVO implements UserDetails {
+public class BaseMemberVO implements UserDetails {
     private Integer mngrNo;
     private String mngrNm;
     private String mngrId;

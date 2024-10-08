@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="kr.go.tech.protection.admin.domain.member.dao.AdminDAO">
-    <select id="selectAdminMemberList" resultType="kr.go.tech.protection.admin.domain.member.dto.AdminVO$ListResponseVO" parameterType="kr.go.tech.protection.admin.domain.member.dto.AdminPO$SearchPO">
+<mapper namespace="kr.go.tech.protection.admin.domain.member.dao.MemberDAO">
+    <select id="selectAdminMemberList" resultType="kr.go.tech.protection.admin.domain.member.dto.MemberVO$ListResponseVO" parameterType="kr.go.tech.protection.admin.domain.member.dto.MemberPO$SearchPO">
         /* selectAdminMemberList [관리자 회원 리스트 조회 쿼리] */
         SELECT
             a."MNGR_NO",
@@ -46,7 +46,7 @@
             a."FRST_RGTR_ID" DESC
     </select>
 
-    <select id="selectAdminMemberById" resultType="kr.go.tech.protection.admin.domain.member.dto.AdminVO$MemberVO">
+    <select id="selectAdminMemberById" resultType="kr.go.tech.protection.admin.domain.member.dto.MemberVO$DefaultMemberVO">
         /* selectAdminMemberById [관리자 회원 아이디 중복 체크 쿼리] */
         SELECT
             a."MNGR_NO",
@@ -67,7 +67,7 @@
             a."MNGR_ID" = #{searchId}
     </select>
 
-    <select id="selectAdminMemberByNo" resultType="kr.go.tech.protection.admin.domain.member.dto.AdminVO$MemberVO">
+    <select id="selectAdminMemberByNo" resultType="kr.go.tech.protection.admin.domain.member.dto.MemberVO$DefaultMemberVO">
         /* selectAdminMemberByNo [관리자 회원 상세조회 쿼리] */
         SELECT
             a."MNGR_NO",
@@ -99,7 +99,7 @@
             "MNGR_NO" = #{no}
     </delete>
 
-    <insert id="insertAdminMember" parameterType="kr.go.tech.protection.admin.domain.member.dto.AdminVO$RegRequestVO" useGeneratedKeys="true" keyProperty="mngrNo">
+    <insert id="insertAdminMember" parameterType="kr.go.tech.protection.admin.domain.member.dto.MemberVO$RegRequestVO" useGeneratedKeys="true" keyProperty="mngrNo">
         /* insertAdminMember [관리자 회원 추가 쿼리] */
         INSERT INTO "MNGR_MBR_INFO_TB"
             (
@@ -133,7 +133,7 @@
             )
     </insert>
 
-    <update id="updatePassword" parameterType="kr.go.tech.protection.admin.domain.member.dto.AdminVO$PasswordRequestVO">
+    <update id="updatePassword" parameterType="kr.go.tech.protection.admin.domain.member.dto.MemberVO$PasswordRequestVO">
     /* updatePassword [관리자회원 비밀번호 변경 쿼리] */
         UPDATE
             "MNGR_MBR_INFO_TB"
@@ -146,7 +146,7 @@
             "MNGR_ID" = #{mngrId}
     </update>
 
-    <select id="selectLoginMemberById" resultType="kr.go.tech.protection.admin.domain.member.dto.BaseAdminVO">
+    <select id="selectLoginMemberById" resultType="kr.go.tech.protection.admin.domain.member.dto.BaseMemberVO">
     /* selectLoginMemberById [관리자회원 ID로 회원 정보 조회 쿼리] */
         SELECT
             a."MNGR_NO",
@@ -170,7 +170,7 @@
             a."MNGR_ID" = #{id}
     </select>
 
-    <update id="resetPassword" parameterType="kr.go.tech.protection.admin.domain.member.dto.AdminVO$ResetPasswordRequestVO">
+    <update id="resetPassword" parameterType="kr.go.tech.protection.admin.domain.member.dto.MemberVO$ResetPasswordRequestVO">
         /* resetPassword [관리자회원 비밀번호 초기화 쿼리] */
         UPDATE
             "MNGR_MBR_INFO_TB"
@@ -183,7 +183,7 @@
             "MNGR_ID" = #{mngrId}
     </update>
 
-    <update id="updateAdminMember" parameterType="kr.go.tech.protection.admin.domain.member.dto.AdminVO$UpdateRequestVO">
+    <update id="updateAdminMember" parameterType="kr.go.tech.protection.admin.domain.member.dto.MemberVO$UpdateRequestVO">
         /* updateAdminMember [관리자 회원 업데이트 쿼리] */
         UPDATE
             "MNGR_MBR_INFO_TB"
