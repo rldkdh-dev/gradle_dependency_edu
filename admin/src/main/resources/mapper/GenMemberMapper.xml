@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.go.tech.protection.admin.domain.account.general.dao.GenMemberDAO">
+    <select id="selectGenMemberList" resultType="kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO$ListResponseVO" parameterType="kr.go.tech.protection.admin.domain.account.general.dto.GenMemberPO$SearchPO">
+        /* selectGenMemberList [일반 회원 리스트 조회 쿼리] */
+              SELECT
+                  GMIT."MBR_NO",
+                  GMIT."MBR_NM",
+                  GMIT."MBR_ID",
+                  GMIT."MBR_MBL_TELNO",
+                  GMIT."EML_ADDR",
+                  GMIT."FRST_REG_DT",
+                  GMIT."LAST_MDFCN_DT",
+                  COALESCE(CASE
+                      WHEN EPMIT."ALW_YN" = 'N' OR EPMIT."DEL_YN" = 'Y' THEN NULL
+                      ELSE EMIT."CONM_NM"
+                  END, '-') AS "CONM_NM" -- CONM_NM이 NULL일 경우 '-'로 대체
+              FROM
+                  "GEN_MBR_INFO_TB" GMIT
+              LEFT JOIN
+                  "ENT_PRCPT_MBR_INFO_TB" EPMIT
+              ON
+                  GMIT."MBR_NO" = EPMIT."MBR_NO"
+              LEFT JOIN
+                  "ENT_MBR_INFO_TB" EMIT
+              ON
+                  EPMIT."ENT_MBR_NO" = EMIT."ENT_MBR_NO"
+              <where>
+                  <if test="conmNm != null">
+                      AND EMIT."CONM_NM" = #{conmNm}
+                  </if>
+                  <if test="searchType != null and searchKeyword != null">
+                      <choose>
+                          <when test="searchType == 'GMR001'">
+                              AND GMIT."MBR_NM" LIKE '%'||#{searchKeyword}||'%'
+                          </when>
+                          <when test="searchType == 'GMR002'">
+                              AND GMIT."MBR_ID" LIKE '%'||#{searchKeyword}||'%'
+                          </when>
+                      </choose>
+                  </if>
+                  ORDER BY
+                      GMIT."MBR_NM"
+              </where>
+          </select>
+
+
+</mapper>
