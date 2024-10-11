@@ -45,5 +45,41 @@
               </where>
           </select>
 
+  <select id="selectGenMemberByNo" resultType="kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO$DetailGenMemberVO">
+        /* selectGenMemberWithEntInfoByNo [일반 회원 및 소속 기업 상세 조회 쿼리] */
+        SELECT
+            GMIT."MBR_NO",
+            GMIT."MBR_GNDR_CD",
+            GMIT."MBR_BRDT",
+            GMIT."MBR_NM",
+            GMIT."MBR_ID",
+            GMIT."MBR_MBL_TELNO",
+            GMIT."EML_ADDR",
+            GMIT."EML_RCPTN_AGRE_YN",
+            -- 회원 주소를 하나의 문자열로 합침
+            '(' || GMIT."HOME_ZIP" || ') ' || GMIT."HOME_ROAD_NM" || ' ' || GMIT."HOME_DADDR" AS "ADDRESS",
+            -- 기업 정보
+            COALESCE(EMIT."CONM_NM", '-') AS "CONM_NM",
+            COALESCE(EMIT."BR_NO", '-') AS "BR_NO",
+            COALESCE(EPMIT."DEPT_NM", '-') AS "DEPT_NM",
+            COALESCE(EPMIT."JBPS_CD", '-') AS "JBPS_CD",
+            -- 회사 주소를 하나의 문자열로 합침
+            COALESCE( '(' ||EMIT."BPLC_ZIP" || ') ' || EMIT."BPLC_ROAD_NM" || ' ' || EMIT."BPLC_DADDR", '-') AS "COMPANY_ADDRESS"
+        FROM
+            "GEN_MBR_INFO_TB" GMIT
+        LEFT JOIN
+            "ENT_PRCPT_MBR_INFO_TB" EPMIT
+        ON
+            GMIT."MBR_NO" = EPMIT."MBR_NO"
+            AND EPMIT."ALW_YN" = 'Y'
+            AND EPMIT."DEL_YN" = 'N'
+        LEFT JOIN
+            "ENT_MBR_INFO_TB" EMIT
+        ON
+            EPMIT."ENT_MBR_NO" = EMIT."ENT_MBR_NO"
+        WHERE
+            GMIT."MBR_NO" = #{no};
+  </select>
+
 
 </mapper>

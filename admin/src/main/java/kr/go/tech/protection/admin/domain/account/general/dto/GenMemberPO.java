@@ -34,39 +34,29 @@ public class GenMemberPO {
         private String searchKeyword;   //검색 단어
     }
 
-
-
-/*
-
-
-
-
-
-    @Getter
-    public static class SearchIdRequestPO {
-        @NotNull(message = "아이디를 입력하세요.")
-        private String searchId;
-    }
-
-    @Getter
-    @Builder
-    public static class SearchIdResponsePO {
-        private Boolean idAvailable;
-    }
-
     @Getter
     @Builder
     public static class DetailResponsePO{
-        private Integer adminNo;
-        private String adminId;
-        private String adminName;
-        private String telNo;
-        private String phoneNo;
-        private String email;
-        private String authGroupName;
-        private Integer authGroupNo;
+        private String genName;     //이름  
+        private String gender;      //성별
+        private LocalDateTime birthDate;      //생년월일
+        private String genId;      //일반회원 아이디
+        private String genPhone;      //연락처
+        private String genEmail;      //이메일
+        private String isEmailConsent;      //이메일 수신 동의 여부
+        private String address;      //주소
+
+        //소속 기업정보
+        private String companyName;      //사업장명
+        private String businessRegistrationNumber;      //사업자 등록번호
+        private String department;      //부서
+        private String position;      //직위
+        private String companyAddress;      //회사 주소
     }
 
+
+
+/*
     @Getter
     @Setter
     public static class RegRequestPO {

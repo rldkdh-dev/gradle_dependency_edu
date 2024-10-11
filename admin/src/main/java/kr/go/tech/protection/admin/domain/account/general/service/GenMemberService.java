@@ -5,7 +5,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import kr.go.tech.protection.admin.domain.account.general.dao.GenMemberDAO;
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberPO;
+import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberPO.DetailResponsePO;
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO;
+import kr.go.tech.protection.admin.domain.member.dto.MemberPO;
+import kr.go.tech.protection.admin.domain.member.dto.MemberVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -35,6 +38,27 @@ public class GenMemberService {
                                 .build()).collect(Collectors.toList())
                 )
                 .build();
+    }
+
+    public GenMemberPO.DetailResponsePO selectGenMemberByNo(int no) {
+
+        //회원정보 상세 조회 및 소속기업 정보 조회
+        GenMemberVO.DetailGenMemberVO genMember = genMemberDAO.selectGenMemberByNo(no);
+
+             return GenMemberPO.DetailResponsePO.builder()
+                     .genName(genMember.getMbrNm())
+                     .gender(genMember.getMbrGndrCd())
+                     .birthDate(genMember.getMbrBrdt())
+                     .genId(genMember.getMbrId())
+                     .genPhone(genMember.getMbrMblTelno())
+                     .isEmailConsent(genMember.getEmlRcptnAgreYn())
+                     .address(genMember.getAddress())
+                     .companyName(genMember.getConmNm())
+                     .businessRegistrationNumber(genMember.getBrNo())
+                     .department(genMember.getDeptNm())
+                     .position(genMember.getJbpsCd())
+                     .companyAddress(genMember.getCompanyAddress())
+                     .build();
     }
 
 }
