@@ -46,7 +46,7 @@
           </select>
 
   <select id="selectGenMemberByNo" resultType="kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO$DetailGenMemberVO">
-        /* selectGenMemberWithEntInfoByNo [일반 회원 및 소속 기업 상세 조회 쿼리] */
+        /* selectGenMemberByNo [일반 회원 및 소속 기업 상세 조회 쿼리] */
         SELECT
             GMIT."MBR_NO",
             GMIT."MBR_GNDR_CD",
