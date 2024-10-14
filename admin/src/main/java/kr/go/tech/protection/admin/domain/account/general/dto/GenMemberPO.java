@@ -2,6 +2,10 @@ package kr.go.tech.protection.admin.domain.account.general.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -10,6 +14,7 @@ public class GenMemberPO {
     @Getter
     @Builder
     public static class ListResponsePO {
+
         private Integer totalCount;
         private List<ListData> list;
     }
@@ -19,6 +24,7 @@ public class GenMemberPO {
     public static class ListData {
         private Integer no;         //번호
         private String companyName;    //소속기업명
+        private String genNo;   //일반 회원번호
         private String genName;   //일반 회원명
         private String genId;      //일반회원 아이디
         private String genPhone;   //일반 회원 휴대폰 전화번호
@@ -29,6 +35,7 @@ public class GenMemberPO {
 
     @Getter
     public static class SearchPO {
+
         private String conmNm;     //사업자명
         private String searchType;  //검색 조건
         private String searchKeyword;   //검색 단어
@@ -36,10 +43,11 @@ public class GenMemberPO {
 
     @Getter
     @Builder
-    public static class DetailResponsePO{
-        private String genName;     //이름  
-        private String gender;      //성별
-        private LocalDateTime birthDate;      //생년월일
+    public static class DetailResponsePO {
+        private String genNo;   //일반 회원번호
+        private String genName;     //이름
+        private String genderCd;      //성별 코드
+        private String birthDate;      //생년월일
         private String genId;      //일반회원 아이디
         private String genPhone;      //연락처
         private String genEmail;      //이메일
@@ -54,6 +62,60 @@ public class GenMemberPO {
         private String companyAddress;      //회사 주소
     }
 
+    @Getter
+    public static class UpdateRequestPO {
+        @NotNull(message = "회원번호는 null일 수 없습니다.")
+        private Integer genNo;
+
+        @NotNull(message = "이름은 null일 수 없습니다.")
+        private String genName;
+
+        @NotNull(message = "성별코드는 null 일 수 없습니다.")
+        private String genderCd;
+
+        @NotEmpty(message = "생년월일은 공백일 수 없습니다.")
+        @Pattern(regexp = "\\d{8}", message = "생년월일은 yyyymmdd 형식이어야 합니다.") // 숫자 8자리 형식 확인
+        private String birthDate;
+
+        @NotEmpty(message = "아이디는 공백일 수 없습니다.")
+        private String genId;
+
+        @NotEmpty(message = "연락처는 공백일 수 없습니다.")
+        @Size(max = 11, message = "연락처는 최대 11자리여야 합니다.") // 메시지 추가
+        private String genPhone;
+
+        @Pattern(regexp = "^[\\w!#$%&'*+/=?`{|}~^.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$", message = "이메일 형식이 올바르지 않습니다.")
+        private String genEmail;
+
+        @NotEmpty(message = "이메일 수신동의 여부는 null일 수 없습니다")
+        private String isEmailConsent;
+
+        @NotEmpty(message = "우편번호는 null일 수 없습니다")
+        private String zipCode;
+
+        @NotEmpty(message = "도로명은 null일 수 없습니다")
+        private String roadName;
+
+        private String detailAddress; // 상세주소 (null 허용)
+    }
+
+    @Getter
+    @Builder
+    public static class UpdateResponsePO {
+        private Integer genNo;
+        private String genName;
+        private String genderCd;
+        private String birthDate;
+        private String genId;
+        private String genPhone;
+        private String genEmail;
+        private String isEmailConsent;
+        private String zipCode;
+        private String roadName;
+        private String detailAddress; // 상세주소 (null 허용)
+    }
+
+}
 
 
 /*
@@ -121,40 +183,7 @@ public class GenMemberPO {
         private Integer adminNo;
     }
 
-    @Getter
-    public static class UpdateRequestPO {
-        @NotNull(message = "회원번호는 null일 수 없습니다.")
-        private Integer adminNo;
-        @NotEmpty(message = "아이디는 공백일 수 없습니다.")
-        private String adminId;
-        @NotEmpty(message = "이름은 공백일 수 없습니다.")
-        @Size(min = 1, max = 100)
-        private String adminName;
-        @NotEmpty(message = "내선 연락처는 공백일 수 없습니다.")
-        @Size(max = 11)
-        private String telNo;
-        @NotEmpty(message = "관리자 개인 연락처는 공백일 수 없습니다.")
-        @Size(max = 11)
-        private String phoneNo;
-        @NotEmpty
-        @Pattern(regexp = "^[\\w!#$%&'*+/=?`{|}~^.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$", message = "이메일 형식이 올바르지 않습니다.")
-        private String email;
-        @NotNull(message = "그룹번호는 null일 수 없습니다.")
-        private Integer authGroupNo;
-        @NotEmpty(message = "그룹명은 공백일 수 없습니다.")
-        private String authGroupName;
-    }
 
-    @Getter
-    @Builder
-    public static class UpdateResponsePO {
-        private Integer adminNo;
-        private String adminId;
-        private String adminName;
-        private String telNo;
-        private String phoneNo;
-        private String email;
-        private Integer authGroupNo;
-        private String authGroupName;
-    }*/
-}
+
+
+} */

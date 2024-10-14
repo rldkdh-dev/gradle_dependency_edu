@@ -45,7 +45,7 @@
               </where>
           </select>
 
-  <select id="selectGenMemberByNo" resultType="kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO$DetailGenMemberVO">
+  <select id="selectGenMemberByNo" resultType="kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO$DetailGenMemberVO" parameterType="int">
         /* selectGenMemberByNo [일반 회원 및 소속 기업 상세 조회 쿼리] */
         SELECT
             GMIT."MBR_NO",
@@ -78,7 +78,36 @@
         ON
             EPMIT."ENT_MBR_NO" = EMIT."ENT_MBR_NO"
         WHERE
-            GMIT."MBR_NO" = #{no};
+            GMIT."MBR_NO" = #{no}
+  </select>
+
+  <select id="selectGenMemberById" resultType="kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO$DefaultGenMemberVO" parameterType="String">
+      /* selectGenMemberById [일반 회원 아이디로 정보 조회] */
+      SELECT
+          GMIT."MBR_NO",                     -- 회원번호
+          GMIT."LINK_INFO",                  -- 연계정보
+          GMIT."MBR_GNDR_CD",                -- 회원 성별 코드
+          GMIT."MBR_SE_CD",                  -- 회원 구분 코드
+          GMIT."MBR_BRDT",                   -- 회원 출생일자
+          GMIT."MBR_NM",                     -- 회원명
+          GMIT."MBR_ID",                     -- 회원 아이디
+          GMIT."MBR_MBL_TELNO",              -- 회원 휴대전화 번호
+          GMIT."EML_ADDR",                   -- 이메일 주소
+          GMIT."EML_RCPTN_AGRE_YN",          -- 이메일 수신 동의 여부
+          GMIT."MBR_PSWD",                   -- 회원 비밀번호
+          GMIT."MBR_PSWD_CHG_DT",            -- 비밀번호 변경일
+          GMIT."CNTN_FAIL_CNT",               -- 접속 실패 횟수
+          GMIT."HOME_ZIP",                   -- 자택 우편번호
+          GMIT."HOME_ROAD_NM",               -- 자택 도로명
+          GMIT."HOME_DADDR",                  -- 자택 상세주소
+          GMIT."FRST_REG_DT",                 -- 최초등록일시
+          GMIT."FRST_RGTR_ID",                 -- 최초등록자 ID
+          GMIT."LAST_MDFCN_DT",                 -- 최종수정일시
+          GMIT."LAST_MDFR_ID"                -- 최종수정자 ID
+      FROM
+          "GEN_MBR_INFO_TB" GMIT
+      WHERE
+          GMIT."MBR_ID" = #{searchId}
   </select>
 
   <delete id="deleteGenMember" parameterType="int">
@@ -89,6 +118,27 @@
       WHERE
           "MBR_NO" = #{no}
   </delete>
+
+  <update id="updateGenMember" parameterType="kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO$UpdateRequestVO">
+      /* updateGenMember [일반 회원 업데이트 쿼리] */
+      UPDATE
+          "GEN_MBR_INFO_TB"
+      SET
+          "MBR_NM" = #{mbrNm},
+          "MBR_GNDR_CD" = #{mbrGndrCd},
+          "MBR_BRDT" = #{mbrBrdt},
+          "MBR_ID" = #{mbrId},
+          "MBR_MBL_TELNO" = #{mbrMblTelno},
+          "EML_ADDR" = #{emlAddr},
+          "EML_RCPTN_AGRE_YN" = #{emlRcptnAgreYn},
+          "HOME_ZIP" = #{homeZip},
+          "HOME_ROAD_NM" = #{homeRoadNm},
+          "HOME_DADDR" = #{homeDaddr},
+          "LAST_MDFCN_DT" = #{lastMdfcnDt},
+          "LAST_MDFR_ID" = #{lastMdfrId}
+      WHERE
+          "MBR_NO" = #{mbrNo}
+  </update>
 
 
 </mapper>
