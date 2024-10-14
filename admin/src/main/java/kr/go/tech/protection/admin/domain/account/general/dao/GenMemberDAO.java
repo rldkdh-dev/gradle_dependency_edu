@@ -12,4 +12,5 @@ public interface GenMemberDAO {
 
 	GenMemberVO.DetailGenMemberVO selectGenMemberByNo(int no);
 
+	Integer deleteGenMember(int no);
 }

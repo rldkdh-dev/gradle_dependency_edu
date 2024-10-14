@@ -7,11 +7,13 @@ import kr.go.tech.protection.admin.domain.account.general.dao.GenMemberDAO;
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberPO;
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberPO.DetailResponsePO;
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO;
+import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO.DetailGenMemberVO;
 import kr.go.tech.protection.admin.domain.member.dto.MemberPO;
 import kr.go.tech.protection.admin.domain.member.dto.MemberVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -59,6 +61,24 @@ public class GenMemberService {
                      .position(genMember.getJbpsCd())
                      .companyAddress(genMember.getCompanyAddress())
                      .build();
+    }
+
+    @Transactional
+    public void deleteGenMember(int no) {
+        GenMemberVO.DetailGenMemberVO GenMember = genMemberDAO.selectGenMemberByNo(no);
+
+        if(GenMember == null) {
+            log.info("FAILED");
+            // TODO null 처리
+        }
+
+        Integer result = genMemberDAO.deleteGenMember(no);
+
+        if(result < 1) {
+            log.info("FAILED");
+            // TODO 삭제 실패 처리
+        }
+
     }
 
 }

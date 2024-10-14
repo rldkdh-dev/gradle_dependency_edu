@@ -4,6 +4,7 @@ import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberPO;
 import kr.go.tech.protection.admin.domain.account.general.service.GenMemberService;
 import kr.go.tech.protection.admin.global.response.ApiResult;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,5 +33,11 @@ public class GenMemberController {
 		return ApiResult.success(data);
 	}
 
+	// 일반 회원 삭제 API
+	@DeleteMapping("/{no}")
+	public ApiResult<String> deleteGenMember(@PathVariable int no) {
+		genMemberService.deleteGenMember(no);
+		return ApiResult.success("");
+	}
 
 }

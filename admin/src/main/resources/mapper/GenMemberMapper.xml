@@ -81,5 +81,14 @@
             GMIT."MBR_NO" = #{no};
   </select>
 
+  <delete id="deleteGenMember" parameterType="int">
+      /* deleteGenMember [일반 회원 삭제 쿼리] */
+      DELETE
+      FROM
+          "GEN_MBR_INFO_TB"
+      WHERE
+          "MBR_NO" = #{no}
+  </delete>
+
 
 </mapper>
