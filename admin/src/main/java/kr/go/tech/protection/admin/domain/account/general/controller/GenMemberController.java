@@ -1,5 +1,6 @@
 package kr.go.tech.protection.admin.domain.account.general.controller;
 
+import javax.validation.Valid;
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberPO;
 import kr.go.tech.protection.admin.domain.account.general.service.GenMemberService;
 import kr.go.tech.protection.admin.global.response.ApiResult;

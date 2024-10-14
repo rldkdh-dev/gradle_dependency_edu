@@ -19,5 +19,6 @@ public interface GenMemberDAO {
 	GenMemberVO.DefaultGenMemberVO selectGenMemberById(String searchId);
 
 	int updateGenMember(GenMemberVO.UpdateRequestVO param);
+
 	Integer deleteGenMember(int no);
 }
