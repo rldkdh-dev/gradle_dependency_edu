@@ -3,15 +3,21 @@ package kr.go.tech.protection.admin.domain.account.general.service;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+import javax.validation.Valid;
 import kr.go.tech.protection.admin.domain.account.general.dao.GenMemberDAO;
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberPO;
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberPO.DetailResponsePO;
+import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberPO.UpdateRequestPO;
+import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberPO.UpdateResponsePO;
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO;
+import kr.go.tech.protection.admin.domain.member.dto.BaseMemberVO;
 import kr.go.tech.protection.admin.domain.member.dto.MemberPO;
 import kr.go.tech.protection.admin.domain.member.dto.MemberVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -47,7 +53,7 @@ public class GenMemberService {
 
              return GenMemberPO.DetailResponsePO.builder()
                      .genName(genMember.getMbrNm())
-                     .gender(genMember.getMbrGndrCd())
+                     .genderCd(genMember.getMbrGndrCd())
                      .birthDate(genMember.getMbrBrdt())
                      .genId(genMember.getMbrId())
                      .genPhone(genMember.getMbrMblTelno())
@@ -59,6 +65,51 @@ public class GenMemberService {
                      .position(genMember.getJbpsCd())
                      .companyAddress(genMember.getCompanyAddress())
                      .build();
+    }
+
+
+    @Transactional
+    public GenMemberPO.UpdateResponsePO updateGenMember(GenMemberPO.UpdateRequestPO requestPO) {
+        BaseMemberVO admin = (BaseMemberVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        GenMemberVO.DefaultGenMemberVO genMember = genMemberDAO.selectGenMemberById(requestPO.getGenId());
+        if (genMember == null) {
+            // TODO null 체크
+        }
+
+        GenMemberVO.UpdateRequestVO param = GenMemberVO.UpdateRequestVO.builder()
+                .mbrNo(requestPO.getGenNo())
+                .mbrNm(requestPO.getGenName())
+                .mbrGndrCd(requestPO.getGenderCd())
+                .mbrBrdt(requestPO.getBirthDate())
+                .mbrId(requestPO.getGenId())
+                .mbrMblTelno(requestPO.getGenPhone())
+                .emlAddr(requestPO.getGenEmail())
+                .emlRcptnAgreYn(requestPO.getIsEmailConsent())
+                .homeZip(requestPO.getZipCode())
+                .homeRoadNm(requestPO.getRoadName())
+                .homeDaddr(requestPO.getDetailAddress())
+                .build();
+        param.setLast(admin.getMngrId());
+
+        int result = genMemberDAO.updateGenMember(param);
+
+        if(result < 1) {
+            // TODO 업데이트 에러 처리
+        }
+
+        return GenMemberPO.UpdateResponsePO.builder()
+                .genNo(requestPO.getGenNo())
+                .genName(requestPO.getGenName())
+                .genderCd(requestPO.getGenderCd())
+                .birthDate(requestPO.getBirthDate())
+                .genId(requestPO.getGenId())
+                .genPhone(requestPO.getGenPhone())
+                .genEmail(requestPO.getGenEmail())
+                .isEmailConsent(requestPO.getIsEmailConsent())
+                .zipCode(requestPO.getZipCode())
+                .roadName(requestPO.getRoadName())
+                .detailAddress(requestPO.getDetailAddress())
+                .build();
     }
 
 }
