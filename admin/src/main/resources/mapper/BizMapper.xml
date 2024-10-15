@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.go.tech.protection.admin.domain.biz.dao.BizMapper">
+    <update id="updateBiz" parameterType="kr.go.tech.protection.admin.domain.biz.dto.BizVO$DefaultBiz">
+        UPDATE
+            "BIZ_INFO_TB"
+        SET
+            "FILE_NO" = #{fileNo, jdbcType=INTEGER},
+            "BIZ_NM" = #{bizNm},
+            "TKCG_DEPT_CD" = #{tkcgDeptCd},
+            "PIC_ID" = #{picId},
+            "RCRT_BGNG_DT" = #{rcrtBgngDt},
+            "RCRT_END_DT" = #{rcrtEndDt},
+            "BIZ_BGNG_DT" = #{bizBgngDt},
+            "BIZ_END_DT" = #{bizEndDt},
+            "BIZ_TRGT_CD" = #{bizTrgtCd},
+            "BIZ_CN" = #{bizCn},
+            "RCRT_STTS_CD" = #{rcrtSttsCd},
+            "BIZ_STTS_CD" = #{bizSttsCd},
+            "BIZ_SMR_CN" = #{bizSmrCn},
+            "APLY_PRC_CN" = #{aplyPrcCn},
+            "CNT_INF_CN" = #{cntInfCn},
+            "PRGRS_PRCS_JSN" = #{prgrsPrcsJsn}::json,
+            "APLY_FRM_JSN" = #{aplyFrmJsn}::json,
+            "STRG_YN" = #{strgYn},
+            "LAST_MDFCN_DT" = #{lastMdfcnDt},
+            "LAST_MDFR_ID" = #{lastMdfrId}
+        WHERE
+            "BIZ_NO" = #{bizNo}
+    </update>
+
+    <insert id="insertBiz" parameterType="kr.go.tech.protection.admin.domain.biz.dto.BizVO$DefaultBiz" useGeneratedKeys="true" keyColumn="BIZ_NO" keyProperty="bizNo">
+        INSERT INTO "BIZ_INFO_TB" (
+            "FILE_NO",
+            "BIZ_NM",
+            "TKCG_DEPT_CD",
+            "PIC_ID",
+            "RCRT_BGNG_DT",
+            "RCRT_END_DT",
+            "BIZ_BGNG_DT",
+            "BIZ_END_DT",
+            "BIZ_TRGT_CD",
+            "BIZ_CN",
+            "RCRT_STTS_CD",
+            "BIZ_STTS_CD",
+            "BIZ_SMR_CN",
+            "APLY_PRC_CN",
+            "CNT_INF_CN",
+            "PRGRS_PRCS_JSN",
+            "APLY_FRM_JSN",
+            "STRG_YN",
+            "TMPR_STRG_YN",
+            "FRST_REG_DT",
+            "FRST_RGTR_ID",
+            "LAST_MDFCN_DT",
+            "LAST_MDFR_ID"
+        ) VALUES (
+            #{fileNo, jdbcType=INTEGER},
+            #{bizNm},
+            #{tkcgDeptCd},
+            #{picId},
+            #{rcrtBgngDt},
+            #{rcrtEndDt},
+            #{bizBgngDt},
+            #{bizEndDt},
+            #{bizTrgtCd},
+            #{bizCn},
+            #{rcrtSttsCd},
+            #{bizSttsCd},
+            #{bizSmrCn},
+            #{aplyPrcCn},
+            #{cntInfCn},
+            #{prgrsPrcsJsn}::json,
+            #{aplyFrmJsn}::json,
+            #{strgYn},
+            #{tmprStrgYn},
+            #{frstRegDt},
+            #{frstRgtrId},
+            #{lastMdfcnDt},
+            #{lastMdfrId}
+        );
+    </insert>
+    
+    <insert id="insertTerms" parameterType="kr.go.tech.protection.admin.domain.biz.dto.BizVO$InsertTerm">
+        INSERT INTO "TRMS_INFO_TB" (
+            "BIZ_NO",
+            "TRMS_NM",
+            "TRMS_CN",
+            "SORT_NO",
+            "FRST_REG_DT",
+            "FRST_RGTR_ID",
+            "LAST_MDFCN_DT",
+            "LAST_MDFR_ID"
+        ) VALUES (
+            #{bizNo},
+            #{trmsNm},
+            #{trmsCn},
+            #{sortNo},
+            #{frstRegDt},
+            #{frstRgtrId},
+            #{lastMdfcnDt},
+            #{lastMdfrId}
+        );
+    </insert>
+
+    <select id="selectTempSave" resultType="kr.go.tech.protection.admin.domain.biz.dto.BizVO$TempSave">
+        SELECT
+            "TMPR_STRG_NO",
+            "BIZ_NO",
+            "TMPR_TTL",
+            "FRST_REG_DT",
+            "FRST_RGTR_ID",
+            "LAST_MDFCN_DT",
+            "LAST_MDFR_ID"
+        FROM
+            "TMPR_STRG_TB"
+        WHERE
+            "BIZ_NO" = #{bizNo}
+    </select>
+
+    <delete id="deleteTempSave">
+        DELETE FROM
+            "TMPR_STRG_TB"
+        WHERE
+            "BIZ_NO" = #{bizNo}
+    </delete>
+
+    <delete id="deleteTerms">
+        DELETE FROM
+            "TRMS_INFO_TB"
+        WHERE
+            "BIZ_NO" = #{bizNo}
+    </delete>
+</mapper>
