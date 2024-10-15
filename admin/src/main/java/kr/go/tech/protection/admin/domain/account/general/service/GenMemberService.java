@@ -122,9 +122,15 @@ public class GenMemberService {
             // TODO null 처리
         }
 
+        // TODO 진행중인 사업이 없을 경우 삭제 처리
+
+        //진행중인 사업이 없을 경우 삭제
         Integer result = genMemberDAO.deleteGenMember(no);
 
-        if(result < 1) {
+        if(result > 0) {
+            //기업 소속 회원 정보 테이블에서 삭제 여부 'Y' update
+            genMemberDAO.updateEntPrcptMbrInfoDelYn(no);
+        }else{
             log.info("FAILED");
             // TODO 삭제 실패 처리
         }

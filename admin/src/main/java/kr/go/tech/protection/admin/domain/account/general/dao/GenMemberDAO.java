@@ -16,4 +16,6 @@ public interface GenMemberDAO {
 	int updateGenMember(GenMemberVO.UpdateRequestVO param);
 
 	Integer deleteGenMember(int no);
+
+	Integer updateEntPrcptMbrInfoDelYn(int no);
 }
