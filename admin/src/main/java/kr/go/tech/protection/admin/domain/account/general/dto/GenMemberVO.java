@@ -91,6 +91,16 @@ public class GenMemberVO {
 
     }
 
+    @Getter
+    @Builder
+    public static class UpdateEntPrcptRequestVO extends BaseColumn {
+        private String entMbrNo;  // 업데이트할 기업회원 번호
+        private Integer mbrNo; // 일반회원 번호
+    }
+
+
+
+
 
 
 }

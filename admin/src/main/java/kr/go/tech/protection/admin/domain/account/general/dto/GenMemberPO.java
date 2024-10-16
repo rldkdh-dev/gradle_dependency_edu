@@ -56,7 +56,7 @@ public class GenMemberPO {
 
         //소속 기업정보
         private String companyName;      //사업장명
-        private String businessRegistrationNumber;      //사업자 등록번호
+        private String businessNumber;      //사업자 등록번호
         private String department;      //부서
         private String position;      //직위
         private String companyAddress;      //회사 주소
@@ -97,6 +97,9 @@ public class GenMemberPO {
         private String roadName;
 
         private String detailAddress; // 상세주소 (null 허용)
+
+        private String businessNumber; // 사업자 등록번호 (null 허용)
+
     }
 
     @Getter
@@ -114,6 +117,8 @@ public class GenMemberPO {
         private String roadName;
         private String detailAddress; // 상세주소 (null 허용)
     }
+
+
 
 }
 
