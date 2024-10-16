@@ -6,7 +6,6 @@ plugins {
 }
 
 group = 'kr.go.tech.protection'
-version = '0.0.1-SNAPSHOT'
 java {
     sourceCompatibility = '11'
 }
@@ -49,7 +48,8 @@ dependencies {
 
     //jasypt
     implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
-
+    //log4j2
+    implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
 }
 
 tasks.named('test') {
