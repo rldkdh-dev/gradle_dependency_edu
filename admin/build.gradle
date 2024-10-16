@@ -3,10 +3,10 @@ plugins {
     id 'war'
     id 'org.springframework.boot' version '2.7.18'
     id 'io.spring.dependency-management' version '1.0.12.RELEASE'
+    id 'org.asciidoctor.jvm.convert' version '3.3.2'
 }
 
 group = 'kr.go.tech.protection'
-version = '0.0.1-SNAPSHOT'
 java {
     sourceCompatibility = '11'
 }
@@ -15,6 +15,7 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+    asciidoctorExt
 }
 
 // eGov Framework
@@ -61,6 +62,30 @@ dependencies {
     implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
 
     implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
+
+    // Spring Rest Docs
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+}
+
+ext {
+    snippetsDir = file('build/generated-snippets')
+}
+test {
+    outputs.dir snippetsDir
+}
+
+asciidoctor {
+    inputs.dir snippetsDir
+    configurations 'asciidoctorExt'
+    baseDirFollowsSourceFile()
+    dependsOn test
+}
+
+bootJar {
+    dependsOn asciidoctor
+    from file("build/docs/asciidoc")
+    into file("src/main/resources/static/docs")
 }
 
 tasks.named('test') {
@@ -70,7 +95,7 @@ tasks.named('test') {
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
-\
+
 war {
     archiveFileName = 'admin.war'
 }
