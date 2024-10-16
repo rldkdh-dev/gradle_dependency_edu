@@ -1,23 +1,28 @@
 package kr.go.tech.protection.admin.domain.member.service;
 
-import kr.go.tech.protection.admin.domain.member.dao.MemberDAO;
-import kr.go.tech.protection.admin.domain.member.dto.BaseMemberVO;
-import kr.go.tech.protection.admin.domain.member.dto.MemberPO;
-import kr.go.tech.protection.admin.domain.member.dto.MemberVO;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import javax.validation.Valid;
 import java.security.SecureRandom;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import kr.go.tech.protection.admin.domain.member.dao.MemberDAO;
+import kr.go.tech.protection.admin.domain.member.dto.BaseMemberVO;
+import kr.go.tech.protection.admin.domain.member.dto.MemberPO;
+import kr.go.tech.protection.admin.domain.member.dto.MemberVO;
+import kr.go.tech.protection.admin.global.exception.ErrorCode;
+import kr.go.tech.protection.admin.global.exception.GlobalException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -50,9 +55,8 @@ public class MemberService {
     public MemberPO.DetailResponsePO selectAdminMemberByNo(int no) {
         MemberVO.DefaultMemberVO member = adminDao.selectAdminMemberByNo(no);
 
-        if(member == null) {
-            // TODO null 처리
-            log.info("FAILED");
+        if(ObjectUtils.isEmpty(member)) {
+            throw new GlobalException(ErrorCode.USER_NOT_FOUND);
         }
 
         return MemberPO.DetailResponsePO.builder()
