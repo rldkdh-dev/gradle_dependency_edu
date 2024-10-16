@@ -56,13 +56,20 @@
             GMIT."MBR_MBL_TELNO",
             GMIT."EML_ADDR",
             GMIT."EML_RCPTN_AGRE_YN",
+            GMIT."HOME_ZIP",
+            GMIT."HOME_ROAD_NM",
+            GMIT."HOME_DADDR",
             -- 회원 주소를 하나의 문자열로 합침
             '(' || GMIT."HOME_ZIP" || ') ' || GMIT."HOME_ROAD_NM" || ' ' || GMIT."HOME_DADDR" AS "ADDRESS",
             -- 기업 정보
-            COALESCE(EMIT."CONM_NM", '-') AS "CONM_NM",
-            COALESCE(EMIT."BR_NO", '-') AS "BR_NO",
-            COALESCE(EPMIT."DEPT_NM", '-') AS "DEPT_NM",
-            COALESCE(EPMIT."JBPS_CD", '-') AS "JBPS_CD",
+            EMIT."CONM_NM",
+            EMIT."BR_NO",
+            EPMIT."DEPT_NM",
+            EPMIT."JBPS_CD",
+            EPMIT."ALW_YN",
+            EMIT."BPLC_ZIP",
+            EMIT."BPLC_ROAD_NM",
+            EMIT."BPLC_DADDR",
             -- 회사 주소를 하나의 문자열로 합침
             COALESCE( '(' ||EMIT."BPLC_ZIP" || ') ' || EMIT."BPLC_ROAD_NM" || ' ' || EMIT."BPLC_DADDR", '-') AS "COMPANY_ADDRESS"
         FROM
@@ -71,7 +78,6 @@
             "ENT_PRCPT_MBR_INFO_TB" EPMIT
         ON
             GMIT."MBR_NO" = EPMIT."MBR_NO"
-            AND EPMIT."ALW_YN" = 'Y'
             AND EPMIT."DEL_YN" = 'N'
         LEFT JOIN
             "ENT_MBR_INFO_TB" EMIT

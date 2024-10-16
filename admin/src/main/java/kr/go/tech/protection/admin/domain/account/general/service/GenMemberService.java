@@ -49,18 +49,28 @@ public class GenMemberService {
 		GenMemberVO.DetailGenMemberVO genMember = genMemberDAO.selectGenMemberByNo(no);
 
 		return GenMemberPO.DetailResponsePO.builder()
+			//회원정보
 			.genName(genMember.getMbrNm())
 			.genderCd(genMember.getMbrGndrCd())
 			.birthDate(genMember.getMbrBrdt())
 			.genId(genMember.getMbrId())
 			.genPhone(genMember.getMbrMblTelno())
 			.isEmailConsent(genMember.getEmlRcptnAgreYn())
+			.zipCode(genMember.getHomeZip())
+			.roadName(genMember.getHomeRoadNm())
+			.detailAddress(genMember.getHomeDaddr())
 			.address(genMember.getAddress())
+			//소속기업정보
 			.companyName(genMember.getConmNm())
 			.businessNumber(genMember.getBrNo())
 			.department(genMember.getDeptNm())
 			.position(genMember.getJbpsCd())
+			.companyZipcode(genMember.getBplcZip())
+			.companyRoadName(genMember.getBlpcRoadNm())
+			.companyDetailAddress(genMember.getBplcDaddr())
 			.companyAddress(genMember.getCompanyAddress())
+			//기업소속 승인여부
+			.isAllow(genMember.getAlwYn())
 			.build();
 	}
 

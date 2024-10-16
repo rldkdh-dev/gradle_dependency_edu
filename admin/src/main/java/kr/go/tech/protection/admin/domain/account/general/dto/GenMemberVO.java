@@ -56,9 +56,9 @@ public class GenMemberVO {
         private String emlRcptnAgreYn;  //이메일 수신 동의 여부
         private String address;  //주소
 
-/*        private String homeZip;  //자택 우편번호
+        private String homeZip;  //자택 우편번호
         private String homeRoadNm;  //자택 도로명
-        private String homeDaddr;  //자택 상세주소*/
+        private String homeDaddr;  //자택 상세주소
 
         //소속 기업 정보
         private Integer entMbrNo;  //기업회원번호
@@ -69,9 +69,12 @@ public class GenMemberVO {
         private String brNo;  //사업자 등록번호
         private String companyAddress;  //사업자 등록번호
 
-/*        private String bplcZip;  //사업장 우편번호
+        // 기업 소속 승인 여부
+        private String alwYn;  //사업자 등록번호
+
+        private String bplcZip;  //사업장 우편번호
         private String blpcRoadNm;  //사업장 도로명
-        private String bplcDaddr;  //사업장 상세주소*/
+        private String bplcDaddr;  //사업장 상세주소
     }
 
     @Getter

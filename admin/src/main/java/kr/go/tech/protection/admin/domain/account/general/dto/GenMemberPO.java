@@ -54,12 +54,22 @@ public class GenMemberPO {
         private String isEmailConsent;      //이메일 수신 동의 여부
         private String address;      //주소
 
+        private String zipCode;  //우편번호
+        private String roadName;  //도로명
+        private String detailAddress;  //상세주소
+
         //소속 기업정보
         private String companyName;      //사업장명
         private String businessNumber;      //사업자 등록번호
         private String department;      //부서
         private String position;      //직위
         private String companyAddress;      //회사 주소
+
+        private String isAllow;  //기업소속 승인여부
+
+        private String companyZipcode;  //사업장 우편번호
+        private String companyRoadName;  //사업장 도로명
+        private String companyDetailAddress;  //사업장 상세주소
     }
 
     @Getter
