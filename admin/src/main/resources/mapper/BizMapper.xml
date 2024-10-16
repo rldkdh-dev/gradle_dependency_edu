@@ -3,26 +3,34 @@
 
 <mapper namespace="kr.go.tech.protection.admin.domain.biz.dao.BizMapper">
     <update id="updateBiz" parameterType="kr.go.tech.protection.admin.domain.biz.dto.BizVO$DefaultBiz">
+        /* updateBiz [사업 공고 UPDATE 쿼리] */
         UPDATE
             "BIZ_INFO_TB"
         SET
-            "FILE_NO" = #{fileNo, jdbcType=INTEGER},
-            "BIZ_NM" = #{bizNm},
-            "TKCG_DEPT_CD" = #{tkcgDeptCd},
-            "PIC_ID" = #{picId},
-            "RCRT_BGNG_DT" = #{rcrtBgngDt},
-            "RCRT_END_DT" = #{rcrtEndDt},
-            "BIZ_BGNG_DT" = #{bizBgngDt},
-            "BIZ_END_DT" = #{bizEndDt},
-            "BIZ_TRGT_CD" = #{bizTrgtCd},
-            "BIZ_CN" = #{bizCn},
-            "RCRT_STTS_CD" = #{rcrtSttsCd},
-            "BIZ_STTS_CD" = #{bizSttsCd},
-            "BIZ_SMR_CN" = #{bizSmrCn},
-            "APLY_PRC_CN" = #{aplyPrcCn},
-            "CNT_INF_CN" = #{cntInfCn},
-            "PRGRS_PRCS_JSN" = #{prgrsPrcsJsn}::json,
-            "APLY_FRM_JSN" = #{aplyFrmJsn}::json,
+            <if test="pageNo == 1">
+                "FILE_NO" = #{fileNo, jdbcType=INTEGER},
+                "BIZ_NM" = #{bizNm},
+                "TKCG_DEPT_CD" = #{tkcgDeptCd},
+                "PIC_ID" = #{picId},
+                "RCRT_BGNG_DT" = #{rcrtBgngDt},
+                "RCRT_END_DT" = #{rcrtEndDt},
+                "BIZ_BGNG_DT" = #{bizBgngDt},
+                "BIZ_END_DT" = #{bizEndDt},
+                "BIZ_TRGT_CD" = #{bizTrgtCd},
+                "BIZ_CN" = #{bizCn},
+                "RCRT_STTS_CD" = #{rcrtSttsCd},
+                "BIZ_STTS_CD" = #{bizSttsCd},
+                "BIZ_SMR_CN" = #{bizSmrCn},
+                "APLY_PRC_CN" = #{aplyPrcCn},
+                "CNT_INF_CN" = #{cntInfCn},
+            </if>
+            <if test="pageNo == 2">
+                "PRGRS_PRCS_JSN" = #{prgrsPrcsJsn}::json,
+            </if>
+            <if test="pageNo == 4">
+                "APLY_FRM_JSN" = #{aplyFrmJsn}::json,
+            </if>
+            "TMPR_STRG_YN" = #{tmprStrgYn},
             "STRG_YN" = #{strgYn},
             "LAST_MDFCN_DT" = #{lastMdfcnDt},
             "LAST_MDFR_ID" = #{lastMdfrId}
@@ -31,6 +39,7 @@
     </update>
 
     <insert id="insertBiz" parameterType="kr.go.tech.protection.admin.domain.biz.dto.BizVO$DefaultBiz" useGeneratedKeys="true" keyColumn="BIZ_NO" keyProperty="bizNo">
+        /* insertBiz [사업 INSERT 쿼리] */
         INSERT INTO "BIZ_INFO_TB" (
             "FILE_NO",
             "BIZ_NM",
@@ -79,10 +88,11 @@
             #{frstRgtrId},
             #{lastMdfcnDt},
             #{lastMdfrId}
-        );
+        )
     </insert>
     
     <insert id="insertTerms" parameterType="kr.go.tech.protection.admin.domain.biz.dto.BizVO$InsertTerm">
+        /* insertTerms [약관 INSERT 쿼리] */
         INSERT INTO "TRMS_INFO_TB" (
             "BIZ_NO",
             "TRMS_NM",
@@ -101,10 +111,11 @@
             #{frstRgtrId},
             #{lastMdfcnDt},
             #{lastMdfrId}
-        );
+        )
     </insert>
 
-    <select id="selectTempSave" resultType="kr.go.tech.protection.admin.domain.biz.dto.BizVO$TempSave">
+    <select id="selectTempSave" resultType="kr.go.tech.protection.admin.domain.biz.dto.BizVO$DefaultTempSave">
+        /* selectTempSave [bizNo에 따른 임시저장 조회 쿼리] */
         SELECT
             "TMPR_STRG_NO",
             "BIZ_NO",
@@ -120,6 +131,7 @@
     </select>
 
     <delete id="deleteTempSave">
+        /* deleteTempSave [임시저장 삭제 쿼리] */
         DELETE FROM
             "TMPR_STRG_TB"
         WHERE
@@ -127,9 +139,47 @@
     </delete>
 
     <delete id="deleteTerms">
+        /* deleteTerms [약관 삭제 쿼리] */
         DELETE FROM
             "TRMS_INFO_TB"
         WHERE
             "BIZ_NO" = #{bizNo}
     </delete>
+
+    <insert id="mergeIntoTempSave" parameterType="kr.go.tech.protection.admin.domain.biz.dto.BizVO$DefaultTempSave">
+        /* mergeIntoTempSave [임시저장 데이터 merge into] */
+        INSERT INTO
+            "TMPR_STRG_TB"
+            (
+                "BIZ_NO",
+                "TMPR_TTL",
+                "FRST_REG_DT",
+                "FRST_RGTR_ID",
+                "LAST_MDFCN_DT",
+                "LAST_MDFR_ID"
+            )
+        VALUES
+            (
+                #{bizNo},
+                #{tmprTtl},
+                #{frstRegDt},
+                #{frstRgtrId},
+                #{lastMdfcnDt},
+                #{lastMdfrId}
+            )
+        ON CONFLICT ("BIZ_NO")
+        DO UPDATE
+            SET
+                "LAST_MDFCN_DT" = #{lastMdfcnDt},
+                "LAST_MDFR_ID" = #{lastMdfrId}
+                <if test="frstRegDt != null">
+                    ,"FRST_REG_DT" = #{frstRegDt},
+                    "FRST_RGTR_ID" = #{frstRgtrId}
+                </if>
+                <if test="tmprTtl != null">
+                    ,"TMPR_TTL" = #{tmprTtl}
+                </if>
+        WHERE
+            "TMPR_STRG_TB"."BIZ_NO" = #{bizNo}
+    </insert>
 </mapper>

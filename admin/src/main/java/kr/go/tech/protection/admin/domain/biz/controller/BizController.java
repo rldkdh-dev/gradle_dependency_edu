@@ -23,4 +23,10 @@ public class BizController {
         BizPO.InsertResponse response = bizService.insertBiz(requestPO, fileData);
         return ApiResult.success(response);
     }
+
+    @PostMapping(value = "/temp")
+    public ApiResult<BizPO.InsertResponse> insertTempSaveBiz(@Valid @RequestPart(name="json") BizPO.TempInsertRequest requestPO) throws JsonProcessingException {
+        BizPO.InsertResponse response = bizService.insertTempSaveBiz(requestPO);
+        return ApiResult.success(response);
+    }
 }
