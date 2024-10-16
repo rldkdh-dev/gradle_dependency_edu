@@ -11,6 +11,7 @@ public class BizVO {
     @Getter
     @Builder
     public static class DefaultBiz extends BaseColumn {
+        private Integer pageNo;
         private Integer bizNo;
         private Integer fileNo;
         private String bizNm;
@@ -42,7 +43,9 @@ public class BizVO {
         private Integer sortNo;
     }
 
-    public static class TempSave extends BaseColumn {
+    @Getter
+    @Builder
+    public static class DefaultTempSave extends BaseColumn {
         private Integer tmprStrgNo;
         private Integer bizNo;
         private String tmprTtl;

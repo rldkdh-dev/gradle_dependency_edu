@@ -11,9 +11,11 @@ public interface BizMapper {
 
     int insertTerms(BizVO.InsertTerm data);
 
-    BizVO.TempSave selectTempSave(Integer bizNo);
+    BizVO.DefaultTempSave selectTempSave(Integer bizNo);
 
     int deleteTempSave(Integer bizNo);
 
     int deleteTerms(Integer bizNo);
+
+    int mergeIntoTempSave(BizVO.DefaultTempSave updateParam);
 }
