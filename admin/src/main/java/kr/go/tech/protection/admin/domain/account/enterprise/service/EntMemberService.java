@@ -1,11 +1,11 @@
-package kr.go.tech.protection.admin.domain.account.general.service;
+package kr.go.tech.protection.admin.domain.account.enterprise.service;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
-import kr.go.tech.protection.admin.domain.account.general.dao.GenMemberDAO;
-import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberPO;
-import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO;
+import kr.go.tech.protection.admin.domain.account.enterprise.dao.EntMemberDAO;
+import kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberPO;
+import kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberVO;
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO.UpdateEntPrcptRequestVO;
 import kr.go.tech.protection.admin.domain.member.dto.BaseMemberVO;
 import kr.go.tech.protection.admin.global.util.NumberUtil;
@@ -19,37 +19,41 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class GenMemberService {
+public class EntMemberService {
 
-	private final GenMemberDAO genMemberDAO;
+	private final EntMemberDAO entMemberDAO;
 
-	public GenMemberPO.ListResponsePO selectGenMemberList(GenMemberPO.SearchPO searchPO) {
-		List<GenMemberVO.ListResponseVO> genMemberList = genMemberDAO.selectGenMemberList(searchPO);
+	public EntMemberPO.ListResponsePO selectEntMemberList(EntMemberPO.SearchPO searchPO) {
+		List<EntMemberVO.ListResponseVO> entMemberList = entMemberDAO.selectEntMemberList(searchPO);
 		AtomicReference<Integer> rowNum = new AtomicReference<>(1);
 
-		return GenMemberPO.ListResponsePO.builder()
-			.totalCount(genMemberList.size())
+		return EntMemberPO.ListResponsePO.builder()
+			.totalCount(entMemberList.size())
 			.list(
-				genMemberList.stream().map(genMember -> GenMemberPO.ListData.builder()
+				entMemberList.stream().map(entMember -> EntMemberPO.ListData.builder()
 					.no(rowNum.getAndSet(rowNum.get() + 1))
-					.genNo(genMember.getMbrNo())
-					.companyName(genMember.getConmNm())
-					.genName(genMember.getMbrNm())
-					.genId(genMember.getMbrId())
-					.genPhone(genMember.getMbrMblTelno())
-					.genEmail(genMember.getEmlAddr())
-					.createdAt(genMember.getFrstRegDt())
-					.modifiedAt(genMember.getLastMdfcnDt())
+					.entNo(entMember.getEntMbrNo())
+					.companyName(entMember.getConmNm())
+					.businessNumber(entMember.getBrNo())
+					.representativeName(entMember.getRprsvNm())
+					.managerName(entMember.getPicNm())
+					.managerTelno(entMember.getPicMblTelno())
+					.managerEmail(entMember.getEmlAddr())
+					.createdAt(entMember.getFrstRegDt())
 					.build()).collect(Collectors.toList())
 			)
 			.build();
 	}
 
-	public GenMemberPO.DetailResponsePO selectGenMemberByNo(int no) {
-		//회원정보 상세 조회 및 소속기업 정보 조회
-		GenMemberVO.DetailGenMemberVO genMember = genMemberDAO.selectGenMemberByNo(no);
 
-		return GenMemberPO.DetailResponsePO.builder()
+
+
+/*
+	public EntMemberPO.DetailResponsePO selectGenMemberByNo(int no) {
+		//회원정보 상세 조회 및 소속기업 정보 조회
+		EntMemberVO.DetailGenMemberVO genMember = genMemberDAO.selectGenMemberByNo(no);
+
+		return EntMemberPO.DetailResponsePO.builder()
 			//회원정보
 			.genName(genMember.getMbrNm())
 			.genderCd(genMember.getMbrGndrCd())
@@ -77,10 +81,10 @@ public class GenMemberService {
 
 
 	@Transactional
-	public GenMemberPO.UpdateResponsePO updateGenMember(GenMemberPO.UpdateRequestPO requestPO) {
+	public EntMemberPO.UpdateResponsePO updateGenMember(EntMemberPO.UpdateRequestPO requestPO) {
 		BaseMemberVO admin = (BaseMemberVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-		GenMemberVO.DefaultGenMemberVO genMember = genMemberDAO.selectGenMemberById(requestPO.getGenId());
+		EntMemberVO.DefaultGenMemberVO genMember = genMemberDAO.selectGenMemberById(requestPO.getGenId());
 		if (genMember == null) {
 			// TODO null 체크
 		}
@@ -90,7 +94,7 @@ public class GenMemberService {
 			String entMemberNo = genMemberDAO.selectEntMemberNoByBusinessNumber(requestPO.getBusinessNumber());
 
 			if (entMemberNo != null) {
-				GenMemberVO.UpdateEntPrcptRequestVO updateEntPrcptRequestParam = UpdateEntPrcptRequestVO.builder()
+				UpdateEntPrcptRequestVO updateEntPrcptRequestParam = UpdateEntPrcptRequestVO.builder()
 					.entMbrNo(entMemberNo)
 					.mbrNo(requestPO.getGenNo())
 					.build();
@@ -106,7 +110,7 @@ public class GenMemberService {
 
 		}
 
-		GenMemberVO.UpdateRequestVO param = GenMemberVO.UpdateRequestVO.builder()
+		EntMemberVO.UpdateRequestVO param = EntMemberVO.UpdateRequestVO.builder()
 			.mbrNo(requestPO.getGenNo())
 			.mbrNm(requestPO.getGenName())
 			.mbrGndrCd(requestPO.getGenderCd())
@@ -127,7 +131,7 @@ public class GenMemberService {
 			// TODO 업데이트 에러 처리
 		}
 
-		return GenMemberPO.UpdateResponsePO.builder()
+		return EntMemberPO.UpdateResponsePO.builder()
 			.genNo(requestPO.getGenNo())
 			.genName(requestPO.getGenName())
 			.genderCd(requestPO.getGenderCd())
@@ -144,7 +148,7 @@ public class GenMemberService {
 
 	@Transactional
 	public void deleteGenMember(int no) {
-		GenMemberVO.DetailGenMemberVO GenMember = genMemberDAO.selectGenMemberByNo(no);
+		EntMemberVO.DetailGenMemberVO GenMember = genMemberDAO.selectGenMemberByNo(no);
 
 		if (GenMember == null) {
 			log.info("FAILED");
@@ -166,11 +170,11 @@ public class GenMemberService {
 	}
 
 	@Transactional
-	public GenMemberPO.ResetPasswordResponsePO resetPassword(
-		GenMemberPO.ResetPasswordRequestPO requestPO) {
+	public EntMemberPO.ResetPasswordResponsePO resetPassword(
+		EntMemberPO.ResetPasswordRequestPO requestPO) {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-		GenMemberVO.DefaultGenMemberVO genMember = genMemberDAO.selectGenMemberById(requestPO.getGenId());
+		EntMemberVO.DefaultGenMemberVO genMember = genMemberDAO.selectGenMemberById(requestPO.getGenId());
 
 		if (genMember == null) {
 			// TODO null 체크
@@ -182,7 +186,7 @@ public class GenMemberService {
 		// 12자리 비밀번호 난수 생성
 		String tempPassword = NumberUtil.generateTempPassword();
 
-		GenMemberVO.ResetPasswordRequestVO param = GenMemberVO.ResetPasswordRequestVO.builder()
+		EntMemberVO.ResetPasswordRequestVO param = EntMemberVO.ResetPasswordRequestVO.builder()
 			.mbrId(requestPO.getGenId())
 			.mbrPswd(encoder.encode(tempPassword))
 			.build();
@@ -207,11 +211,11 @@ public class GenMemberService {
 			// TODO 비밀번호 초기화 실패 처리
 		}
 
-		return GenMemberPO.ResetPasswordResponsePO.builder()
+		return EntMemberPO.ResetPasswordResponsePO.builder()
 			.genNo(genMember.getMbrNo())
 			.genId(requestPO.getGenId())
 			.build();
-	}
+	}*/
 
 }
 
