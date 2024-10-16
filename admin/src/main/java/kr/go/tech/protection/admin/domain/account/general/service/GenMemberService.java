@@ -11,6 +11,7 @@ import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberPO.Update
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberPO.UpdateResponsePO;
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO;
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO.DetailGenMemberVO;
+import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO.UpdateEntPrcptRequestVO;
 import kr.go.tech.protection.admin.domain.member.dto.BaseMemberVO;
 import kr.go.tech.protection.admin.domain.member.dto.MemberPO;
 import kr.go.tech.protection.admin.domain.member.dto.MemberVO;
@@ -61,7 +62,7 @@ public class GenMemberService {
                      .isEmailConsent(genMember.getEmlRcptnAgreYn())
                      .address(genMember.getAddress())
                      .companyName(genMember.getConmNm())
-                     .businessRegistrationNumber(genMember.getBrNo())
+                     .businessNumber(genMember.getBrNo())
                      .department(genMember.getDeptNm())
                      .position(genMember.getJbpsCd())
                      .companyAddress(genMember.getCompanyAddress())
@@ -75,6 +76,27 @@ public class GenMemberService {
         GenMemberVO.DefaultGenMemberVO genMember = genMemberDAO.selectGenMemberById(requestPO.getGenId());
         if (genMember == null) {
             // TODO null 체크
+        }
+
+        // 수정하려는 사업자 등록번호 값 검증
+        if (requestPO.getBusinessNumber() != null && !requestPO.getBusinessNumber().isEmpty()) {
+            String entMemberNo = genMemberDAO.selectEntMemberNoByBusinessNumber(requestPO.getBusinessNumber());
+
+            if (entMemberNo != null) {
+                GenMemberVO.UpdateEntPrcptRequestVO updateEntPrcptRequestParam = UpdateEntPrcptRequestVO.builder()
+                    .entMbrNo(entMemberNo)
+                    .mbrNo(requestPO.getGenNo())
+                    .build();
+
+                updateEntPrcptRequestParam.setLast(admin.getMngrId());
+
+                int result = genMemberDAO.updateEntPrcpt(updateEntPrcptRequestParam);
+                log.info("회원 소속기업 수정 여부 = {}", result);
+
+            }else{
+                // TODO 회원정보 업데이트 하지않고 유효하지않은 사업자 번호라고 프론트쪽에 응답 처리
+            }
+
         }
 
         GenMemberVO.UpdateRequestVO param = GenMemberVO.UpdateRequestVO.builder()
@@ -125,7 +147,7 @@ public class GenMemberService {
         // TODO 진행중인 사업이 없을 경우 삭제 처리
 
         //진행중인 사업이 없을 경우 삭제
-        Integer result = genMemberDAO.deleteGenMember(no);
+        int result = genMemberDAO.deleteGenMember(no);
 
         if(result > 0) {
             //기업 소속 회원 정보 테이블에서 삭제 여부 'Y' update
