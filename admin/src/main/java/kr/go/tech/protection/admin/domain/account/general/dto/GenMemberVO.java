@@ -98,6 +98,13 @@ public class GenMemberVO {
         private Integer mbrNo; // 일반회원 번호
     }
 
+    @Getter
+    @Builder
+    public static class ResetPasswordRequestVO extends BaseColumn{
+        private String mbrId;
+        private String mbrPswd;
+    }
+
 
 
 

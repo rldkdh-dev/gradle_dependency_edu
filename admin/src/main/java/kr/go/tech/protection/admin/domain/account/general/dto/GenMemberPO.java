@@ -120,6 +120,19 @@ public class GenMemberPO {
 
 
 
+    @Getter
+    public static class ResetPasswordRequestPO {
+        @NotEmpty(message = "아이디는 공백일 수 없습니다.")
+        private String genId;
+    }
+
+    @Getter
+    @Builder
+    public static class ResetPasswordResponsePO {
+        private String genId;
+        private Integer genNo;
+    }
+
 }
 
 
@@ -175,18 +188,7 @@ public class GenMemberPO {
         private String adminId;
     }
 
-    @Getter
-    public static class ResetPasswordRequestPO {
-        @NotEmpty(message = "아이디는 공백일 수 없습니다.")
-        private String adminId;
-    }
 
-    @Getter
-    @Builder
-    public static class ResetPasswordResponsePO {
-        private String adminId;
-        private Integer adminNo;
-    }
 
 
 

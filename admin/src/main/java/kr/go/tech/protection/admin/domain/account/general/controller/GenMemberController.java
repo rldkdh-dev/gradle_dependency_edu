@@ -42,12 +42,20 @@ public class GenMemberController {
 		genMemberService.deleteGenMember(no);
 		return ApiResult.success("");
 	}
+
 	// 일반 회원 수정 API
 	@PutMapping("")
 	public ApiResult<GenMemberPO.UpdateResponsePO> updateGenMember(@Valid @RequestBody GenMemberPO.UpdateRequestPO requestPO) {
 		GenMemberPO.UpdateResponsePO response = genMemberService.updateGenMember(requestPO);
 		return ApiResult.success(response);
 	}
+
+	// 일반 회원 - 비밀번호 초기화
+	@PutMapping(value = "/password-reset")
+	 public ApiResult<GenMemberPO.ResetPasswordResponsePO> passwordResetGenMember(@Valid @RequestBody GenMemberPO.ResetPasswordRequestPO requestPO) {
+		 GenMemberPO.ResetPasswordResponsePO response = genMemberService.resetPassword(requestPO);
+		 return ApiResult.success(response);
+	 }
 
 
 }

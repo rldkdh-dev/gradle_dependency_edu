@@ -1,5 +1,6 @@
 package kr.go.tech.protection.admin.global.util;
 
+import java.security.SecureRandom;
 import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,6 +8,27 @@ import org.slf4j.LoggerFactory;
 public class NumberUtil {
 
     public static final Logger logger = LoggerFactory.getLogger(NumberUtil.class);
+    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+     private static final int PASSWORD_LENGTH = 12;
+
+    /**
+     * 12자리 임시 비밀번호 생성
+     *
+     * @return String
+     */
+    public static String generateTempPassword() {
+        SecureRandom random = new SecureRandom();
+        StringBuilder password = new StringBuilder(PASSWORD_LENGTH);
+
+        for (int i = 0; i < PASSWORD_LENGTH; i++) {
+            int index = random.nextInt(CHARACTERS.length());
+            password.append(CHARACTERS.charAt(index));
+        }
+
+        return password.toString();
+    }
+
+
 
     /**
      * Integer 정수를 랜덤으로 생성,

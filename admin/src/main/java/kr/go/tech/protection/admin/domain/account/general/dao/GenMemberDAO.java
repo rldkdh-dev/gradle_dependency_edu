@@ -1,9 +1,9 @@
 package kr.go.tech.protection.admin.domain.account.general.dao;
 
 import java.util.List;
-import javax.validation.constraints.NotNull;
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberPO;
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO;
+import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO.ResetPasswordRequestVO;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
@@ -18,9 +18,12 @@ public interface GenMemberDAO {
 
 	int deleteGenMember(int no);
 
-	Integer updateEntPrcptMbrInfoDelYn(int no);
+	int updateEntPrcptMbrInfoDelYn(int no);
 
 	String selectEntMemberNoByBusinessNumber(String businessNumber);
 
 	int updateEntPrcpt(GenMemberVO.UpdateEntPrcptRequestVO param);
+
+	int resetPassword(ResetPasswordRequestVO param);
+
 }
