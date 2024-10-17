@@ -3,11 +3,44 @@ package kr.go.tech.protection.admin.global.util;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Locale;
 import org.springframework.util.ObjectUtils;
 
 public class DateUtil {
+
+    private static final String DEFAULT_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
+
+    /**
+      * LocalDateTime을 고정된 포맷("yyyy-MM-dd HH:mm:ss")의 문자열로 변환하는 메서드
+      *
+      * @param localDateTime 변환할 LocalDateTime 객체
+      * @return 변환된 날짜 문자열, null if localDateTime이 null
+      */
+     public static String formatLocalDateTimeToString(LocalDateTime localDateTime) {
+         if (localDateTime == null) {
+             return null;
+         }
+         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DEFAULT_FORMAT);
+         return localDateTime.format(formatter);
+     }
+
+    /**
+      * LocalDateTime을 고정된 포맷("yyyy-MM-dd")의 문자열로 변환하는 메서드
+      *
+      * @param localDateTime 변환할 LocalDateTime 객체
+      * @return 변환된 날짜 문자열, null if localDateTime이 null
+      */
+     public static String formatLocalDateToString(LocalDateTime localDateTime) {
+         if (localDateTime == null) {
+             return null;
+         }
+         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
+         return localDateTime.format(formatter);
+     }
 
     /***
      * java.util.Date 시간을 Date 형식으로 변경한다.

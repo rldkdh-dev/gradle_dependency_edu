@@ -5,10 +5,13 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import kr.go.tech.protection.admin.domain.account.enterprise.dao.EntMemberDAO;
 import kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberPO;
+import kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberPO.DetailResponsePO;
+import kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberPO.ListResponsePO;
 import kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberVO;
 import kr.go.tech.protection.admin.domain.member.dto.BaseMemberVO;
 import kr.go.tech.protection.admin.global.exception.ErrorCode;
 import kr.go.tech.protection.admin.global.exception.GlobalException;
+import kr.go.tech.protection.admin.global.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,17 +42,17 @@ public class EntMemberService {
 					.managerName(entMember.getPicNm())
 					.managerTelno(entMember.getPicMblTelno())
 					.managerEmail(entMember.getEmlAddr())
-					.createdAt(entMember.getFrstRegDt())
+					.createdAt(DateUtil.formatLocalDateToString(entMember.getFrstRegDt()))
 					.build()).collect(Collectors.toList())
 			)
 			.build();
 	}
 
 	@Transactional
-	public EntMemberPO.UpdateResponsePO updateGenMember(EntMemberPO.UpdateRequestPO requestPO) {
+	public EntMemberPO.UpdateResponsePO updateEntMember(EntMemberPO.UpdateRequestPO requestPO) {
 		BaseMemberVO admin = (BaseMemberVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-		EntMemberVO.DefaultEntMemberVO entMember = entMemberDAO.selectEntMemberByNo(requestPO.getEntNo());
+		EntMemberVO.DetailEntMemberVO entMember = entMemberDAO.selectEntMemberByNo(requestPO.getEntNo());
 
 		if (ObjectUtils.isEmpty(entMember)) {
 			throw new GlobalException(ErrorCode.USER_NOT_FOUND);
@@ -122,40 +125,73 @@ public class EntMemberService {
 	}
 
 
+	public DetailResponsePO selectEntMemberByNo(int no) {
+		EntMemberVO.DetailEntMemberVO entMember = entMemberDAO.selectEntMemberByNo(no);
+
+		if (ObjectUtils.isEmpty(entMember)) {
+			throw new GlobalException(ErrorCode.USER_NOT_FOUND);
+		}
+
+		return EntMemberPO.DetailResponsePO.builder()
+			.entNo(entMember.getEntMbrNo())
+			.companyName(entMember.getConmNm())
+			.representativeName(entMember.getRprsvNm())
+			.businessNumber(entMember.getBrNo())
+			.businessTypeCode(entMember.getBzmnTypeCd())
+			.institutionTypeCode(entMember.getInstTypeCd())
+			.representativeBusinessCode(entMember.getRprsBzstatCd())
+			.representativeIndustryCode(entMember.getRprsTpbizCd())
+			.employeeCount(entMember.getEmpCnt())
+			.entTelNo(entMember.getTelNo())
+			.companyAddress(entMember.getBplcAddress())
+			.homepageUrl(entMember.getCoHmpgAddr())
+			.mainProduct(entMember.getMainPrdctn())
+			.managerName(entMember.getPicNm())
+			.managerTypeCode(entMember.getPicSeCd())
+			.managerDeptName(entMember.getPicDeptNm())
+			.managerPositionCode(entMember.getPicJbpsCd())
+			.managerTelNo(entMember.getPicMblTelno())
+			.managerEmail(entMember.getEmlAddr())
+			.isEmailConsent(entMember.getEmlRcptnAgreYn())
+			.sdgnNo(entMember.getSdgnNo())
+			.technicalProtectionTotalScore(entMember.getTotalScore())
+			.institutionalProtectionScore(entMember.getInstPrtcMngFldScr())
+			.personnelProtectionScore(entMember.getPsnlPrtcngFldScr())
+			.physicalProtectionScore(entMember.getPhysPrtcMngFldScr())
+			.accidentManagementScore(entMember.getAcdntDisMngFldScr())
+			.diagnosedAt(DateUtil.formatLocalDateToString(entMember.getLastMdfcnDt()))
+			.expiryAt(DateUtil.formatLocalDateToString(entMember.getExpirationDate()))
+			.isExpiration(entMember.getExpirationYn())
+			.build();
+	}
+
+	public EntMemberPO.EmployeeListResponsePO selectEmployeeListByEntNo(int entNo) {
+		List<EntMemberVO.EmployeeListResponseVO> employeeList = entMemberDAO.selectEmployeeListByEntNo(entNo);
+		AtomicReference<Integer> rowNum = new AtomicReference<>(1);
+
+		return EntMemberPO.EmployeeListResponsePO.builder()
+			.totalCount(employeeList.size())
+			.list(
+				employeeList.stream().map(employee -> EntMemberPO.EmployeeListData.builder()
+					.no(rowNum.getAndSet(rowNum.get() + 1))
+					.genNo(employee.getMbrNo())
+					.typeCode(employee.getSeCd())
+					.deptName(employee.getDeptNm())
+					.positionCode(employee.getJbpsCd())
+					.name(employee.getMbrNm())
+					.telno(employee.getMbrMblTelno())
+					.email(employee.getEmlAddr())
+					.build()).collect(Collectors.toList())
+			)
+			.build();
+	}
+
 }
 
 
 
 /*
-	public EntMemberPO.DetailResponsePO selectGenMemberByNo(int no) {
-		//회원정보 상세 조회 및 소속기업 정보 조회
-		EntMemberVO.DetailGenMemberVO genMember = genMemberDAO.selectGenMemberByNo(no);
 
-		return EntMemberPO.DetailResponsePO.builder()
-			//회원정보
-			.genName(genMember.getMbrNm())
-			.genderCd(genMember.getMbrGndrCd())
-			.birthDate(genMember.getMbrBrdt())
-			.genId(genMember.getMbrId())
-			.genPhone(genMember.getMbrMblTelno())
-			.isEmailConsent(genMember.getEmlRcptnAgreYn())
-			.zipCode(genMember.getHomeZip())
-			.roadName(genMember.getHomeRoadNm())
-			.detailAddress(genMember.getHomeDaddr())
-			.address(genMember.getAddress())
-			//소속기업정보
-			.companyName(genMember.getConmNm())
-			.businessNumber(genMember.getBrNo())
-			.department(genMember.getDeptNm())
-			.position(genMember.getJbpsCd())
-			.companyZipcode(genMember.getBplcZip())
-			.companyRoadName(genMember.getBlpcRoadNm())
-			.companyDetailAddress(genMember.getBplcDaddr())
-			.companyAddress(genMember.getCompanyAddress())
-			//기업소속 승인여부
-			.isAllow(genMember.getAlwYn())
-			.build();
-	}
 
 
 

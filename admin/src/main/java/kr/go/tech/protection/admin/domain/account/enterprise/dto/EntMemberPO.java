@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,7 +28,27 @@ public class EntMemberPO {
         private String managerName; // 담당자명
         private String managerTelno;    // 담당자 연락처
         private String managerEmail;    // 담당자 이메일
-        private LocalDateTime createdAt;    //가입일
+        private String createdAt;    //가입일
+    }
+
+    @Getter
+    @Builder
+    public static class EmployeeListResponsePO {
+        private Integer totalCount;
+        private List<EmployeeListData> list;
+    }
+
+    @Getter
+    @Builder
+    public static class EmployeeListData {
+        private Integer no; //번호
+        private Integer genNo;   // 직원 일반 회원번호
+        private String typeCode; // 구분 코드
+        private String deptName; // 부서명
+        private String positionCode; // 직위 코드
+        private String name; // 이름
+        private String telno; // 연락처
+        private String email; // 구분 코드
     }
 
     @Getter
@@ -137,57 +156,55 @@ public class EntMemberPO {
         private Boolean isBusinessNumberAvailable;
     }
 
-
-
-/*
     @Getter
     @Builder
     public static class DetailResponsePO {
-        private String genNo;   //일반 회원번호
-        private String genName;     //이름
-        private String genderCd;      //성별 코드
-        private String birthDate;      //생년월일
-        private String genId;      //일반회원 아이디
-        private String genPhone;      //연락처
-        private String genEmail;      //이메일
-        private String isEmailConsent;      //이메일 수신 동의 여부
-        private String address;      //주소
+        private Integer entNo;                      // 기업회원번호
+        private String companyName;                  // 사업자명
+        private String representativeName;           // 대표자명
+        private String businessNumber;               // 사업자등록번호
+        private String businessTypeCode;             // 사업자유형 코드
+        private String institutionTypeCode;          // 기관유형 코드
+        private String representativeBusinessCode;   // 대표업태 코드
+        private String representativeIndustryCode;   // 대표업종 코드
+        private Integer employeeCount;               // 직원수
+        private String entTelNo;                     // 기업 연락처
+        private String companyAddress;                // 사업장 주소
+        private String homepageUrl;                   // 회사 홈페이지 주소
+        private String mainProduct;                   // 주요 생산 제품
 
-        private String zipCode;  //우편번호
-        private String roadName;  //도로명
-        private String detailAddress;  //상세주소
 
-        //소속 기업정보
-        private String companyName;      //사업장명
-        private String businessNumber;      //사업자 등록번호
-        private String department;      //부서
-        private String position;      //직위
-        private String companyAddress;      //회사 주소
+        // 담당자 정보
+        private String managerName;                  // 담당자명
+        private String managerTypeCode;              // 담당자 구분 코드
+        private String managerDeptName;              // 담당자 부서명
+        private String managerPositionCode;          // 담당자 직위 코드
+        private String managerTelNo;                 // 담당자 연락처
+        private String managerEmail;                  // 담당자 이메일
+        private String isEmailConsent;               // 이메일 수신 동의 여부
 
-        private String isAllow;  //기업소속 승인여부
+        //기술보호 수준 자가진단 결과
+        private String sdgnNo;                      // 자가진단번호
+        private String technicalProtectionTotalScore;    // 기술보호 수준 자가진단 결과 점수 (종합)
+        private String institutionalProtectionScore; // 제도적 보호 관리 분야 점수
+        private String personnelProtectionScore;    // 인적 보호 관리 분야 점수
+        private String physicalProtectionScore;     // 물적 보호 관리 분야 점수
+        private String accidentManagementScore;     // 사고재해 관리 분야 점수
+        private String diagnosedAt;          // 자가 진단일
+        private String expiryAt;                // 만료일
+        private String isExpiration;                // 만료 여부
 
-        private String companyZipcode;  //사업장 우편번호
-        private String companyRoadName;  //사업장 도로명
-        private String companyDetailAddress;  //사업장 상세주소
     }
 
+    // 직원 목록 responseListData
 
+    // 자가진단 수준 점수 data
 
-
-    @Getter
-    public static class ResetPasswordRequestPO {
-        @NotEmpty(message = "아이디는 공백일 수 없습니다.")
-        private String genId;
-    }
-
-    @Getter
-    @Builder
-    public static class ResetPasswordResponsePO {
-        private String genId;
-        private Integer genNo;
-    }*/
 
 }
+
+
+
 
 
 

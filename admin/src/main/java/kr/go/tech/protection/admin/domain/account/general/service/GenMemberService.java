@@ -8,6 +8,7 @@ import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberPO;
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO;
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO.UpdateEntPrcptRequestVO;
 import kr.go.tech.protection.admin.domain.member.dto.BaseMemberVO;
+import kr.go.tech.protection.admin.global.util.DateUtil;
 import kr.go.tech.protection.admin.global.util.NumberUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,8 +39,8 @@ public class GenMemberService {
 					.genId(genMember.getMbrId())
 					.genPhone(genMember.getMbrMblTelno())
 					.genEmail(genMember.getEmlAddr())
-					.createdAt(genMember.getFrstRegDt())
-					.modifiedAt(genMember.getLastMdfcnDt())
+					.createdAt(DateUtil.formatLocalDateToString(genMember.getFrstRegDt()))
+					.modifiedAt(DateUtil.formatLocalDateToString(genMember.getLastMdfcnDt()))
 					.build()).collect(Collectors.toList())
 			)
 			.build();

@@ -29,8 +29,8 @@ public class GenMemberPO {
         private String genId;      //일반회원 아이디
         private String genPhone;   //일반 회원 휴대폰 전화번호
         private String genEmail;   //일반회원 이메일
-        private LocalDateTime createdAt;    //가입일
-        private LocalDateTime modifiedAt;    //수정일
+        private String createdAt;    //가입일
+        private String modifiedAt;    //수정일
     }
 
     @Getter
