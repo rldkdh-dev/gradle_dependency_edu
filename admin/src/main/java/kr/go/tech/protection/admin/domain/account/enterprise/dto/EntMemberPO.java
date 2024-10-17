@@ -173,7 +173,6 @@ public class EntMemberPO {
         private String homepageUrl;                   // 회사 홈페이지 주소
         private String mainProduct;                   // 주요 생산 제품
 
-
         // 담당자 정보
         private String managerName;                  // 담당자명
         private String managerTypeCode;              // 담당자 구분 코드
@@ -193,12 +192,7 @@ public class EntMemberPO {
         private String diagnosedAt;          // 자가 진단일
         private String expiryAt;                // 만료일
         private String isExpiration;                // 만료 여부
-
     }
-
-    // 직원 목록 responseListData
-
-    // 자가진단 수준 점수 data
 
 
 }

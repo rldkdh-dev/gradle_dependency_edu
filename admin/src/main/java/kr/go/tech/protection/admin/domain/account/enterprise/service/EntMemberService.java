@@ -186,86 +186,24 @@ public class EntMemberService {
 			.build();
 	}
 
-}
-
-
-
-/*
-
-
-
-
-
 	@Transactional
-	public void deleteGenMember(int no) {
-		EntMemberVO.DetailGenMemberVO GenMember = genMemberDAO.selectGenMemberByNo(no);
+	public void deleteEntMember(int no) {
+		EntMemberVO.DetailEntMemberVO entMember = entMemberDAO.selectEntMemberByNo(no);
 
-		if (GenMember == null) {
-			log.info("FAILED");
-			// TODO null 처리
+		if (ObjectUtils.isEmpty(entMember)) {
+			throw new GlobalException(ErrorCode.USER_NOT_FOUND);
 		}
 
-		// TODO 진행중인 사업이 없을 경우 삭제 처리
+		//TODO 진행중인 사업이 있을경우 예외 처리
 
 		//진행중인 사업이 없을 경우 삭제
-		int result = genMemberDAO.deleteGenMember(no);
+		int result = entMemberDAO.deleteEntMember(no);
 
 		if (result > 0) {
-			//기업 소속 회원 정보 테이블에서 삭제 여부 'Y' update
-			genMemberDAO.updateEntPrcptMbrInfoDelYn(no);
-		} else {
-
+			//기업 소속 회원 정보 테이블에서 소속 직원목록 삭제 여부 'Y' update
+			entMemberDAO.updateEmployeesDelYnByEntNo(no);
 		}
 
 	}
 
-	@Transactional
-	public EntMemberPO.ResetPasswordResponsePO resetPassword(
-		EntMemberPO.ResetPasswordRequestPO requestPO) {
-		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-
-		EntMemberVO.DefaultGenMemberVO genMember = genMemberDAO.selectGenMemberById(requestPO.getGenId());
-
-		if (genMember == null) {
-			// TODO null 체크
-		}
-
-		// 로그인 된 관리자 회원
-		BaseMemberVO admin = (BaseMemberVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-		// 12자리 비밀번호 난수 생성
-		String tempPassword = NumberUtil.generateTempPassword();
-
-		EntMemberVO.ResetPasswordRequestVO param = EntMemberVO.ResetPasswordRequestVO.builder()
-			.mbrId(requestPO.getGenId())
-			.mbrPswd(encoder.encode(tempPassword))
-			.build();
-
-		// 수정시간 & 수정자 셋팅
-		param.setLast(admin.getMngrId());
-
-		int result = genMemberDAO.resetPassword(param);
-
-		if (result > 0) {
-			// TODO 휴대폰으로 임시 비밀번호 발송 로직 처리
-
-			// TODO 이메일 수신 동의 시 이메일도 발송 처리
-			if ("Y".equals(genMember.getEmlRcptnAgreYn())) {
-
-			}
-
-			// TODO 로그 등록
-
-		} else {
-			log.info("FAILED");
-			// TODO 비밀번호 초기화 실패 처리
-		}
-
-		return EntMemberPO.ResetPasswordResponsePO.builder()
-			.genNo(genMember.getMbrNo())
-			.genId(requestPO.getGenId())
-			.build();
-	}*/
-
-
-
+}

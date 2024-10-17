@@ -17,20 +17,7 @@ public interface EntMemberDAO {
 
     List<EntMemberVO.EmployeeListResponseVO> selectEmployeeListByEntNo(int entNo);
 
-/*	EntMemberVO.DetailGenMemberVO selectGenMemberByNo(int no);
+    int deleteEntMember(int no);
 
-	EntMemberVO.DefaultGenMemberVO selectGenMemberById(String searchId);
-
-	int updateGenMember(EntMemberVO.UpdateRequestVO param);
-
-	int deleteGenMember(int no);
-
-	int updateEntPrcptMbrInfoDelYn(int no);
-
-	String selectEntMemberNoByBusinessNumber(String businessNumber);
-
-	int updateEntPrcpt(EntMemberVO.UpdateEntPrcptRequestVO param);
-
-	int resetPassword(ResetPasswordRequestVO param);*/
-
+    int updateEmployeesDelYnByEntNo(int no);
 }

@@ -129,7 +129,7 @@
   </update>
 
     <select id="isBusinessNumberDuplicate" resultType="int">
-      /* 사업자등록번호 중복 체크 쿼리*/
+      /* isBusinessNumberDuplicate [사업자등록번호 중복 체크 쿼리] */
         SELECT
           COUNT(*)
         FROM
@@ -139,7 +139,7 @@
     </select>
 
   <select id="selectEmployeeListByEntNo" resultType="kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberVO$EmployeeListResponseVO">
-        /* 기업소속 직원 목록 조회 */
+        /* selectEmployeeListByEntNo [기업소속 직원 목록 조회] */
         SELECT
             GMIT."MBR_NO",
             GMIT."MBR_NM",
@@ -158,136 +158,23 @@
 		        EPMIT."ENT_MBR_NO" = #{entNo}
   </select>
 
-
-
-</mapper>
-
-
-
-<!--
-
-  <select id="selectGenMemberByNo" resultType="kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO$DetailGenMemberVO" parameterType="int">
-        /* selectGenMemberByNo [일반 회원 및 소속 기업 상세 조회 쿼리] */
-        SELECT
-            GMIT."MBR_NO",
-            GMIT."MBR_GNDR_CD",
-            GMIT."MBR_BRDT",
-            GMIT."MBR_NM",
-            GMIT."MBR_ID",
-            GMIT."MBR_MBL_TELNO",
-            GMIT."EML_ADDR",
-            GMIT."EML_RCPTN_AGRE_YN",
-            GMIT."HOME_ZIP",
-            GMIT."HOME_ROAD_NM",
-            GMIT."HOME_DADDR",
-            &#45;&#45; 회원 주소를 하나의 문자열로 합침
-            '(' || GMIT."HOME_ZIP" || ') ' || GMIT."HOME_ROAD_NM" || ' ' || GMIT."HOME_DADDR" AS "ADDRESS",
-            &#45;&#45; 기업 정보
-            EMIT."CONM_NM",
-            EMIT."BR_NO",
-            EPMIT."DEPT_NM",
-            EPMIT."JBPS_CD",
-            EPMIT."ALW_YN",
-            EMIT."BPLC_ZIP",
-            EMIT."BPLC_ROAD_NM",
-            EMIT."BPLC_DADDR",
-            &#45;&#45; 회사 주소를 하나의 문자열로 합침
-            COALESCE( '(' ||EMIT."BPLC_ZIP" || ') ' || EMIT."BPLC_ROAD_NM" || ' ' || EMIT."BPLC_DADDR", '-') AS "COMPANY_ADDRESS"
-        FROM
-            "GEN_MBR_INFO_TB" GMIT
-        LEFT JOIN
-            "ENT_PRCPT_MBR_INFO_TB" EPMIT
-        ON
-            GMIT."MBR_NO" = EPMIT."MBR_NO"
-            AND EPMIT."DEL_YN" = 'N'
-        LEFT JOIN
-            "ENT_MBR_INFO_TB" EMIT
-        ON
-            EPMIT."ENT_MBR_NO" = EMIT."ENT_MBR_NO"
-        WHERE
-            GMIT."MBR_NO" = #{no}
-  </select>
-
-  <select id="selectGenMemberById" resultType="kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO$DefaultGenMemberVO" parameterType="String">
-      /* selectGenMemberById [일반 회원 아이디로 정보 조회] */
-      SELECT
-          GMIT."MBR_NO",                     &#45;&#45; 회원번호
-          GMIT."LINK_INFO",                  &#45;&#45; 연계정보
-          GMIT."MBR_GNDR_CD",                &#45;&#45; 회원 성별 코드
-          GMIT."MBR_SE_CD",                  &#45;&#45; 회원 구분 코드
-          GMIT."MBR_BRDT",                   &#45;&#45; 회원 출생일자
-          GMIT."MBR_NM",                     &#45;&#45; 회원명
-          GMIT."MBR_ID",                     &#45;&#45; 회원 아이디
-          GMIT."MBR_MBL_TELNO",              &#45;&#45; 회원 휴대전화 번호
-          GMIT."EML_ADDR",                   &#45;&#45; 이메일 주소
-          GMIT."EML_RCPTN_AGRE_YN",          &#45;&#45; 이메일 수신 동의 여부
-          GMIT."MBR_PSWD",                   &#45;&#45; 회원 비밀번호
-          GMIT."MBR_PSWD_CHG_DT",            &#45;&#45; 비밀번호 변경일
-          GMIT."CNTN_FAIL_CNT",               &#45;&#45; 접속 실패 횟수
-          GMIT."HOME_ZIP",                   &#45;&#45; 자택 우편번호
-          GMIT."HOME_ROAD_NM",               &#45;&#45; 자택 도로명
-          GMIT."HOME_DADDR",                  &#45;&#45; 자택 상세주소
-          GMIT."FRST_REG_DT",                 &#45;&#45; 최초등록일시
-          GMIT."FRST_RGTR_ID",                 &#45;&#45; 최초등록자 ID
-          GMIT."LAST_MDFCN_DT",                 &#45;&#45; 최종수정일시
-          GMIT."LAST_MDFR_ID"                &#45;&#45; 최종수정자 ID
-      FROM
-          "GEN_MBR_INFO_TB" GMIT
-      WHERE
-          GMIT."MBR_ID" = #{searchId}
-  </select>
-
-    <update id="updateEntPrcptMbrInfoDelYn">
-        UPDATE
-            "ENT_PRCPT_MBR_INFO_TB"
-        SET
-            "DEL_YN" = 'Y'
-        WHERE
-            "MBR_NO" = #{no}
-    </update>
-
-  <delete id="deleteGenMember">
-      /* deleteGenMember [일반 회원 삭제 쿼리] */
+  <delete id="deleteEntMember">
+      /* deleteEntMember [기업 회원 삭제 쿼리] */
       DELETE
       FROM
-          "GEN_MBR_INFO_TB"
+        "ENT_MBR_INFO_TB"
       WHERE
-          "MBR_NO" = #{no}
+        "ENT_MBR_NO" = #{no}
   </delete>
 
+  <update id="updateEmployeesDelYnByEntNo">
+      /* updateEmployeesDelYnByEntNo [기업회원 소속 직원 목록 삭제여부 컬럼 Y 업데이트 쿼리] */
+      UPDATE
+          "ENT_PRCPT_MBR_INFO_TB"
+      SET
+          "DEL_YN" = 'Y'
+      WHERE
+          "ENT_MBR_NO" = #{no}
+  </update>
 
-
-    <select id="selectEntMemberNoByBusinessNumber" resultType="String">
-        /*일반 회원 수정 - 사업자 등록번호 유효 검증 쿼리 - */
-        SELECT
-        		"ENT_MBR_NO"
-        FROM
-        		"ENT_MBR_INFO_TB"
-        WHERE
-        		"BR_NO" = #{businessNumber};
-    </select>
-
-    <update id="updateEntPrcpt" parameterType="kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO$UpdateEntPrcptRequestVO">
-        /*일반 회원 수정 - 기업 소속 업데이트 쿼리*/
-        UPDATE
-            "ENT_PRCPT_MBR_INFO_TB"
-        SET
-            ENT_MBR_NO = #{entMbrNo}
-        WHERE
-            MBR_NO = #{mbrNo}
-    </update>
-
-    <update id="resetPassword" parameterType="kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO$ResetPasswordRequestVO">
-        /* resetPassword [일반회원 비밀번호 초기화 쿼리] */
-        UPDATE
-            "GEN_MBR_INFO_TB"
-        SET
-            "MBR_PSWD" = #{mbrPswd},
-            "LAST_MDFCN_DT" = #{lastMdfcnDt},
-            "LAST_MDFR_ID" = #{lastMdfrId}
-        WHERE
-            "MBR_ID" = #{mbrId}
-    </update>
--->
-
-
+</mapper>
