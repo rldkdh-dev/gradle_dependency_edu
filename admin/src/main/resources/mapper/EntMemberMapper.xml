@@ -37,13 +37,98 @@
              EMIT."FRST_REG_DT" DESC
     </select>
 
+<!--  <select id="selectEntMemberByNo" resultType="kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberVO$DefaultEntMemberVO">
+      /* selectEntMemberByNo [기업 회원 기업회원번호로 정보 조회] */
+      SELECT
+          GMIT."MBR_NO",                     &#45;&#45; 회원번호
+          GMIT."LINK_INFO",                  &#45;&#45; 연계정보
+          GMIT."MBR_GNDR_CD",                &#45;&#45; 회원 성별 코드
+          GMIT."MBR_SE_CD",                  &#45;&#45; 회원 구분 코드
+          GMIT."MBR_BRDT",                   &#45;&#45; 회원 출생일자
+          GMIT."MBR_NM",                     &#45;&#45; 회원명
+          GMIT."MBR_ID",                     &#45;&#45; 회원 아이디
+          GMIT."MBR_MBL_TELNO",              &#45;&#45; 회원 휴대전화 번호
+          GMIT."EML_ADDR",                   &#45;&#45; 이메일 주소
+          GMIT."EML_RCPTN_AGRE_YN",          &#45;&#45; 이메일 수신 동의 여부
+          GMIT."MBR_PSWD",                   &#45;&#45; 회원 비밀번호
+          GMIT."MBR_PSWD_CHG_DT",            &#45;&#45; 비밀번호 변경일
+          GMIT."CNTN_FAIL_CNT",               &#45;&#45; 접속 실패 횟수
+          GMIT."HOME_ZIP",                   &#45;&#45; 자택 우편번호
+          GMIT."HOME_ROAD_NM",               &#45;&#45; 자택 도로명
+          GMIT."HOME_DADDR",                  &#45;&#45; 자택 상세주소
+          GMIT."FRST_REG_DT",                 &#45;&#45; 최초등록일시
+          GMIT."FRST_RGTR_ID",                 &#45;&#45; 최초등록자 ID
+          GMIT."LAST_MDFCN_DT",                 &#45;&#45; 최종수정일시
+          GMIT."LAST_MDFR_ID"                &#45;&#45; 최종수정자 ID
+      FROM
+          "GEN_MBR_INFO_TB" GMIT
+      WHERE
+          GMIT."MBR_ID" = #{searchId}
+  </select>-->
+
+  <update id="updateEntMember" parameterType="kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberVO$UpdateRequestVO">
+      /* updateEntMember [기업 회원 업데이트 쿼리] */
+      UPDATE
+          "ENT_MBR_INFO_TB"
+      SET
+          "MBR_NM" = #{conmNm},                     -- 사업자명
+          "RPRSV_NM" = #{rprsvNm},                  -- 대표자명
+          "BR_NO" = #{brNo},                        -- 사업자등록번호
+          "BZMNT_TYPE_CD" = #{bzmnTypeCd},          -- 사업자유형 코드
+          "INST_TYPE_CD" = #{instTypeCd},          -- 기관유형 코드
+          "RPRS_BZSTAT_CD" = #{rprsBzstatCd},       -- 대표업태 코드
+          "RPRS_TPBIZ_CD" = #{rprsTpbizCd},         -- 대표업종 코드
+          "EMP_CNT" = #{empCnt},                     -- 직원 수
+          "TEL_NO" = #{telNo},                       -- 기업 연락처
+          "BPLC_ZIP" = #{bplcZip},                  -- 사업장 우편번호
+          "BPLC_ROAD_NM" = #{bplcRoadNm},           -- 사업장 도로명
+          "BPLC_DADDR" = #{bplcDaddr},              -- 사업장 상세주소
+          "CO_HMPG_ADDR" = #{coHmpgAddr},           -- 회사 홈페이지 주소
+          "MAIN_PRDCTN" = #{mainPrdctn},            -- 주요 생산 제품
+          "FCT_YN" = #{fctYn},                       -- 공장 여부
+          "PIC_NM" = #{picNm},                       -- 담당자명
+          "PIC_SE_CD" = #{picSeCd},                  -- 담당자 구분 코드
+          "PIC_DEPT_NM" = #{picDeptNm},              -- 담당자 부서명
+          "PIC_JBPS_CD" = #{picJbpsCd},              -- 담당자 직위 코드
+          "PIC_MBL_TELNO" = #{picMblTelno},          -- 담당자 연락처
+          "EML_ADDR" = #{emlAddr},                   -- 담당자 이메일
+          "EML_RCPTN_AGRE_YN" = #{emlRcptnAgreYn},  -- 이메일 수신 동의 여부
+          "LAST_MDFCN_DT" = #{lastMdfcnDt},          -- 수정 날짜
+          "LAST_MDFR_ID" = #{lastMdfrId}             -- 수정자 ID
+      WHERE
+          "ENT_MBR_NO" = #{entMbrNo}                     -- 기업회원번호
+  </update>
+
+    <select id="selectEntMemberByBusinessNumber" resultType="kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberVO$ListResponseVO" parameterType="kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberPO$SearchPO">
+        /* selectEntMemberByBusinessNumber [사업자 등록번호로 기업 회원 조회 쿼리] */
+
+        /* 사업자 등록번호로 기업회원 정보 조회 구현해야함*/
+        SELECT
+             EMIT."ENT_MBR_NO",
+             EMIT."CONM_NM",
+             EMIT."BR_NO",
+             EMIT."RPRSV_NM",
+             EMIT."PIC_NM",
+             EMIT."PIC_MBL_TELNO",
+             EMIT."EML_ADDR",
+             EMIT."FRST_REG_DT"
+         FROM
+             "ENT_MBR_INFO_TB" EMIT
+    </select>
+
+    <select id="isBusinessNumberDuplicate" resultType="int">
+      /* 사업자등록번호 중복 체크 쿼리*/
+        SELECT
+          COUNT(*)
+        FROM
+          "ENT_MBR_INFO_TB"
+        WHERE
+          "BR_NO" = #{businessNumber}
+    </select>
 
 
 
-
-
-
-
+</mapper>
 
 
 
@@ -138,26 +223,7 @@
           "MBR_NO" = #{no}
   </delete>
 
-  <update id="updateGenMember" parameterType="kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO$UpdateRequestVO">
-      /* updateGenMember [일반 회원 업데이트 쿼리] */
-      UPDATE
-          "GEN_MBR_INFO_TB"
-      SET
-          "MBR_NM" = #{mbrNm},
-          "MBR_GNDR_CD" = #{mbrGndrCd},
-          "MBR_BRDT" = #{mbrBrdt},
-          "MBR_ID" = #{mbrId},
-          "MBR_MBL_TELNO" = #{mbrMblTelno},
-          "EML_ADDR" = #{emlAddr},
-          "EML_RCPTN_AGRE_YN" = #{emlRcptnAgreYn},
-          "HOME_ZIP" = #{homeZip},
-          "HOME_ROAD_NM" = #{homeRoadNm},
-          "HOME_DADDR" = #{homeDaddr},
-          "LAST_MDFCN_DT" = #{lastMdfcnDt},
-          "LAST_MDFR_ID" = #{lastMdfrId}
-      WHERE
-          "MBR_NO" = #{mbrNo}
-  </update>
+
 
     <select id="selectEntMemberNoByBusinessNumber" resultType="String">
         /*일반 회원 수정 - 사업자 등록번호 유효 검증 쿼리 - */
@@ -193,4 +259,3 @@
 -->
 
 
-</mapper>

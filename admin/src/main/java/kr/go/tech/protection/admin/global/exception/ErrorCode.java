@@ -9,7 +9,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ErrorCode {
 	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버에러가 발생했습니다\n 관리자에게 문의해주세요."),
-	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저는 존재하지 않습니다.");
+	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저는 존재하지 않습니다."),
+	NO_UPDATE(HttpStatus.NOT_FOUND, "업데이트가 취소 되었습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String message;

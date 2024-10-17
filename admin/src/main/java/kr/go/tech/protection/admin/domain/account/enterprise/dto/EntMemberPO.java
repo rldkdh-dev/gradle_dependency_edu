@@ -40,8 +40,102 @@ public class EntMemberPO {
         private String searchKeyword;   //검색 단어
     }
 
+    @Getter
+    public static class UpdateRequestPO {
+        //기업 정보
+        @NotNull(message = "기업회원번호는 null일 수 없습니다.")
+        private Integer entNo;
 
+        @NotNull(message = "사업자명은 null일 수 없습니다.")
+        private String companyName;
+        
+        @NotNull(message = "대표자명은 null일 수 없습니다.")
+        private String representativeName;
+        
+        @NotNull(message = "사업자등록번호는 null일 수 없습니다.")
+        private String businessNumber;
+        
+        @NotNull(message = "사업자유형 코드는 null일 수 없습니다.")
+        private String businessTypeCode;
+        
+        @NotNull(message = "기관유형 코드는 null일 수 없습니다.")
+        private String institutionTypeCode;
 
+        @NotNull(message = "대표업태 코드는 null일 수 없습니다.")
+        private String representativeBusinessCode;
+
+        @NotNull(message = "대표업종 코드는 null일 수 없습니다.")
+        private String representativeIndustryCode;
+
+        @NotNull(message = "직원수는 공백일 수 없습니다.")
+        @Size(min = 1, message = "직원수는 1명 이상이여야 합니다.")
+        private Integer employeeCount;
+
+        @NotEmpty(message = "연락처는 공백일 수 없습니다.")
+        @Size(max = 11, message = "연락처는 최대 11자리여야 합니다.")
+        private String entTelNo;              // 기업 연락처
+
+        @NotEmpty(message = "사업장주소는 공백일 수 없습니다.")
+        private String companyAddress;       // 사업장 주소
+
+        private String homepageUrl;        // 회사 홈페이지 주소
+        private String mainProduct;        // 주요 생산 제품
+        private String isFactory;              // 공장 여부
+
+        //담당자 정보
+        @NotNull(message = "담당자명은 null일 수 없습니다.")
+        private String managerName;              // 담당자명
+
+        @NotNull(message = "담당자 구분코드는 null일 수 없습니다.")
+        private String managerTypeCode;            // 담당자 구분 코드
+
+        private String managerDeptName;          // 담당자 부서명
+        private String managerPositionCode;          // 담당자 직위 코드
+        private String mangerTelno;        // 담당자 연락처
+        private String managerEmail;            // 담당자 이메일
+        private String isEmailConsent;    // 이메일 수신 동의 여부
+
+    }
+
+    @Getter
+    @Builder
+    public static class UpdateResponsePO {
+        private Integer entNo;                      // 기업회원번호
+        private String companyName;                  // 사업자명
+        private String representativeName;           // 대표자명
+        private String businessNumber;               // 사업자등록번호
+        private String businessTypeCode;             // 사업자유형 코드
+        private String institutionTypeCode;          // 기관유형 코드
+        private String representativeBusinessCode;   // 대표업태 코드
+        private String representativeIndustryCode;   // 대표업종 코드
+        private Integer employeeCount;               // 직원수
+        private String entTelNo;                     // 기업 연락처
+        private String companyAddress;                // 사업장 주소
+        private String homepageUrl;                   // 회사 홈페이지 주소
+        private String mainProduct;                   // 주요 생산 제품
+        private String isFactory;                     // 공장 여부
+
+        // 담당자 정보
+        private String managerName;                  // 담당자명
+        private String managerTypeCode;              // 담당자 구분 코드
+        private String managerDeptName;              // 담당자 부서명
+        private String managerPositionCode;          // 담당자 직위 코드
+        private String managerTelNo;                 // 담당자 연락처
+        private String managerEmail;                  // 담당자 이메일
+        private String isEmailConsent;               // 이메일 수신 동의 여부
+    }
+
+    @Getter
+    public static class SearchBusinessNumberRequestPO {
+        @NotNull(message = "사업자 등록번호를 입력하세요.")
+        private String businessNumber;
+    }
+
+    @Getter
+    @Builder
+    public static class SearchBusinessNumberResponsePO {
+        private Boolean isBusinessNumberAvailable;
+    }
 
 
 
@@ -77,61 +171,6 @@ public class EntMemberPO {
         private String companyDetailAddress;  //사업장 상세주소
     }
 
-    @Getter
-    public static class UpdateRequestPO {
-        @NotNull(message = "회원번호는 null일 수 없습니다.")
-        private Integer genNo;
-
-        @NotNull(message = "이름은 null일 수 없습니다.")
-        private String genName;
-
-        @NotNull(message = "성별코드는 null 일 수 없습니다.")
-        private String genderCd;
-
-        @NotEmpty(message = "생년월일은 공백일 수 없습니다.")
-        @Pattern(regexp = "\\d{8}", message = "생년월일은 yyyymmdd 형식이어야 합니다.") // 숫자 8자리 형식 확인
-        private String birthDate;
-
-        @NotEmpty(message = "아이디는 공백일 수 없습니다.")
-        private String genId;
-
-        @NotEmpty(message = "연락처는 공백일 수 없습니다.")
-        @Size(max = 11, message = "연락처는 최대 11자리여야 합니다.") // 메시지 추가
-        private String genPhone;
-
-        @Pattern(regexp = "^[\\w!#$%&'*+/=?`{|}~^.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$", message = "이메일 형식이 올바르지 않습니다.")
-        private String genEmail;
-
-        @NotEmpty(message = "이메일 수신동의 여부는 null일 수 없습니다")
-        private String isEmailConsent;
-
-        @NotEmpty(message = "우편번호는 null일 수 없습니다")
-        private String zipCode;
-
-        @NotEmpty(message = "도로명은 null일 수 없습니다")
-        private String roadName;
-
-        private String detailAddress; // 상세주소 (null 허용)
-
-        private String businessNumber; // 사업자 등록번호 (null 허용)
-
-    }
-
-    @Getter
-    @Builder
-    public static class UpdateResponsePO {
-        private Integer genNo;
-        private String genName;
-        private String genderCd;
-        private String birthDate;
-        private String genId;
-        private String genPhone;
-        private String genEmail;
-        private String isEmailConsent;
-        private String zipCode;
-        private String roadName;
-        private String detailAddress; // 상세주소 (null 허용)
-    }
 
 
 

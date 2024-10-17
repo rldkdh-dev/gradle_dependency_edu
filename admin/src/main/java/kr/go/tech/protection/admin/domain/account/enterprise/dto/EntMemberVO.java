@@ -55,12 +55,44 @@ public class EntMemberVO {
         private String emlRcptnAgreYn;    // 이메일 수신 동의 여부
     }
 
-
-
-
-
-
     @Getter
+    @Builder
+    public static class UpdateRequestVO extends BaseColumn{
+        //기업 정보
+        private Integer entMbrNo;         // 기업회원번호
+        private String conmNm;             // 사업자명
+        private String rprsvNm;           // 대표자명
+        private String brNo;               // 사업자등록번호
+        private String bzmnTypeCd;        // 사업자유형 코드
+        private String instTypeCd;        // 기관유형 코드
+        private String rprsBzstatCd;      // 대표업태 코드
+        private String rprsTpbizCd;       // 대표업종 코드
+        private Integer empCnt;            // 직원 수
+        private String telNo;              // 기업 연락처
+
+        private String bplcZip;            // 사업장 우편번호
+        private String bplcRoadNm;        // 사업장 도로명
+        private String bplcDaddr;         // 사업장 상세주소
+
+        private String coHmpgAddr;        // 회사 홈페이지 주소
+        private String mainPrdctn;        // 주요 생산 제품
+        private String fctYn;              // 공장 여부
+        
+        //담당자 정보
+        private String picNm;              // 담당자명
+        private String picSeCd;            // 담당자 구분 코드
+        private String picDeptNm;          // 담당자 부서명
+        private String picJbpsCd;          // 담당자 직위 코드
+        private String picMblTelno;        // 담당자 연락처
+        private String emlAddr;            // 담당자 이메일
+        private String emlRcptnAgreYn;    // 이메일 수신 동의 여부
+    }
+
+
+
+
+
+/*    @Getter
     public static class DetailEntMemberVO extends BaseColumn {
         //회원 상세 정보
         private Integer mbrNo;  //회원번호
@@ -97,24 +129,9 @@ public class EntMemberVO {
         private String bplcZip;  //사업장 우편번호
         private String blpcRoadNm;  //사업장 도로명
         private String bplcDaddr;  //사업장 상세주소
-    }
+    }*/
 
-    @Getter
-    @Builder
-    public static class UpdateRequestVO extends BaseColumn{
-        private Integer mbrNo;  //회원번호
-        private String mbrNm;  //회원명
-        private String mbrGndrCd;  //회원 성별 코드
-        private String mbrBrdt;  //회원 출생일자
-        private String mbrId;  //회원 아이디
-        private String mbrMblTelno;  //회원 휴대전화 번호
-        private String emlAddr;  //이메일 주소
-        private String emlRcptnAgreYn;  //이메일 수신 동의 여부
-        private String homeZip;  //자택 우편번호
-        private String homeRoadNm;  //자택 도로명
-        private String homeDaddr;  //자택 상세주소
 
-    }
 
     @Getter
     @Builder

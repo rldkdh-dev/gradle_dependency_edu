@@ -6,15 +6,15 @@ import java.util.stream.Collectors;
 import kr.go.tech.protection.admin.domain.account.enterprise.dao.EntMemberDAO;
 import kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberPO;
 import kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberVO;
-import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO.UpdateEntPrcptRequestVO;
 import kr.go.tech.protection.admin.domain.member.dto.BaseMemberVO;
-import kr.go.tech.protection.admin.global.util.NumberUtil;
+import kr.go.tech.protection.admin.global.exception.ErrorCode;
+import kr.go.tech.protection.admin.global.exception.GlobalException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 @Slf4j
 @Service
@@ -45,6 +45,84 @@ public class EntMemberService {
 			.build();
 	}
 
+	@Transactional
+	public EntMemberPO.UpdateResponsePO updateGenMember(EntMemberPO.UpdateRequestPO requestPO) {
+		BaseMemberVO admin = (BaseMemberVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		EntMemberVO.DefaultEntMemberVO entMember = entMemberDAO.selectEntMemberByNo(requestPO.getEntNo());
+
+		if (ObjectUtils.isEmpty(entMember)) {
+			throw new GlobalException(ErrorCode.USER_NOT_FOUND);
+		}
+		
+		// TODO 사업장 주소 (전체 주소로 들어옴) 우편번호, 도로명, 상세주소로 나눠서 저장하는 로직 추가해야함
+
+		EntMemberVO.UpdateRequestVO param = EntMemberVO.UpdateRequestVO.builder()
+			.entMbrNo(requestPO.getEntNo())
+			.conmNm(requestPO.getCompanyName())
+			.rprsvNm(requestPO.getRepresentativeName())
+			.brNo(requestPO.getBusinessNumber())
+			.bzmnTypeCd(requestPO.getBusinessTypeCode())
+			.instTypeCd(requestPO.getInstitutionTypeCode())
+			.rprsBzstatCd(requestPO.getRepresentativeBusinessCode())
+			.rprsTpbizCd(requestPO.getRepresentativeIndustryCode())
+			.empCnt(requestPO.getEmployeeCount())
+			.telNo(requestPO.getEntTelNo())
+			.bplcZip("사업장 우편번호")
+			.bplcRoadNm("사업장 도로명")
+			.bplcDaddr("사업장 상세주소")
+			.coHmpgAddr(requestPO.getHomepageUrl())
+			.mainPrdctn(requestPO.getMainProduct())
+			.fctYn(requestPO.getIsFactory())
+			.picNm(requestPO.getManagerName())
+			.picSeCd(requestPO.getManagerTypeCode())
+			.picDeptNm(requestPO.getManagerDeptName())
+			.picJbpsCd(requestPO.getManagerPositionCode())
+			.picMblTelno(requestPO.getMangerTelno())
+			.emlAddr(requestPO.getManagerEmail())
+			.emlRcptnAgreYn(requestPO.getIsEmailConsent())
+			.build();
+
+		param.setLast(admin.getMngrId());
+
+		int result = entMemberDAO.updateEntMember(param);
+
+		if (result < 1) {
+			throw new GlobalException(ErrorCode.NO_UPDATE);
+		}
+
+		return EntMemberPO.UpdateResponsePO.builder()
+			.entNo(requestPO.getEntNo())
+			.companyName(requestPO.getCompanyName())
+			.representativeName(requestPO.getRepresentativeName())
+			.businessNumber(requestPO.getBusinessNumber())
+			.businessTypeCode(requestPO.getBusinessTypeCode())
+			.institutionTypeCode(requestPO.getInstitutionTypeCode())
+			.representativeBusinessCode(requestPO.getRepresentativeBusinessCode())
+			.representativeIndustryCode(requestPO.getRepresentativeIndustryCode())
+			.employeeCount(requestPO.getEmployeeCount())
+			.entTelNo(requestPO.getEntTelNo())
+			.companyAddress("우편번호 + 도로명 + 상세주소")
+			.homepageUrl(requestPO.getHomepageUrl())
+			.mainProduct(requestPO.getMainProduct())
+			.isFactory(requestPO.getIsFactory())
+			.managerName(requestPO.getManagerName())
+			.managerTypeCode(requestPO.getManagerTypeCode())
+			.managerDeptName(requestPO.getManagerDeptName())
+			.managerPositionCode(requestPO.getManagerPositionCode())
+			.managerTelNo(requestPO.getMangerTelno())
+			.managerEmail(requestPO.getManagerEmail())
+			.isEmailConsent(requestPO.getIsEmailConsent())
+			.build();
+	}
+
+	// 사업자 등록번호 중복체크
+	public boolean checkBusinessNumber(String businessNumber) {
+		return entMemberDAO.isBusinessNumberDuplicate(businessNumber) > 0;
+	}
+
+
+}
 
 
 
@@ -80,71 +158,7 @@ public class EntMemberService {
 	}
 
 
-	@Transactional
-	public EntMemberPO.UpdateResponsePO updateGenMember(EntMemberPO.UpdateRequestPO requestPO) {
-		BaseMemberVO admin = (BaseMemberVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-		EntMemberVO.DefaultGenMemberVO genMember = genMemberDAO.selectGenMemberById(requestPO.getGenId());
-		if (genMember == null) {
-			// TODO null 체크
-		}
-
-		// 수정하려는 사업자 등록번호 값 검증
-		if (requestPO.getBusinessNumber() != null && !requestPO.getBusinessNumber().isEmpty()) {
-			String entMemberNo = genMemberDAO.selectEntMemberNoByBusinessNumber(requestPO.getBusinessNumber());
-
-			if (entMemberNo != null) {
-				UpdateEntPrcptRequestVO updateEntPrcptRequestParam = UpdateEntPrcptRequestVO.builder()
-					.entMbrNo(entMemberNo)
-					.mbrNo(requestPO.getGenNo())
-					.build();
-
-				updateEntPrcptRequestParam.setLast(admin.getMngrId());
-
-				int result = genMemberDAO.updateEntPrcpt(updateEntPrcptRequestParam);
-				log.info("회원 소속기업 수정 여부 = {}", result);
-
-			} else {
-				// TODO 회원정보 업데이트 하지않고 유효하지않은 사업자 번호라고 프론트쪽에 응답 처리
-			}
-
-		}
-
-		EntMemberVO.UpdateRequestVO param = EntMemberVO.UpdateRequestVO.builder()
-			.mbrNo(requestPO.getGenNo())
-			.mbrNm(requestPO.getGenName())
-			.mbrGndrCd(requestPO.getGenderCd())
-			.mbrBrdt(requestPO.getBirthDate())
-			.mbrId(requestPO.getGenId())
-			.mbrMblTelno(requestPO.getGenPhone())
-			.emlAddr(requestPO.getGenEmail())
-			.emlRcptnAgreYn(requestPO.getIsEmailConsent())
-			.homeZip(requestPO.getZipCode())
-			.homeRoadNm(requestPO.getRoadName())
-			.homeDaddr(requestPO.getDetailAddress())
-			.build();
-		param.setLast(admin.getMngrId());
-
-		int result = genMemberDAO.updateGenMember(param);
-
-		if (result < 1) {
-			// TODO 업데이트 에러 처리
-		}
-
-		return EntMemberPO.UpdateResponsePO.builder()
-			.genNo(requestPO.getGenNo())
-			.genName(requestPO.getGenName())
-			.genderCd(requestPO.getGenderCd())
-			.birthDate(requestPO.getBirthDate())
-			.genId(requestPO.getGenId())
-			.genPhone(requestPO.getGenPhone())
-			.genEmail(requestPO.getGenEmail())
-			.isEmailConsent(requestPO.getIsEmailConsent())
-			.zipCode(requestPO.getZipCode())
-			.roadName(requestPO.getRoadName())
-			.detailAddress(requestPO.getDetailAddress())
-			.build();
-	}
 
 	@Transactional
 	public void deleteGenMember(int no) {
@@ -217,6 +231,5 @@ public class EntMemberService {
 			.build();
 	}*/
 
-}
 
 
