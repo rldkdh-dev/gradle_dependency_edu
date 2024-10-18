@@ -78,11 +78,11 @@
            COALESCE(ESIT."ACDNT_DIS_MNG_FLD_SCR", 0)) AS "TOTAL_SCORE", -- 종합점수
           ESIT."FRST_REG_DT",     -- 자가진단 최초 등록일
           ESIT."LAST_MDFCN_DT",      -- 자가진단 수정일
-          -- 만료일: 수정일 + 6개월
-          ESIT."LAST_MDFCN_DT" + INTERVAL '6 months' AS "EXPIRATION_DATE", -- 만료일
-          -- 만료 여부: 6개월 이상 경과 시 'Y', 그렇지 않으면 'N'
+          -- 만료일: 수정일 + 90일
+          ESIT."LAST_MDFCN_DT" + INTERVAL '90 days' AS "EXPIRATION_DATE", -- 만료일
+          -- 만료 여부: 90일 이상 경과 시 'Y', 그렇지 않으면 'N'
           CASE
-              WHEN (ESIT."LAST_MDFCN_DT" + INTERVAL '6 months')::DATE <![CDATA[<=]]> CURRENT_DATE THEN 'Y'
+              WHEN (ESIT."LAST_MDFCN_DT" + INTERVAL '90 days')::DATE <![CDATA[<=]]> CURRENT_DATE THEN 'Y'
               ELSE 'N'
           END AS "EXPIRATION_YN" -- 만료 여부
       FROM
