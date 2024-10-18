@@ -35,7 +35,6 @@ public class GenMemberPO {
 
     @Getter
     public static class SearchPO {
-
         private String conmNm;     //사업자명
         private String searchType;  //검색 조건
         private String searchKeyword;   //검색 단어

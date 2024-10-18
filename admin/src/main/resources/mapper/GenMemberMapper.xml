@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="kr.go.tech.protection.admin.domain.account.enterprise.dao.EntMemberDAO">
-    <select id="selectEntMemberList" resultType="kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberVO$ListResponseVO" parameterType="kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberPO$SearchPO">
-          /* selectEntMemberList [기업 회원 리스트 조회 쿼리] */
+<mapper namespace="kr.go.tech.protection.admin.domain.account.general.dao.GenMemberDAO">
+    <select id="selectGenMemberList" resultType="kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO$ListResponseVO" parameterType="kr.go.tech.protection.admin.domain.account.general.dto.GenMemberPO$SearchPO">
+          /* selectGenMemberList [일반 회원 리스트 조회 쿼리] */
           SELECT
               GMIT."MBR_NO",
               GMIT."MBR_NM",
@@ -116,7 +116,8 @@
           GMIT."MBR_ID" = #{searchId}
   </select>
 
-    <update id="updateEntPrcptMbrInfoDelYn">
+    <update id="updateEntPrcptMbrInfoDelYnByGenNo">
+        /* updateEntPrcptMbrInfoDelYnByGenNo [일반회원 기업 소속 정보 테이블에서 삭제 여부 컬럼 Y 업데이트 쿼리] */
         UPDATE
             "ENT_PRCPT_MBR_INFO_TB"
         SET
@@ -156,17 +157,17 @@
   </update>
 
     <select id="selectEntMemberNoByBusinessNumber" resultType="String">
-        /*일반 회원 수정 - 사업자 등록번호 유효 검증 쿼리 - */
+        /* selectEntMemberNoByBusinessNumber [일반 회원 수정 - 사업자 등록번호 유효 검증 쿼리] */
         SELECT
         		"ENT_MBR_NO"
         FROM
         		"ENT_MBR_INFO_TB"
         WHERE
-        		"BR_NO" = #{businessNumber};
+        		"BR_NO" = #{businessNumber}
     </select>
 
     <update id="updateEntPrcpt" parameterType="kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO$UpdateEntPrcptRequestVO">
-        /*일반 회원 수정 - 기업 소속 업데이트 쿼리*/
+        /* updateEntPrcpt [일반 회원 수정 - 기업 소속 업데이트 쿼리] */
         UPDATE
             "ENT_PRCPT_MBR_INFO_TB"
         SET
@@ -186,6 +187,5 @@
         WHERE
             "MBR_ID" = #{mbrId}
     </update>
-
 
 </mapper>

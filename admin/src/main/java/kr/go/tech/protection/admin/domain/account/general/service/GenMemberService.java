@@ -8,6 +8,8 @@ import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberPO;
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO;
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO.UpdateEntPrcptRequestVO;
 import kr.go.tech.protection.admin.domain.member.dto.BaseMemberVO;
+import kr.go.tech.protection.admin.global.exception.ErrorCode;
+import kr.go.tech.protection.admin.global.exception.GlobalException;
 import kr.go.tech.protection.admin.global.util.DateUtil;
 import kr.go.tech.protection.admin.global.util.NumberUtil;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 @Slf4j
 @Service
@@ -71,7 +74,6 @@ public class GenMemberService {
 			.companyRoadName(genMember.getBlpcRoadNm())
 			.companyDetailAddress(genMember.getBplcDaddr())
 			.companyAddress(genMember.getCompanyAddress())
-			//기업소속 승인여부
 			.isAllow(genMember.getAlwYn())
 			.build();
 	}
@@ -82,8 +84,9 @@ public class GenMemberService {
 		BaseMemberVO admin = (BaseMemberVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
 		GenMemberVO.DefaultGenMemberVO genMember = genMemberDAO.selectGenMemberById(requestPO.getGenId());
-		if (genMember == null) {
-			// TODO null 체크
+
+		if (ObjectUtils.isEmpty(genMember)) {
+			throw new GlobalException(ErrorCode.USER_NOT_FOUND);
 		}
 
 		// 수정하려는 사업자 등록번호 값 검증
@@ -99,10 +102,9 @@ public class GenMemberService {
 				updateEntPrcptRequestParam.setLast(admin.getMngrId());
 
 				int result = genMemberDAO.updateEntPrcpt(updateEntPrcptRequestParam);
-				log.info("회원 소속기업 수정 여부 = {}", result);
 
 			} else {
-				// TODO 회원정보 업데이트 하지않고 유효하지않은 사업자 번호라고 프론트쪽에 응답 처리
+				throw new GlobalException(ErrorCode.NO_BUSINESS_NUMBER);
 			}
 
 		}
@@ -125,7 +127,7 @@ public class GenMemberService {
 		int result = genMemberDAO.updateGenMember(param);
 
 		if (result < 1) {
-			// TODO 업데이트 에러 처리
+			throw new GlobalException(ErrorCode.NO_UPDATE);
 		}
 
 		return GenMemberPO.UpdateResponsePO.builder()
@@ -145,36 +147,31 @@ public class GenMemberService {
 
 	@Transactional
 	public void deleteGenMember(int no) {
-		GenMemberVO.DetailGenMemberVO GenMember = genMemberDAO.selectGenMemberByNo(no);
+		GenMemberVO.DetailGenMemberVO genMember = genMemberDAO.selectGenMemberByNo(no);
 
-		if (GenMember == null) {
-			log.info("FAILED");
-			// TODO null 처리
+		if (ObjectUtils.isEmpty(genMember)) {
+			throw new GlobalException(ErrorCode.USER_NOT_FOUND);
 		}
 
-		// TODO 진행중인 사업이 없을 경우 삭제 처리
+		//TODO 진행중인 사업이 있을경우 예외 처리
 
-		//진행중인 사업이 없을 경우 삭제
 		int result = genMemberDAO.deleteGenMember(no);
 
 		if (result > 0) {
 			//기업 소속 회원 정보 테이블에서 삭제 여부 'Y' update
-			genMemberDAO.updateEntPrcptMbrInfoDelYn(no);
-		} else {
-
+			genMemberDAO.updateEntPrcptMbrInfoDelYnByGenNo(no);
 		}
 
 	}
 
 	@Transactional
-	public GenMemberPO.ResetPasswordResponsePO resetPassword(
-		GenMemberPO.ResetPasswordRequestPO requestPO) {
+	public GenMemberPO.ResetPasswordResponsePO resetPassword(GenMemberPO.ResetPasswordRequestPO requestPO) {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
 		GenMemberVO.DefaultGenMemberVO genMember = genMemberDAO.selectGenMemberById(requestPO.getGenId());
 
-		if (genMember == null) {
-			// TODO null 체크
+		if (ObjectUtils.isEmpty(genMember)) {
+			throw new GlobalException(ErrorCode.USER_NOT_FOUND);
 		}
 
 		// 로그인 된 관리자 회원
@@ -204,8 +201,7 @@ public class GenMemberService {
 			// TODO 로그 등록
 
 		} else {
-			log.info("FAILED");
-			// TODO 비밀번호 초기화 실패 처리
+			throw new GlobalException(ErrorCode.PASSWORD_RESET_FAILED);
 		}
 
 		return GenMemberPO.ResetPasswordResponsePO.builder()

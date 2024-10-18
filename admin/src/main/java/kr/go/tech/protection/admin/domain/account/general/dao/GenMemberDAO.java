@@ -18,7 +18,7 @@ public interface GenMemberDAO {
 
 	int deleteGenMember(int no);
 
-	int updateEntPrcptMbrInfoDelYn(int no);
+	int updateEntPrcptMbrInfoDelYnByGenNo(int no);
 
 	String selectEntMemberNoByBusinessNumber(String businessNumber);
 

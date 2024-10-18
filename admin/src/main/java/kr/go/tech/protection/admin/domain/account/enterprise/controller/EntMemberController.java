@@ -5,6 +5,7 @@ import kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberPO;
 import kr.go.tech.protection.admin.domain.account.enterprise.service.EntMemberService;
 import kr.go.tech.protection.admin.global.response.ApiResult;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -55,29 +56,13 @@ public class EntMemberController {
 		return ApiResult.success(data);
 	}
 
-
-
-
-}
-
-/*
-
-
-	// 일반 회원 삭제 API
+	// 기업 회원 삭제 API
 	@DeleteMapping("/{no}")
-	public ApiResult<String> deleteGenMember(@PathVariable int no) {
-		genMemberService.deleteGenMember(no);
+	public ApiResult<String> deleteEntMember(@PathVariable int no) {
+		entMemberService.deleteEntMember(no);
 		return ApiResult.success("");
 	}
 
-
-
-	// 일반 회원 - 비밀번호 초기화
-	@PutMapping(value = "/password-reset")
-	 public ApiResult<EntMemberPO.ResetPasswordResponsePO> passwordResetGenMember(@Valid @RequestBody EntMemberPO.ResetPasswordRequestPO requestPO) {
-		 EntMemberPO.ResetPasswordResponsePO response = genMemberService.resetPassword(requestPO);
-		 return ApiResult.success(response);
-	 }
-*/
+}
 
 
