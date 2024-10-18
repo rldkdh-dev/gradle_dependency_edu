@@ -72,42 +72,126 @@ public class GenMemberPO {
     }
 
     @Getter
+    public static class InsertRequestPO {
+        @NotNull(message = "이름은 null일 수 없습니다.")
+        private String genName;
+
+        @NotNull(message = "성별코드는 null일 수 없습니다.")
+        private String genderCd;
+
+        @NotEmpty(message = "생년월일은 공백일 수 없습니다.")
+        @Pattern(regexp = "\\d{8}", message = "생년월일은 yyyymmdd 형식이어야 합니다.") // 숫자 8자리
+        private String birthDate;
+
+        // 아이디: 영문 소문자로 시작, 6~15자, 숫자만 사용 불가
+        @NotEmpty(message = "아이디는 공백일 수 없습니다.")
+        @Size(min = 6, max = 15, message = "아이디는 6자 이상, 15자 이하여야 합니다.")
+        @Pattern(
+            regexp = "^(?=.*[a-z])[a-z0-9]{6,15}$",
+            message = "아이디는 영문 소문자로 시작하며, 숫자 조합이 가능하지만 숫자만 사용될 수 없습니다."
+        )
+        private String genId;
+
+        // 비밀번호: 숫자, 영문 대소문자, 특수문자 포함 8~20자
+        @NotEmpty(message = "비밀번호는 공백일 수 없습니다.")
+        @Size(min = 8, max = 20, message = "비밀번호는 8자 이상, 20자 이하여야 합니다.")
+        @Pattern(
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,20}$",
+            message = "비밀번호는 영문 대소문자, 숫자, 특수문자를 조합하여 작성해야 합니다."
+        )
+        private String password;
+
+        // 연락처: 010으로 시작, 나머지 두 부분은 최대 4자리 숫자
+        @NotEmpty(message = "연락처는 공백일 수 없습니다.")
+        @Pattern(
+            regexp = "^010-\\d{3,4}-\\d{4}$",
+            message = "연락처 형식이 올바르지 않습니다. (예: 010-1234-5678)"
+        )
+        private String genPhone;
+
+        @NotEmpty(message = "이메일은 공백일 수 없습니다.")
+        @Pattern(
+            regexp = "^[\\w!#$%&'*+/=?`{|}~^.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$",
+            message = "이메일 형식이 올바르지 않습니다."
+        )
+        private String genEmail;
+
+        @NotEmpty(message = "이메일 수신동의 여부는 null일 수 없습니다.")
+        private String isEmailConsent;
+
+        @NotEmpty(message = "우편번호는 null일 수 없습니다.")
+        private String zipCode;
+
+        @NotEmpty(message = "도로명은 null일 수 없습니다.")
+        private String roadName;
+
+        // 상세주소: 선택 입력 (null 허용)
+        private String detailAddress;
+
+        @NotEmpty(message = "사업자 등록번호는 null일 수 없습니다.")
+        @Pattern(regexp = "\\d{10}", message = "사업자 등록번호는 10자리 숫자여야 합니다.")
+        private String businessNumber;
+    }
+
+    @Getter
     public static class UpdateRequestPO {
         @NotNull(message = "회원번호는 null일 수 없습니다.")
         private Integer genNo;
 
-        @NotNull(message = "이름은 null일 수 없습니다.")
+        // 이름: 한글 또는 영문만 허용, 영문-한글 조합 불가
+        @NotEmpty(message = "이름은 공백일 수 없습니다.")
+        @Pattern(regexp = "^[a-zA-Z가-힣]{1,50}$", message = "이름은 한글 또는 영문으로 작성해주세요.")
         private String genName;
 
-        @NotNull(message = "성별코드는 null 일 수 없습니다.")
+        @NotNull(message = "성별코드는 null일 수 없습니다.")
         private String genderCd;
 
+        // 생년월일: 8자리 숫자만 허용 (yyyymmdd 형식)
         @NotEmpty(message = "생년월일은 공백일 수 없습니다.")
-        @Pattern(regexp = "\\d{8}", message = "생년월일은 yyyymmdd 형식이어야 합니다.") // 숫자 8자리 형식 확인
+        @Pattern(regexp = "\\d{8}", message = "생년월일은 yyyymmdd 형식이어야 합니다.")
         private String birthDate;
 
+        // 아이디: 6~15자, 영문으로 시작, 영문 숫자 조합 가능, 마침표 사용 가능, 공백 불가
         @NotEmpty(message = "아이디는 공백일 수 없습니다.")
+        @Pattern(
+            regexp = "^[a-zA-Z](?!.*(.)\\1{2})[a-zA-Z0-9.]{5,14}$",
+            message = "아이디는 6~15자의 영문 또는 영문 숫자 조합으로 작성하고, 영문으로 시작해야 합니다."
+        )
         private String genId;
 
+        // 연락처: 010으로 시작, 나머지 두 부분은 최대 4자리 숫자
         @NotEmpty(message = "연락처는 공백일 수 없습니다.")
-        @Size(max = 11, message = "연락처는 최대 11자리여야 합니다.") // 메시지 추가
+        @Pattern(
+            regexp = "^010-\\d{3,4}-\\d{4}$",
+            message = "연락처 형식이 올바르지 않습니다. (예: 010-1234-5678)"
+        )
         private String genPhone;
 
-        @Pattern(regexp = "^[\\w!#$%&'*+/=?`{|}~^.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$", message = "이메일 형식이 올바르지 않습니다.")
+        // 이메일
+        @Pattern(
+            regexp = "^[\\w!#$%&'*+/=?`{|}~^.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$",
+            message = "이메일 형식이 올바르지 않습니다."
+        )
         private String genEmail;
 
-        @NotEmpty(message = "이메일 수신동의 여부는 null일 수 없습니다")
+        @NotEmpty(message = "이메일 수신동의 여부는 null일 수 없습니다.")
         private String isEmailConsent;
 
-        @NotEmpty(message = "우편번호는 null일 수 없습니다")
+        @NotEmpty(message = "우편번호는 null일 수 없습니다.")
         private String zipCode;
 
-        @NotEmpty(message = "도로명은 null일 수 없습니다")
+        @NotEmpty(message = "도로명은 null일 수 없습니다.")
         private String roadName;
 
-        private String detailAddress; // 상세주소 (null 허용)
+        // 상세주소: 선택 입력 (null 허용)
+        private String detailAddress;
 
-        private String businessNumber; // 사업자 등록번호 (null 허용)
+        // 사업자 등록번호: 10자리 숫자만 허용
+        @Pattern(
+            regexp = "^\\d{10}$",
+            message = "사업자 등록번호는 10자리 숫자여야 합니다."
+        )
+        private String businessNumber;
 
     }
 
@@ -140,6 +224,28 @@ public class GenMemberPO {
     public static class ResetPasswordResponsePO {
         private String genId;
         private Integer genNo;
+    }
+
+    @Getter
+    @Builder
+    public static class InsertResponsePO {
+        private Integer genNo;
+        private String genName;
+        private String genderCd;
+        private String birthDate;
+        private String genId;
+        private String genPhone;
+        private String genEmail;
+        private String isEmailConsent;
+        private String zipCode;
+        private String roadName;
+        private String detailAddress; // 상세주소 (null 허용)
+    }
+
+    @Getter
+    public static class SearchIdRequestPO {
+        @NotNull(message = "아이디를 입력하세요.")
+        private String searchId;
     }
 
 }

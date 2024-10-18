@@ -106,6 +106,36 @@ public class GenMemberVO {
     public static class ResetPasswordRequestVO extends BaseColumn{
         private String mbrId;
         private String mbrPswd;
+        private LocalDateTime mbrPswdChgDt;
+    }
+
+    @Getter
+    @Builder
+    public static class InsertRequestVO extends BaseColumn {
+        private Integer mbrNo;  //회원번호
+        private String mbrSeCd;  //회원 구분 코드
+        private String mbrNm;  //회원명
+        private String mbrGndrCd;  //회원 성별 코드
+        private String mbrBrdt;  //회원 출생일자
+        private String mbrMblTelno;  //회원 휴대전화 번호
+        private String mbrId;  //회원 아이디
+        private String mbrPswd;  //회원 비밀번호
+        private Integer cntnFailCnt;  //접속실패횟수
+        private String emlAddr;  //이메일 주소
+        private String homeZip;  //자택 우편번호
+        private String homeRoadNm;  //자택 도로명
+        private String homeDaddr;  //자택 상세주소
+        private String emlRcptnAgreYn;  //이메일 수신 동의 여부
+    }
+
+    @Getter
+    @Builder
+    public static class InsertEntPrcptVO extends BaseColumn {
+        private Integer mbrNo;  //일반 회원 번호
+        private Integer entMbrNo;  //기업 회원 번호
+        private String seCd;  //구분 코든
+        private String jbpsCd;  //직위 코드
+        private String deptNm;  //부서명
     }
 
 

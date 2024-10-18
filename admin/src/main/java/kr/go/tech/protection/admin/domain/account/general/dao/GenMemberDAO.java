@@ -3,6 +3,8 @@ package kr.go.tech.protection.admin.domain.account.general.dao;
 import java.util.List;
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberPO;
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO;
+import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO.InsertEntPrcptVO;
+import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO.InsertRequestVO;
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO.ResetPasswordRequestVO;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -26,4 +28,11 @@ public interface GenMemberDAO {
 
 	int resetPassword(ResetPasswordRequestVO param);
 
+	int isGenIdDuplicate(String searchId);
+
+	int insertGenMember(InsertRequestVO requestVO);
+
+	int selectEntMbrNoByBusinessNumber(String businessNumber);
+
+	int insertGenMemberIntoEntPrcpt(InsertEntPrcptVO entPrcptVO);
 }

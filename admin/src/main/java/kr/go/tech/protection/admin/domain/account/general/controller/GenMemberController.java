@@ -8,9 +8,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -22,8 +24,7 @@ public class GenMemberController {
 
 	// 일반 회원 목록 조회 API
 	@GetMapping("")
-	public ApiResult<GenMemberPO.ListResponsePO> selectGenMemberList(
-		GenMemberPO.SearchPO searchPO) {
+	public ApiResult<GenMemberPO.ListResponsePO> selectGenMemberList(GenMemberPO.SearchPO searchPO) {
 		GenMemberPO.ListResponsePO data = genMemberService.selectGenMemberList(searchPO);
 
 		return ApiResult.success(data);
@@ -52,9 +53,23 @@ public class GenMemberController {
 
 	// 일반 회원 - 비밀번호 초기화
 	@PutMapping(value = "/password-reset")
-	 public ApiResult<GenMemberPO.ResetPasswordResponsePO> passwordResetGenMember(@Valid @RequestBody GenMemberPO.ResetPasswordRequestPO requestPO) {
-		 GenMemberPO.ResetPasswordResponsePO response = genMemberService.resetPassword(requestPO);
-		 return ApiResult.success(response);
+	public ApiResult<GenMemberPO.ResetPasswordResponsePO> passwordResetGenMember(@Valid @RequestBody GenMemberPO.ResetPasswordRequestPO requestPO) {
+		GenMemberPO.ResetPasswordResponsePO response = genMemberService.resetPassword(requestPO);
+		return ApiResult.success(response);
+	}
+
+	// 일반 회원 등록 API
+	@PostMapping("")
+	public ApiResult<GenMemberPO.InsertResponsePO> insertGenMember(@Valid @RequestBody GenMemberPO.InsertRequestPO requestPO) {
+		GenMemberPO.InsertResponsePO response = genMemberService.insertGenMember(requestPO);
+		return ApiResult.success(response);
+	}
+
+	// 아이디 중복 체크 API
+	 @GetMapping("/check-id")
+	 public ApiResult<Boolean> checkGenMemberIdDuplicate(@RequestParam String searchId) {
+		 boolean isDuplicate = genMemberService.checkGenMemberIdDuplicate(searchId);
+		 return ApiResult.success(isDuplicate);
 	 }
 
 
