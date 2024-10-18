@@ -139,7 +139,7 @@
     </select>
 
   <select id="selectEmployeeListByEntNo" resultType="kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberVO$EmployeeListResponseVO">
-        /* selectEmployeeListByEntNo [기업소속 직원 목록 조회] */
+        /* selectEmployeeListByEntNo [기업소속 직원 목록 조회 쿼리] */
         SELECT
             GMIT."MBR_NO",
             GMIT."MBR_NM",
@@ -176,5 +176,112 @@
       WHERE
           "ENT_MBR_NO" = #{no}
   </update>
+
+  <select id="selectEntMemberByBusinessNumber" resultType="kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberVO$DefaultEntMemberVO">
+      <!-- selectEntMemberByBusinessNumber [사업자등록번호로 기업회원 정보 조회 쿼리] -->
+      SELECT
+          EMIT."ENT_MBR_NO",            -- 기업회원번호
+          EMIT."MBR_SE_CD",             -- 회원구분 코드
+          EMIT."MBR_DTL_SE_CD",         -- 회원상세구분 코드
+          EMIT."JNT_CERT_INFO",         -- 공동인증서 정보
+          EMIT."CONM_NM",               -- 사업자명
+          EMIT."RPRSV_NM",              -- 대표자명
+          EMIT."BR_NO",                 -- 사업자등록번호
+          EMIT."INST_STTS_CD",          -- 기관 상태 코드
+          EMIT."BZMN_TYPE_CD",          -- 사업자유형 코드
+          EMIT."INST_TYPE_CD",          -- 기관유형 코드
+          EMIT."BZENT_FNDN_DT",         -- 설립일
+          EMIT."RPRS_BZSTAT_CD",        -- 대표업태 코드
+          EMIT."RPRS_TPBIZ_CD",         -- 대표업종 코드
+          EMIT."EMP_CNT",               -- 직원 수
+          EMIT."FCT_YN",                -- 공장 여부
+          EMIT."PRV_CORP_SE_CD",        -- 개인법인 구분 코드
+          EMIT."PRV_CORP_NO",           -- 개인법인 번호
+          EMIT."TEL_NO",                -- 연락처
+          EMIT."BPLC_ZIP",              -- 사업장 우편번호
+          EMIT."BPLC_ROAD_NM",          -- 사업장 도로명 주소
+          EMIT."BPLC_DADDR",            -- 사업장 상세주소
+          '(' ||EMIT."BPLC_ZIP" || ') ' || EMIT."BPLC_ROAD_NM" || EMIT."BPLC_DADDR" AS "BPLC_ADDRESS",   -- 사업장 주소
+          EMIT."CO_HMPG_ADDR",          -- 홈페이지 주소
+          EMIT."MAIN_PRDCTN",           -- 주요 생산 제품
+          EMIT."PIC_NM",                -- 담당자명
+          EMIT."PIC_GNDR_CD",           -- 담당자 성별 코드
+          EMIT."PIC_BRDT",              -- 담당자 생년월일
+          EMIT."PIC_MBL_TELNO",         -- 담당자 연락처
+          EMIT."PIC_SE_CD",             -- 담당자 구분 코드
+          EMIT."PIC_DEPT_NM",           -- 담당자 부서명
+          EMIT."PIC_JBPS_CD",           -- 담당자 직위 코드
+          EMIT."EML_ADDR",              -- 이메일 주소
+          EMIT."EML_RCPTN_AGRE_YN",     -- 이메일 수신 동의 여부
+          EMIT."FRST_REG_DT",           -- 최초 등록일
+          EMIT."FRST_RGTR_ID",          -- 최초 등록자 ID
+          EMIT."LAST_MDFCN_DT",         -- 마지막 수정일
+          EMIT."LAST_MDFR_ID"           -- 마지막 수정자 ID
+      FROM
+          "ENT_MBR_INFO_TB" EMIT
+      WHERE
+          EMIT."BR_NO" = #{businessNumber}
+  </select>
+
+  <insert id="insertEntMember" parameterType="kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberVO$InsertRequestVO" useGeneratedKeys="true" keyProperty="entMbrNo">
+       <!-- insertEntMember [기업회원 등록 쿼리] -->
+      INSERT INTO "ENT_MBR_INFO_TB" (
+          "ENT_MBR_NO",
+          "CONM_NM",
+          "RPRSV_NM",
+          "BR_NO",
+          "BZMN_TYPE_CD",
+          "INST_TYPE_CD",
+          "RPRS_BZSTAT_CD",
+          "RPRS_TPBIZ_CD",
+          "EMP_CNT",
+          "FCT_YN",
+          "TEL_NO",
+          "BPLC_ZIP",
+          "BPLC_ROAD_NM",
+          "BPLC_DADDR",
+          "CO_HMPG_ADDR",
+          "MAIN_PRDCTN",
+          "PIC_NM",
+          "PIC_MBL_TELNO",
+          "PIC_SE_CD",
+          "PIC_DEPT_NM",
+          "PIC_JBPS_CD",
+          "EML_ADDR",
+          "EML_RCPTN_AGRE_YN",
+          "FRST_REG_DT",
+          "FRST_RGTR_ID",
+          "LAST_MDFCN_DT",
+          "LAST_MDFR_ID"
+      ) VALUES (
+          #{entMbrNo},
+          #{conmNm},
+          #{rprsvNm},
+          #{brNo},
+          #{bzmnTypeCd},
+          #{instTypeCd},
+          #{rprsBzstatCd},
+          #{rprsTpbizCd},
+          #{empCnt},
+          #{fctYn},
+          #{telNo},
+          #{bplcZip},
+          #{bplcRoadNm},
+          #{bplcDaddr},
+          #{coHmpgAddr},
+          #{mainPrdctn},
+          #{picNm},
+          #{picMblTelno},
+          #{picSeCd},
+          #{picDeptNm},
+          #{picJbpsCd},
+          #{emlAddr},
+          #{emlRcptnAgreYn},
+          #{frstRegDt},
+          #{frstRgtrId},
+          #{lastMdfcnDt},
+          #{lastMdfrId}
+      )
+  </insert>
 
 </mapper>

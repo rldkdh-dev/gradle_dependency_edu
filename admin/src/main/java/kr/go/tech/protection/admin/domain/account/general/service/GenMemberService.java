@@ -89,7 +89,7 @@ public class GenMemberService {
 	public GenMemberPO.UpdateResponsePO updateGenMember(GenMemberPO.UpdateRequestPO requestPO) {
 		BaseMemberVO admin = (BaseMemberVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-		DefaultGenMemberVO genMember = genMemberDAO.selectGenMemberById(requestPO.getGenId());
+		GenMemberVO.DefaultGenMemberVO genMember = genMemberDAO.selectGenMemberById(requestPO.getGenId());
 
 		if (ObjectUtils.isEmpty(genMember)) {
 			throw new GlobalException(ErrorCode.USER_NOT_FOUND);
@@ -177,7 +177,7 @@ public class GenMemberService {
 	public GenMemberPO.ResetPasswordResponsePO resetPassword(GenMemberPO.ResetPasswordRequestPO requestPO) {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-		DefaultGenMemberVO genMember = genMemberDAO.selectGenMemberById(requestPO.getGenId());
+		GenMemberVO.DefaultGenMemberVO genMember = genMemberDAO.selectGenMemberById(requestPO.getGenId());
 
 		if (ObjectUtils.isEmpty(genMember)) {
 			throw new GlobalException(ErrorCode.USER_NOT_FOUND);
@@ -249,16 +249,17 @@ public class GenMemberService {
 				InsertEntPrcptVO entPrcptVO = InsertEntPrcptVO.builder()
 					.mbrNo(requestVO.getMbrNo())
 					.entMbrNo(entNo)
-					// TODO 기업 소속 정보 테이블의 구분코드, 직위코두, 부서명은 어떤걸로 넣어야하는지 ? CHECK
+					// TODO 기업 소속 정보 테이블의 구분코드, 직위코드, 부서명은 어떤걸로 넣어야하는지 ? CHECK
 					.build();
 				entPrcptVO.setFirst(admin.getMngrId());
-				genMemberDAO.insertGenMemberIntoEntPrcpt(entPrcptVO);
+				if (genMemberDAO.insertGenMemberIntoEntPrcpt(entPrcptVO) < 1) {
+					throw new GlobalException(ErrorCode.INSERT_FAILED);
+				}
 			}
-
 		}else{
 			throw new GlobalException(ErrorCode.INSERT_FAILED);
 		}
-		
+
 		// 등록 후 제대로 등록 됐는지 아이디로 회원 여부 조회 후 프론트로 응답
 		GenMemberVO.DefaultGenMemberVO genMember = genMemberDAO.selectGenMemberById(requestVO.getMbrId());
 

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -61,6 +62,13 @@ public class EntMemberController {
 	public ApiResult<String> deleteEntMember(@PathVariable int no) {
 		entMemberService.deleteEntMember(no);
 		return ApiResult.success("");
+	}
+
+	// 기업 회원 등록 API
+	@PostMapping("")
+	public ApiResult<EntMemberPO.InsertResponsePO> insertEntMember(@Valid @RequestBody EntMemberPO.InsertRequestPO requestPO) {
+		EntMemberPO.InsertResponsePO response = entMemberService.insertEntMember(requestPO);
+		return ApiResult.success(response);
 	}
 
 }

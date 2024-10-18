@@ -3,6 +3,7 @@ package kr.go.tech.protection.admin.domain.account.enterprise.dao;
 import java.util.List;
 import kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberPO;
 import kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberVO;
+import kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberVO.InsertRequestVO;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
@@ -20,4 +21,8 @@ public interface EntMemberDAO {
     int deleteEntMember(int no);
 
     int updateEmployeesDelYnByEntNo(int no);
+
+    int insertEntMember(InsertRequestVO requestVO);
+
+    EntMemberVO.DefaultEntMemberVO selectEntMemberByBusinessNumber(String businessNumber);
 }

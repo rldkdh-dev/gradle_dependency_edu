@@ -3,10 +3,10 @@ package kr.go.tech.protection.admin.domain.account.enterprise.service;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+import javax.validation.Valid;
 import kr.go.tech.protection.admin.domain.account.enterprise.dao.EntMemberDAO;
 import kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberPO;
 import kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberPO.DetailResponsePO;
-import kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberPO.ListResponsePO;
 import kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberVO;
 import kr.go.tech.protection.admin.domain.member.dto.BaseMemberVO;
 import kr.go.tech.protection.admin.global.exception.ErrorCode;
@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Slf4j
 @Service
@@ -81,7 +82,7 @@ public class EntMemberService {
 			.picSeCd(requestPO.getManagerTypeCode())
 			.picDeptNm(requestPO.getManagerDeptName())
 			.picJbpsCd(requestPO.getManagerPositionCode())
-			.picMblTelno(requestPO.getMangerTelno())
+			.picMblTelno(requestPO.getManagerTelNo())
 			.emlAddr(requestPO.getManagerEmail())
 			.emlRcptnAgreYn(requestPO.getIsEmailConsent())
 			.build();
@@ -113,7 +114,7 @@ public class EntMemberService {
 			.managerTypeCode(requestPO.getManagerTypeCode())
 			.managerDeptName(requestPO.getManagerDeptName())
 			.managerPositionCode(requestPO.getManagerPositionCode())
-			.managerTelNo(requestPO.getMangerTelno())
+			.managerTelNo(requestPO.getManagerTelNo())
 			.managerEmail(requestPO.getManagerEmail())
 			.isEmailConsent(requestPO.getIsEmailConsent())
 			.build();
@@ -123,7 +124,6 @@ public class EntMemberService {
 	public boolean checkBusinessNumber(String businessNumber) {
 		return entMemberDAO.isBusinessNumberDuplicate(businessNumber) > 0;
 	}
-
 
 	public DetailResponsePO selectEntMemberByNo(int no) {
 		EntMemberVO.DetailEntMemberVO entMember = entMemberDAO.selectEntMemberByNo(no);
@@ -205,5 +205,73 @@ public class EntMemberService {
 		}
 
 	}
+
+	@Transactional
+   public EntMemberPO.InsertResponsePO insertEntMember(@Valid @RequestBody EntMemberPO.InsertRequestPO requestPO) {
+       BaseMemberVO admin = (BaseMemberVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		EntMemberVO.InsertRequestVO requestVO = EntMemberVO.InsertRequestVO.builder()
+			.conmNm(requestPO.getCompanyName())
+			.rprsvNm(requestPO.getRepresentativeName())
+			.brNo(requestPO.getBusinessNumber())
+			.bzmnTypeCd(requestPO.getBusinessTypeCode())
+			.instTypeCd(requestPO.getInstitutionTypeCode())
+			.rprsBzstatCd(requestPO.getRepresentativeBusinessCode())
+			.rprsTpbizCd(requestPO.getRepresentativeBusinessCode())
+			.empCnt(requestPO.getEmployeeCount())
+			.telNo(requestPO.getEntTelNo())
+			// TODO 주소 통으로 들어온걸 우편번호, 도로명, 상세주소 분할해서 저장해야함
+			.bplcZip("우편번호")
+			.bplcRoadNm("도로명")
+			.bplcDaddr("상세주소")
+			.coHmpgAddr(requestPO.getHomepageUrl())
+			.mainPrdctn(requestPO.getMainProduct())
+			.fctYn(requestPO.getIsFactory())
+			.picNm(requestPO.getManagerName())
+			.picSeCd(requestPO.getManagerTypeCode())
+			.picDeptNm(requestPO.getManagerDeptName())
+			.picJbpsCd(requestPO.getManagerPositionCode())
+			.picMblTelno(requestPO.getManagerTelNo())
+			.emlAddr(requestPO.getManagerEmail())
+			.emlRcptnAgreYn(requestPO.getIsEmailConsent())
+			.build();
+		requestVO.setFirst(admin.getMngrId());
+
+		int result = entMemberDAO.insertEntMember(requestVO);
+
+		if(result < 1){
+			throw new GlobalException(ErrorCode.INSERT_FAILED);
+		}
+
+		// 등록 후 제대로 등록 됐는지 사업자등록번호로 회원 여부 조회 후 프론트로 응답
+		EntMemberVO.DefaultEntMemberVO entMember = entMemberDAO.selectEntMemberByBusinessNumber(requestVO.getBrNo());
+
+		if(ObjectUtils.isEmpty(entMember)) {
+			throw new GlobalException(ErrorCode.USER_NOT_FOUND);
+       }
+
+       return EntMemberPO.InsertResponsePO.builder()
+               .companyName(entMember.getConmNm())
+               .representativeName(entMember.getRprsvNm())
+               .businessNumber(entMember.getBrNo())
+               .businessTypeCode(entMember.getBzmnTypeCd())
+               .institutionTypeCode(entMember.getInstTypeCd())
+               .representativeBusinessCode(entMember.getRprsBzstatCd())
+               .representativeIndustryCode(entMember.getRprsTpbizCd())
+               .employeeCount(entMember.getEmpCnt())
+               .entTelNo(entMember.getTelNo())
+               .companyAddress(entMember.getBplcAddress())
+               .homepageUrl(entMember.getCoHmpgAddr())
+               .mainProduct(entMember.getMainPrdctn())
+               .isFactory(entMember.getFctYn())
+               .managerName(entMember.getPicNm())
+               .managerTypeCode(entMember.getPicSeCd())
+               .managerDeptName(entMember.getPicDeptNm())
+               .managerPositionCode(entMember.getPicJbpsCd())
+               .managerTelNo(entMember.getPicMblTelno())
+               .managerEmail(entMember.getEmlAddr())
+               .isEmailConsent(entMember.getEmlRcptnAgreYn())
+               .build();
+   }
 
 }
