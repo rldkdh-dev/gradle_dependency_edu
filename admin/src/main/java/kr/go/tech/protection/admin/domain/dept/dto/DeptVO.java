@@ -1,9 +1,9 @@
-package kr.go.tech.protection.admin.domain.auth.dto;
+package kr.go.tech.protection.admin.domain.dept.dto;
 
 import lombok.Builder;
 import lombok.Getter;
 
-public class AuthVO {
+public class DeptVO {
 
     @Getter
     @Builder

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 public class BizVO {
 
@@ -49,5 +50,20 @@ public class BizVO {
         private Integer tmprStrgNo;
         private Integer bizNo;
         private String tmprTtl;
+    }
+
+    @Getter
+    @Builder
+    public static class ListResponse {
+        private Integer bizNo;
+        private String bizNm;
+        private String mngrNm;
+        private String deptNm;
+        private Date rcrtBgngDt;
+        private Date rcrtEndDt;
+        private Date bizBgngDt;
+        private Date bizEndDt;
+        private String bizSttsCd;
+        private Integer applicantsCount;
     }
 }

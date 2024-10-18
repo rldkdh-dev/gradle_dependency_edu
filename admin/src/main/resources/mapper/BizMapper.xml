@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="kr.go.tech.protection.admin.domain.biz.dao.BizMapper">
+<mapper namespace="kr.go.tech.protection.admin.domain.biz.dao.BizDAO">
     <update id="updateBiz" parameterType="kr.go.tech.protection.admin.domain.biz.dto.BizVO$DefaultBiz">
         /* updateBiz [사업 공고 UPDATE 쿼리] */
         UPDATE
@@ -182,4 +182,63 @@
         WHERE
             "TMPR_STRG_TB"."BIZ_NO" = #{bizNo}
     </insert>
+
+    <select id="selectBizList" parameterType="kr.go.tech.protection.admin.domain.biz.dto.BizPO$SearchRequest" resultType="kr.go.tech.protection.admin.domain.biz.dto.BizVO$ListResponse">
+        SELECT
+            "BIZ_NO",
+            "BIZ_NM",
+            "MNGR_NM" ,
+            ARRAY_TO_STRING(ARRAY_AGG(agi."AUTHRT_NM"), ',') as "DEPT_NM",
+            DATE(bit."RCRT_BGNG_DT") as "RCRT_BGNG_DT",
+            DATE(bit."RCRT_END_DT") as "RCRT_END_DT",
+            DATE(bit."BIZ_BGNG_DT") as "BIZ_BGNG_DT",
+            DATE(bit."BIZ_END_DT") as "BIZ_END_DT",
+            bit."RCRT_STTS_CD",
+            (select count(*) from "BIZ_APLY_TB" bat where bat."BIZ_NO" = bit."BIZ_NO") as "APPLICANTS_COUNT"
+        FROM
+            "BIZ_INFO_TB" bit
+        JOIN
+            "MNGR_MBR_INFO_TB" mmit
+        ON
+            bit."PIC_ID" = MMIT."MNGR_ID"
+        LEFT JOIN
+            "AUTHRT_GROUP_INFO_TB" agi on CAST (agi."AUTHRT_NO" as TEXT) = ANY(STRING_TO_ARRAY(bit."TKCG_DEPT_CD", '|'))
+        where
+            bit."BIZ_STTS_CD"  = #{bizStatus}
+
+            <if test="recruitmentYear != ''">
+                AND
+                    EXTRACT(YEAR FROM bit."RCRT_BGNG_DT") = CAST(#{recruitmentYear} AS INTEGER)
+            </if>
+            <if test='recruitmentStatus.equals("STS002")'>
+                AND
+                    "RCRT_BGNG_DT" <![CDATA[<]]> NOW()
+            </if>
+            <if test="recruitmentStatus.equals('STS003')">
+                AND
+                    "RCRT_BGNG_DT" <![CDATA[<]]> NOW()
+                AND
+                    "RCRT_END_DT" <![CDATA[>]]> NOW()
+            </if>
+            <if test="assignDepartmentNo != null">
+                AND
+                    "TKCG_DEPT_CD" SIMILAR TO '%'||cast(#{assignDepartmentNo} as VARCHAR)||'%'
+            </if>
+            <if test="searchType != '' and searchKeyword != ''">
+                <choose>
+                    <when test="searchType.equals('RBC001')">
+                        AND
+                           bit."BIZ_NM" LIKE '%'||#{searchKeyword}||'%'
+                    </when>
+                    <when test="searchType.equals('RBC002')">
+                        AND
+                           mmit."MNGR_NM" LIKE '%'||#{searchKeyword}||'%'
+                    </when>
+                </choose>
+            </if>
+        GROUP BY
+            bit."BIZ_NO", bit."BIZ_NM", mmit."MNGR_NM"
+        ORDER BY
+            bit."BIZ_NO" DESC
+    </select>
 </mapper>

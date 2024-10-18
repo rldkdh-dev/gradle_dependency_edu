@@ -3,9 +3,7 @@ package kr.go.tech.protection.admin.domain.biz.dto;
 import lombok.Builder;
 import lombok.Getter;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
 
@@ -167,5 +165,31 @@ public class BizPO {
 //        private String applicationFormJson;
 
         private Integer pageNo;
+    }
+
+    @Getter
+    @Builder
+    public static class ListResponse {
+        private Integer no; // no
+        private Integer bizNo; // 사업번호
+        private String bizName; // 사업명
+        private String assignDepartment; // 담당 부서
+        private String picName; // 담당자
+        private String recruitmentDate; // 모집기간
+        private String bizDate; // 사업 종료기간
+        private Integer applicantsCount; // 신청자 수
+        private String recruitmentStatus; // 모집현황
+    }
+
+    @Getter
+    @Builder
+    public static class SearchRequest {
+        @NotNull
+        private String bizStatus; // 공고상태
+        private String recruitmentYear; // 모집기간(년도)
+        private String recruitmentStatus; // 모집현황
+        private Integer assignDepartmentNo; // 담당부서
+        private String searchType; // 검색구분
+        private String searchKeyword; // 검색어
     }
 }

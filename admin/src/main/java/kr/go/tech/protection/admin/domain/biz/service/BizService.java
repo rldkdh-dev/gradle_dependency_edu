@@ -2,7 +2,7 @@ package kr.go.tech.protection.admin.domain.biz.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.go.tech.protection.admin.domain.biz.dao.BizMapper;
+import kr.go.tech.protection.admin.domain.biz.dao.BizDAO;
 import kr.go.tech.protection.admin.domain.biz.dto.BizPO;
 import kr.go.tech.protection.admin.domain.biz.dto.BizVO;
 import kr.go.tech.protection.admin.domain.member.dto.BaseMemberVO;
@@ -13,17 +13,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class BizService {
-    private final BizMapper bizMapper;
+    private final BizDAO bizDao;
 
     @Transactional
     public BizPO.InsertResponse insertBiz(BizPO.InsertRequest requestPO, MultipartFile fileData) throws JsonProcessingException {
@@ -48,14 +51,14 @@ public class BizService {
 
 
         // 임시저장 체크
-        BizVO.DefaultTempSave temp = bizMapper.selectTempSave(requestPO.getBizNo());
+        BizVO.DefaultTempSave temp = bizDao.selectTempSave(requestPO.getBizNo());
         
         if(temp == null) {
             // TODO 임시저장 데이터가 없는 경우 처리
         }
 
         // 임시저장 DELETE
-        int delResult = bizMapper.deleteTempSave(requestPO.getBizNo());
+        int delResult = bizDao.deleteTempSave(requestPO.getBizNo());
         if(delResult < 1) {
             // TODO 임시저장 삭제 에러 처리
         }
@@ -90,7 +93,7 @@ public class BizService {
         requestVO.setFirst(admin.getMngrId());
         requestVO.setLast(admin.getMngrId());
 
-        int result = bizMapper.updateBiz(requestVO);
+        int result = bizDao.updateBiz(requestVO);
         if(result < 1) {
             // TODO update 에러 처리
         }
@@ -98,7 +101,7 @@ public class BizService {
         // 약관이 있는 경우 약관 INSERT
         if(!requestPO.getTerms().isEmpty()) {
             // 기존 임시저장된 약관 삭제
-            int termResult = bizMapper.deleteTerms(bizNo);
+            int termResult = bizDao.deleteTerms(bizNo);
             if(termResult < 1) {
                 // TODO 약관 삭제 에러 처리
             }
@@ -113,7 +116,7 @@ public class BizService {
                 data.setFirst(admin.getMngrId());
                 data.setLast(admin.getMngrId());
 
-                int termsRst = bizMapper.insertTerms(data);
+                int termsRst = bizDao.insertTerms(data);
                 if(termsRst < 1) {
                     // TODO INSERT 에러 처리
                 }
@@ -200,13 +203,13 @@ public class BizService {
                 .build();
 
         // 임시저장 데이터 확인 (임시저장이 있는 경우 임시저장 및 사업 데이터 UPDATE, 없는 경우 임시저장, 사업 데이터 INSERT)
-        BizVO.DefaultTempSave tempSave = bizMapper.selectTempSave(bizNo);
+        BizVO.DefaultTempSave tempSave = bizDao.selectTempSave(bizNo);
 
         if(tempSave != null) {
             // 약관 페이지 제외 공고 UPDATE 처리
             if(!requestPO.getPageNo().equals(3)) {
                 requestVO.setLast(admin.getMngrId());
-                int result = bizMapper.updateBiz(requestVO);
+                int result = bizDao.updateBiz(requestVO);
                 if( result < 1 ) {
                 }
             }
@@ -217,7 +220,7 @@ public class BizService {
                     .bizNo(requestVO.getBizNo())
                     .build();
             param.setLast(admin.getMngrId());
-            int tempResult = bizMapper.mergeIntoTempSave(param);
+            int tempResult = bizDao.mergeIntoTempSave(param);
             if(tempResult < 1) {
                 // TODO 에러 처리
             }
@@ -225,7 +228,7 @@ public class BizService {
             // 공고 INSERT
             requestVO.setFirst(admin.getMngrId());
             requestVO.setLast(admin.getMngrId());
-            int result = bizMapper.insertBiz(requestVO);
+            int result = bizDao.insertBiz(requestVO);
             if( result < 1 ) {
                 // TODO insert 에러 처리
             }
@@ -237,7 +240,7 @@ public class BizService {
                     .build();
             param.setFirst(admin.getMngrId());
             param.setLast(admin.getMngrId());
-            int tempResult = bizMapper.mergeIntoTempSave(param);
+            int tempResult = bizDao.mergeIntoTempSave(param);
             if(tempResult < 1) {
                 // TODO 에러 처리
             }
@@ -246,7 +249,7 @@ public class BizService {
         // 약관 페이지 요청시 약관 INSERT
         if(requestPO.getPageNo().equals(3) && !requestPO.getTerms().isEmpty()) {
             // 기존 임시저장된 약관 삭제
-            int termResult = bizMapper.deleteTerms(requestVO.getBizNo());
+            int termResult = bizDao.deleteTerms(requestVO.getBizNo());
             if(termResult < 1) {
                 // TODO 약관 삭제 에러 처리
             }
@@ -261,7 +264,7 @@ public class BizService {
                 data.setFirst(admin.getMngrId());
                 data.setLast(admin.getMngrId());
 
-                int termsRst = bizMapper.insertTerms(data);
+                int termsRst = bizDao.insertTerms(data);
                 if (termsRst < 1) {
                     // TODO INSERT 에러 처리
                 }
@@ -287,5 +290,25 @@ public class BizService {
                 .applicationFormJson(requestPO.getApplicationFormJson())
                 .pageNo(requestPO.getPageNo())
                 .build();
+    }
+
+    public List<BizPO.ListResponse> selectBizzesList(BizPO.SearchRequest request) {
+
+        List<BizVO.ListResponse> bizList = bizDao.selectBizList(request);
+        AtomicReference<Integer> rowNum = new AtomicReference<>(1);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        return bizList.stream().map(biz->BizPO.ListResponse.builder()
+                .no(rowNum.getAndSet(rowNum.get() + 1))
+                .bizNo(biz.getBizNo())
+                .bizName(biz.getBizNm())
+                .assignDepartment(biz.getDeptNm())
+                .picName(biz.getMngrNm())
+                .recruitmentDate(sdf.format(biz.getRcrtBgngDt())+ " ~ " +sdf.format(biz.getRcrtEndDt()))
+                .bizDate(sdf.format(biz.getBizBgngDt()) + " ~ " + sdf.format(biz.getBizEndDt()))
+                .applicantsCount(biz.getApplicantsCount())
+                .recruitmentStatus(biz.getRcrtBgngDt().compareTo(new Date())<0?"모집 중":"대기")
+                .build()
+        ).collect(Collectors.toList());
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,6 +28,12 @@ public class BizController {
     @PostMapping(value = "/temp")
     public ApiResult<BizPO.InsertResponse> insertTempSaveBiz(@Valid @RequestPart(name="json") BizPO.TempInsertRequest requestPO) throws JsonProcessingException {
         BizPO.InsertResponse response = bizService.insertTempSaveBiz(requestPO);
+        return ApiResult.success(response);
+    }
+
+    @GetMapping(value = "")
+    public ApiResult<List<BizPO.ListResponse>> selectBizzesList(@Valid @RequestBody BizPO.SearchRequest request) {
+        List<BizPO.ListResponse> response = bizService.selectBizzesList(request);
         return ApiResult.success(response);
     }
 }
