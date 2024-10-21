@@ -8,8 +8,8 @@ spring:
   application:
     name: admin
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: ENC(z0E3pVgdYTl8xTsqcbpggeQ/BaMXhChyeMTarbk3bSvirnupXdEzbLHR+zCD0+BqFWyqryeiFFc=)
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: ENC(8yQYQKOpNfdwQmxx9ru5Xkj9z3J271WeK0OlkauvkUuK5bfuUoRdIWUrjnVJ64jylQ++839VeBjBvJy2iWYVKA==)
     username: ENC(zjtt39UJAPnH8koc9erOsw==)
     password: ENC(RtOuXeSNC8cQUNXmddy4Q70a9uH9XWbZ)
 
@@ -17,3 +17,14 @@ spring:
 jasypt:
   encryptor:
     bean: jasyptStringEncryptor
+
+jwt:
+  secret: a2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbXRva2FyaW10b2thcmltdG9rYXJpbQ==
+
+logging:
+  level:
+    jdbc:
+      resultset: warn
+      audit: warn
+      connection: warn
+      sqlonly: off
