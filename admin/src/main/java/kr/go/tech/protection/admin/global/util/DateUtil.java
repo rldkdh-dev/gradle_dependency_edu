@@ -14,6 +14,29 @@ public class DateUtil {
     private static final String DEFAULT_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
 
+
+    /**
+     * yyyyMMdd 문자열 날짜를 Timestamp로 변환하는 메서드
+     *
+     * @return 변환된 Timestamp, 변환에 실패할 경우 null 반환
+     */
+    public static Timestamp convertStringToTimestamp(String dateString) {
+        if (dateString == null || dateString.isEmpty()) {
+            return null; // null 또는 빈 문자열인 경우 null 반환
+        }
+
+        try {
+            // "yyyyMMdd" 형식으로 파싱
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            java.util.Date date = sdf.parse(dateString);
+            return new Timestamp(date.getTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null; // 파싱에 실패한 경우 null 반환
+        }
+    }
+
+
     /**
       * LocalDateTime을 고정된 포맷("yyyy-MM-dd HH:mm:ss")의 문자열로 변환하는 메서드
       *

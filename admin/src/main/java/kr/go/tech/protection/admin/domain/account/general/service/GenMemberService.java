@@ -8,7 +8,7 @@ import javax.validation.Valid;
 import kr.go.tech.protection.admin.domain.account.general.dao.GenMemberDAO;
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberPO;
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO;
-import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO.DefaultGenMemberVO;
+import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO.DetailGenMemberVO;
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO.InsertEntPrcptVO;
 import kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO.UpdateEntPrcptRequestVO;
 import kr.go.tech.protection.admin.domain.member.dto.BaseMemberVO;
@@ -59,8 +59,13 @@ public class GenMemberService {
 		//회원정보 상세 조회 및 소속기업 정보 조회
 		GenMemberVO.DetailGenMemberVO genMember = genMemberDAO.selectGenMemberByNo(no);
 
+		if (ObjectUtils.isEmpty(genMember)) {
+			throw new GlobalException(ErrorCode.USER_NOT_FOUND);
+		}
+
 		return GenMemberPO.DetailResponsePO.builder()
 			//회원정보
+			.genNo(genMember.getMbrNo())
 			.genName(genMember.getMbrNm())
 			.genderCd(genMember.getMbrGndrCd())
 			.birthDate(genMember.getMbrBrdt())
@@ -77,7 +82,7 @@ public class GenMemberService {
 			.department(genMember.getDeptNm())
 			.position(genMember.getJbpsCd())
 			.companyZipcode(genMember.getBplcZip())
-			.companyRoadName(genMember.getBlpcRoadNm())
+			.companyRoadName(genMember.getBplcRoadNm())
 			.companyDetailAddress(genMember.getBplcDaddr())
 			.companyAddress(genMember.getCompanyAddress())
 			.isAllow(genMember.getAlwYn())
@@ -89,7 +94,7 @@ public class GenMemberService {
 	public GenMemberPO.UpdateResponsePO updateGenMember(GenMemberPO.UpdateRequestPO requestPO) {
 		BaseMemberVO admin = (BaseMemberVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-		GenMemberVO.DefaultGenMemberVO genMember = genMemberDAO.selectGenMemberById(requestPO.getGenId());
+		DetailGenMemberVO genMember = genMemberDAO.selectGenMemberByNo(requestPO.getGenNo());
 
 		if (ObjectUtils.isEmpty(genMember)) {
 			throw new GlobalException(ErrorCode.USER_NOT_FOUND);
@@ -97,7 +102,7 @@ public class GenMemberService {
 
 		// 수정하려는 사업자 등록번호 값 검증
 		if (requestPO.getBusinessNumber() != null && !requestPO.getBusinessNumber().isEmpty()) {
-			String entMemberNo = genMemberDAO.selectEntMemberNoByBusinessNumber(requestPO.getBusinessNumber());
+			Integer entMemberNo = genMemberDAO.selectEntMemberNoByBusinessNumber(requestPO.getBusinessNumber());
 
 			if (entMemberNo != null) {
 				GenMemberVO.UpdateEntPrcptRequestVO updateEntPrcptRequestParam = UpdateEntPrcptRequestVO.builder()
@@ -122,7 +127,7 @@ public class GenMemberService {
 			.mbrNo(requestPO.getGenNo())
 			.mbrNm(requestPO.getGenName())
 			.mbrGndrCd(requestPO.getGenderCd())
-			.mbrBrdt(requestPO.getBirthDate())
+			.mbrBrdt(DateUtil.convertStringToTimestamp(requestPO.getBirthDate()))
 			.mbrId(requestPO.getGenId())
 			.mbrMblTelno(requestPO.getGenPhone())
 			.emlAddr(requestPO.getGenEmail())
@@ -228,7 +233,7 @@ public class GenMemberService {
 		GenMemberVO.InsertRequestVO requestVO = GenMemberVO.InsertRequestVO.builder()
 			.mbrNm(requestPO.getGenName())
 			.mbrGndrCd(requestPO.getGenderCd())
-			.mbrBrdt(requestPO.getBirthDate())
+			.mbrBrdt(DateUtil.convertStringToTimestamp(requestPO.getBirthDate()))
 			.mbrId(requestPO.getGenId())
 			.mbrPswd(encoder.encode(requestPO.getPassword()))
 			.mbrMblTelno(requestPO.getGenPhone())

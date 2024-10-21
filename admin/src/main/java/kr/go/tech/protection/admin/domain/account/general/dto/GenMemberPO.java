@@ -43,7 +43,7 @@ public class GenMemberPO {
     @Getter
     @Builder
     public static class DetailResponsePO {
-        private String genNo;   //일반 회원번호
+        private Integer genNo;   //일반 회원번호
         private String genName;     //이름
         private String genderCd;      //성별 코드
         private String birthDate;      //생년월일
@@ -101,11 +101,11 @@ public class GenMemberPO {
         )
         private String password;
 
-        // 연락처: 010으로 시작, 나머지 두 부분은 최대 4자리 숫자
+        // 연락처: 11자리 숫자
         @NotEmpty(message = "연락처는 공백일 수 없습니다.")
         @Pattern(
-            regexp = "^010-\\d{3,4}-\\d{4}$",
-            message = "연락처 형식이 올바르지 않습니다. (예: 010-1234-5678)"
+            regexp = "^\\d{11}$",
+            message = "연락처 형식이 올바르지 않습니다. (예: 01012345678)"
         )
         private String genPhone;
 
@@ -159,11 +159,11 @@ public class GenMemberPO {
         )
         private String genId;
 
-        // 연락처: 010으로 시작, 나머지 두 부분은 최대 4자리 숫자
+        // 연락처: 11자리 숫자
         @NotEmpty(message = "연락처는 공백일 수 없습니다.")
         @Pattern(
-            regexp = "^010-\\d{3,4}-\\d{4}$",
-            message = "연락처 형식이 올바르지 않습니다. (예: 010-1234-5678)"
+            regexp = "^\\d{11}$",
+            message = "연락처 형식이 올바르지 않습니다. (예: 01012345678)"
         )
         private String genPhone;
 
@@ -210,8 +210,6 @@ public class GenMemberPO {
         private String roadName;
         private String detailAddress; // 상세주소 (null 허용)
     }
-
-
 
     @Getter
     public static class ResetPasswordRequestPO {

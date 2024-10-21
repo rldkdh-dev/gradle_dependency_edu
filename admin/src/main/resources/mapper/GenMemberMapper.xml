@@ -156,7 +156,7 @@
           "MBR_NO" = #{mbrNo}
   </update>
 
-    <select id="selectEntMemberNoByBusinessNumber" resultType="String">
+    <select id="selectEntMemberNoByBusinessNumber">
         /* selectEntMemberNoByBusinessNumber [일반 회원 수정 - 사업자 등록번호 유효 검증 쿼리] */
         SELECT
         		"ENT_MBR_NO"
@@ -171,9 +171,9 @@
         UPDATE
             "ENT_PRCPT_MBR_INFO_TB"
         SET
-            ENT_MBR_NO = #{entMbrNo}
+            "ENT_MBR_NO" = #{entMbrNo}
         WHERE
-            MBR_NO = #{mbrNo}
+            "MBR_NO" = #{mbrNo}
     </update>
 
     <update id="resetPassword" parameterType="kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO$ResetPasswordRequestVO">
@@ -203,7 +203,6 @@
         /* insertGenMember [일반 회원 추가 쿼리] */
         INSERT INTO "GEN_MBR_INFO_TB"
             (
-                "MBR_NO",
                 "MBR_SE_CD",
                 "MBR_NM",
                 "MBR_GNDR_CD",
@@ -222,12 +221,11 @@
                 "LAST_MDFCN_DT",
                 "LAST_MDFR_ID"
             ) VALUES (
-                #{mbrNo},
                 #{mbrSeCd},
                 #{mbrNm},
                 #{mbrGndrCd},
                 #{mbrBrdt},
-                #{mbrMblTelNo},
+                #{mbrMblTelno},
                 #{mbrId},
                 #{mbrPswd},
                 0,

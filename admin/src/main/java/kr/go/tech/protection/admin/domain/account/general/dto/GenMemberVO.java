@@ -1,5 +1,6 @@
 package kr.go.tech.protection.admin.domain.account.general.dto;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import kr.go.tech.protection.admin.global.common.BaseColumn;
 import lombok.Builder;
@@ -73,7 +74,7 @@ public class GenMemberVO {
         private String alwYn;  //사업자 등록번호
 
         private String bplcZip;  //사업장 우편번호
-        private String blpcRoadNm;  //사업장 도로명
+        private String bplcRoadNm;  //사업장 도로명
         private String bplcDaddr;  //사업장 상세주소
     }
 
@@ -83,7 +84,7 @@ public class GenMemberVO {
         private Integer mbrNo;  //회원번호
         private String mbrNm;  //회원명
         private String mbrGndrCd;  //회원 성별 코드
-        private String mbrBrdt;  //회원 출생일자
+        private Timestamp mbrBrdt;  //회원 출생일자
         private String mbrId;  //회원 아이디
         private String mbrMblTelno;  //회원 휴대전화 번호
         private String emlAddr;  //이메일 주소
@@ -97,7 +98,7 @@ public class GenMemberVO {
     @Getter
     @Builder
     public static class UpdateEntPrcptRequestVO extends BaseColumn {
-        private String entMbrNo;  // 업데이트할 기업회원 번호
+        private Integer entMbrNo;  // 업데이트할 기업회원 번호
         private Integer mbrNo; // 일반회원 번호
     }
 
@@ -116,7 +117,7 @@ public class GenMemberVO {
         private String mbrSeCd;  //회원 구분 코드
         private String mbrNm;  //회원명
         private String mbrGndrCd;  //회원 성별 코드
-        private String mbrBrdt;  //회원 출생일자
+        private Timestamp mbrBrdt;  //회원 출생일자
         private String mbrMblTelno;  //회원 휴대전화 번호
         private String mbrId;  //회원 아이디
         private String mbrPswd;  //회원 비밀번호

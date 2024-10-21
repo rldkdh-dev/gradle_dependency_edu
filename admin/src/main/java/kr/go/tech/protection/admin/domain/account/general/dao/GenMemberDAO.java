@@ -22,7 +22,7 @@ public interface GenMemberDAO {
 
 	int updateEntPrcptMbrInfoDelYnByGenNo(int no);
 
-	String selectEntMemberNoByBusinessNumber(String businessNumber);
+	Integer selectEntMemberNoByBusinessNumber(String businessNumber);
 
 	int updateEntPrcpt(GenMemberVO.UpdateEntPrcptRequestVO param);
 
