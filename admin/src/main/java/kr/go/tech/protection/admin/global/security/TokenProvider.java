@@ -31,7 +31,7 @@ public class TokenProvider {
     @PostConstruct
     protected void init() {
         this.SECRET_KEY = Base64.getEncoder().encodeToString(SECRET_KEY.getBytes());
-        this.tokenValidTime = 30 * 60 * 1000L; // 30분
+        this.tokenValidTime = 10 * 60 * 1000L; // 10분
     }
 
     public String generateToken(String memberId, String authGroupNo) {
