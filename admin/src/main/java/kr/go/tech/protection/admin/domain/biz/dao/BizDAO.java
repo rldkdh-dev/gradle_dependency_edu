@@ -8,7 +8,7 @@ import java.util.List;
 
 @Mapper
 public interface BizDAO {
-    int updateBiz(BizVO.DefaultBiz requestVO);
+    int updateBizBeforeInsert(BizVO.DefaultBiz requestVO);
 
     int insertBiz(BizVO.DefaultBiz requestVO);
 
@@ -23,4 +23,8 @@ public interface BizDAO {
     int mergeIntoTempSave(BizVO.DefaultTempSave updateParam);
 
     List<BizVO.ListResponse> selectBizList(BizPO.SearchRequest request);
+
+    BizVO.BizDetail findBizByBizNo(Integer bizNo);
+
+    int updateBizAfterInsert(BizVO.UpdateBiz requestVO);
 }

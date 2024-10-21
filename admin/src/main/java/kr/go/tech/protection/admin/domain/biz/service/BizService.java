@@ -6,6 +6,8 @@ import kr.go.tech.protection.admin.domain.biz.dao.BizDAO;
 import kr.go.tech.protection.admin.domain.biz.dto.BizPO;
 import kr.go.tech.protection.admin.domain.biz.dto.BizVO;
 import kr.go.tech.protection.admin.domain.member.dto.BaseMemberVO;
+import kr.go.tech.protection.admin.global.exception.ErrorCode;
+import kr.go.tech.protection.admin.global.exception.GlobalException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
@@ -34,9 +37,6 @@ public class BizService {
         BaseMemberVO admin = (BaseMemberVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         LocalDateTime now = LocalDateTime.now();
         Integer bizNo = requestPO.getBizNo();
-        
-        // TODO 테스트용
-        Integer fileNo = null;
 
         // JSON to String
         ObjectMapper objectMapper = new ObjectMapper();
@@ -49,25 +49,22 @@ public class BizService {
 
         String statusCode = getStatusCode(getLocaldatetime(requestPO.getRecruitStartDt()),getLocaldatetime(requestPO.getRecruitEndDt()),now);
 
-
         // 임시저장 체크
         BizVO.DefaultTempSave temp = bizDao.selectTempSave(requestPO.getBizNo());
-        
         if(temp == null) {
-            // TODO 임시저장 데이터가 없는 경우 처리
+            throw new GlobalException(ErrorCode.NOT_FOUND_TEMP_SAVE);
         }
 
         // 임시저장 DELETE
         int delResult = bizDao.deleteTempSave(requestPO.getBizNo());
         if(delResult < 1) {
-            // TODO 임시저장 삭제 에러 처리
+            throw new GlobalException(ErrorCode.NOT_FOUND_TEMP_SAVE);
         }
 
         // 사업 UPDATE
         BizVO.DefaultBiz requestVO = BizVO.DefaultBiz.builder()
             .pageNo(requestPO.getPageNo())
             .bizNo(bizNo)
-            .fileNo(fileNo)
             .bizNm(requestPO.getBizName())
             .tkcgDeptCd(Arrays.stream(requestPO.getDepts())
                     .map(String::valueOf)
@@ -93,34 +90,14 @@ public class BizService {
         requestVO.setFirst(admin.getMngrId());
         requestVO.setLast(admin.getMngrId());
 
-        int result = bizDao.updateBiz(requestVO);
+        int result = bizDao.updateBizBeforeInsert(requestVO);
         if(result < 1) {
-            // TODO update 에러 처리
+            throw new GlobalException(ErrorCode.BIZ_INSERT_FAILED);
         }
 
         // 약관이 있는 경우 약관 INSERT
         if(!requestPO.getTerms().isEmpty()) {
-            // 기존 임시저장된 약관 삭제
-            int termResult = bizDao.deleteTerms(bizNo);
-            if(termResult < 1) {
-                // TODO 약관 삭제 에러 처리
-            }
-
-            for (BizPO.Terms term: requestPO.getTerms()) {
-                BizVO.InsertTerm data = BizVO.InsertTerm.builder()
-                        .bizNo(bizNo)
-                        .trmsNm(term.getTermsName())
-                        .trmsCn(term.getTermsContent())
-                        .sortNo(term.getSortNo())
-                        .build();
-                data.setFirst(admin.getMngrId());
-                data.setLast(admin.getMngrId());
-
-                int termsRst = bizDao.insertTerms(data);
-                if(termsRst < 1) {
-                    // TODO INSERT 에러 처리
-                }
-            }
+            insertTerms(bizNo, admin, requestPO.getTerms());
         }
 
         return BizPO.InsertResponse.builder()
@@ -201,6 +178,7 @@ public class BizService {
                 .strgYn("N")
                 .tmprStrgYn("Y")
                 .build();
+        requestVO.setLast(admin.getMngrId());
 
         // 임시저장 데이터 확인 (임시저장이 있는 경우 임시저장 및 사업 데이터 UPDATE, 없는 경우 임시저장, 사업 데이터 INSERT)
         BizVO.DefaultTempSave tempSave = bizDao.selectTempSave(bizNo);
@@ -209,8 +187,9 @@ public class BizService {
             // 약관 페이지 제외 공고 UPDATE 처리
             if(!requestPO.getPageNo().equals(3)) {
                 requestVO.setLast(admin.getMngrId());
-                int result = bizDao.updateBiz(requestVO);
+                int result = bizDao.updateBizBeforeInsert(requestVO);
                 if( result < 1 ) {
+                    throw new GlobalException(ErrorCode.BIZ_UPDATE_FAILED);
                 }
             }
 
@@ -222,7 +201,7 @@ public class BizService {
             param.setLast(admin.getMngrId());
             int tempResult = bizDao.mergeIntoTempSave(param);
             if(tempResult < 1) {
-                // TODO 에러 처리
+                throw new GlobalException(ErrorCode.TEMP_SAVE_INSERT_FAILED);
             }
         } else {
             // 공고 INSERT
@@ -230,7 +209,7 @@ public class BizService {
             requestVO.setLast(admin.getMngrId());
             int result = bizDao.insertBiz(requestVO);
             if( result < 1 ) {
-                // TODO insert 에러 처리
+                throw new GlobalException(ErrorCode.BIZ_INSERT_FAILED);
             }
 
             // 임시저장 INSERT
@@ -242,7 +221,7 @@ public class BizService {
             param.setLast(admin.getMngrId());
             int tempResult = bizDao.mergeIntoTempSave(param);
             if(tempResult < 1) {
-                // TODO 에러 처리
+                throw new GlobalException(ErrorCode.TEMP_SAVE_INSERT_FAILED);
             }
         }
 
@@ -251,7 +230,7 @@ public class BizService {
             // 기존 임시저장된 약관 삭제
             int termResult = bizDao.deleteTerms(requestVO.getBizNo());
             if(termResult < 1) {
-                // TODO 약관 삭제 에러 처리
+                throw new GlobalException(ErrorCode.TEMP_SAVE_DELETE_FAILED);
             }
 
             for (BizPO.Terms term: requestPO.getTerms()) {
@@ -266,7 +245,7 @@ public class BizService {
 
                 int termsRst = bizDao.insertTerms(data);
                 if (termsRst < 1) {
-                    // TODO INSERT 에러 처리
+                    throw new GlobalException(ErrorCode.TEMP_SAVE_INSERT_FAILED);
                 }
             }
         }
@@ -311,4 +290,141 @@ public class BizService {
                 .build()
         ).collect(Collectors.toList());
     }
+
+    @Transactional
+    public BizPO.UpdateResponse updateBizzes(BizPO.UpdateRequest request, MultipartFile fileData) throws JsonProcessingException {
+        BizVO.BizDetail biz = bizDao.findBizByBizNo(request.getBizNo());
+        if(biz==null) {
+            throw new GlobalException(ErrorCode.NOT_FOUND_BIZ);
+        }
+
+        BaseMemberVO admin = (BaseMemberVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        // 담당자 일치 확인
+        if(!admin.getMngrId().equals(biz.getPicId())) {
+            throw new GlobalException(ErrorCode.NOT_MATCHED_PIC);
+        }
+        
+        // 모집종료일자가 모집시작일자보다 빠른지 확인 
+        if(request.getRecruitEndDt().before(java.sql.Timestamp.valueOf(biz.getRcrtBgngDt()))) {
+            throw new GlobalException(ErrorCode.BAD_REQUEST_RECRUIT_DATE);
+        }
+
+        LocalDate recruitEndDt = getLocalDateFormat(request.getRecruitEndDt());
+        LocalDate today = LocalDate.now();
+
+        // 모집종료일자가 오늘 이전인지 확인
+        if(!recruitEndDt.equals(today) && request.getRecruitEndDt().before(new Date())) {
+            throw new GlobalException(ErrorCode.BAD_REQUEST_RECRUIT_DATE_FOR_TODAY);
+        }
+
+        // 본인 담당부서 포함여부 확인
+        if(!Arrays.stream(request.getDepts()).anyMatch(dept-> dept.equals(admin.getAuthrtGroupNo()))) {
+            throw new GlobalException(ErrorCode.BAD_REQUEST_MY_DEPT);
+        }
+
+        // 모집시작 여부
+        String afterRecruitDateYn = today.equals(biz.getRcrtBgngDt().toLocalDate())?"Y":today.isAfter(biz.getRcrtBgngDt().toLocalDate())?"Y":"N";
+        LocalDateTime now = LocalDateTime.now();
+        String statusCode = getStatusCode(biz.getRcrtBgngDt(),getLocaldatetime(request.getRecruitEndDt()),now); // 상태 코드
+        Integer bizNo = biz.getBizNo();
+
+        // JSON to String
+        ObjectMapper objectMapper = new ObjectMapper();
+        String processJsn = objectMapper.writeValueAsString(request.getBizProcessJson());
+        String formJsn = objectMapper.writeValueAsString(request.getApplicationFormJson());
+
+        // 사업 UPDATE
+        BizVO.UpdateBiz requestVO = BizVO.UpdateBiz.builder()
+                .afterBizStartDt(afterRecruitDateYn)
+                .pageNo(request.getPageNo())
+                .bizNo(bizNo)
+                .bizNm(request.getBizName())
+                .tkcgDeptCd(Arrays.stream(request.getDepts())
+                        .map(String::valueOf)
+                        .collect(Collectors.joining("|")))
+                .rcrtEndDt(getLocaldatetime(request.getRecruitEndDt()))
+                .bizBgngDt(getLocaldatetime(request.getBizStartDt()))
+                .bizEndDt(getLocaldatetime(request.getBizEndDt()))
+                .bizCn(request.getBizContent())
+                .rcrtSttsCd(statusCode)
+                .bizSttsCd(statusCode)
+                .bizTrgtCd(String.join("|",request.getTarget()))
+                .bizSmrCn(request.getBizSummary())
+                .aplyPrcCn(request.getApplicationProcess())
+                .cntInfCn(request.getContact())
+                .prgrsPrcsJsn(processJsn)
+                .aplyFrmJsn(formJsn)
+                .build();
+        requestVO.setLast(admin.getMngrId());
+
+        int result = bizDao.updateBizAfterInsert(requestVO);
+        if(result < 1) {
+            throw new GlobalException(ErrorCode.BIZ_UPDATE_FAILED);
+        }
+
+        // 약관 페이지 수정 요청이면서 모집시작 전인 경우 약관 INSERT
+        if(!request.getTerms().isEmpty() && request.getPageNo()==3 && afterRecruitDateYn.equals("N")) {
+            insertTerms(bizNo, admin, request.getTerms());
+        }
+
+        // TODO 파일 추가
+        if(!fileData.isEmpty()) {
+        }
+
+        // TODO 파일 추가
+        return BizPO.UpdateResponse.builder()
+                .bizNo(request.getBizNo())
+                .bizName(request.getBizName())
+                .adminName(admin.getUsername())
+                .depts(request.getDepts())
+                .recruitStartDt(getDateFormat(biz.getBizBgngDt()))
+                .recruitEndDt(request.getRecruitEndDt())
+                .bizStartDt(request.getBizStartDt())
+                .bizEndDt(request.getBizEndDt())
+                .target(request.getTarget())
+                .bizContent(request.getBizContent())
+                .bizSummary(request.getBizSummary())
+                .applicationProcess(request.getApplicationProcess())
+                .contact(request.getContact())
+                .bizProcessJson(request.getBizProcessJson())
+                .terms(request.getTerms())
+                .applicationFormJson(request.getApplicationFormJson())
+                .build();
+    }
+
+    public void insertTerms(Integer bizNo, BaseMemberVO admin, List<BizPO.Terms> terms) {
+        // 기존 임시저장된 약관 삭제
+        int termResult = bizDao.deleteTerms(bizNo);
+        if(termResult < 1) {
+            throw new GlobalException(ErrorCode.TERMS_DELETE_FAILED);
+        }
+
+        for (BizPO.Terms term: terms) {
+            BizVO.InsertTerm data = BizVO.InsertTerm.builder()
+                    .bizNo(bizNo)
+                    .trmsNm(term.getTermsName())
+                    .trmsCn(term.getTermsContent())
+                    .sortNo(term.getSortNo())
+                    .build();
+            data.setFirst(admin.getMngrId());
+            data.setLast(admin.getMngrId());
+
+            int termsRst = bizDao.insertTerms(data);
+            if(termsRst < 1) {
+                throw new GlobalException(ErrorCode.TERMS_INSERT_FAILED);
+            }
+        }
+    }
+
+    public Date getDateFormat(LocalDateTime param) {
+        return  java.sql.Timestamp.valueOf(param);
+    }
+
+    public LocalDate getLocalDateFormat(Date param) {
+        return param.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+    }
+
 }

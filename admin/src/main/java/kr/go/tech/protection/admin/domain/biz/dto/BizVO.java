@@ -66,4 +66,40 @@ public class BizVO {
         private String bizSttsCd;
         private Integer applicantsCount;
     }
+
+    @Getter
+    @Builder
+    public static class UpdateBiz extends BaseColumn{
+        private String afterBizStartDt;
+        private Integer pageNo;
+        private Integer bizNo;
+        private String bizNm;
+        private String tkcgDeptCd;
+        private LocalDateTime rcrtBgngDt;
+        private LocalDateTime rcrtEndDt;
+        private LocalDateTime bizBgngDt;
+        private LocalDateTime bizEndDt;
+        private String bizTrgtCd;
+        private String bizCn;
+        private String rcrtSttsCd;
+        private String bizSttsCd;
+        private String bizSmrCn;
+        private String aplyPrcCn;
+        private String cntInfCn;
+        private String prgrsPrcsJsn;
+        private String aplyFrmJsn;
+    }
+
+    @Getter
+    @Builder
+    public static class BizDetail {
+        private Integer bizNo;
+        private String bizNm;
+        private String picId;
+        private String mngrNm;
+        private LocalDateTime rcrtBgngDt;
+        private LocalDateTime rcrtEndDt;
+        private LocalDateTime bizBgngDt;
+        private LocalDateTime bizEndDt;
+    }
 }

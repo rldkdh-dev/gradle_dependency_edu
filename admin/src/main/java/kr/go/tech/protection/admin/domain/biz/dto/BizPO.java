@@ -13,15 +13,15 @@ public class BizPO {
     @Builder
     public static class InsertRequest {
         @NotNull
-        private final Integer pageNo;
+        private Integer pageNo;
 
-        private final Integer bizNo;
+        private Integer bizNo;
 
-        private final String bizName;
+        private String bizName;
 
-        private final String adminId;
+        private String adminId;
 
-        private final Integer[] depts;
+        private Integer[] depts;
 
         private Date recruitStartDt;
 
@@ -52,15 +52,15 @@ public class BizPO {
     @Builder
     public static class TempInsertRequest {
         @NotNull
-        private final Integer pageNo;
+        private Integer pageNo;
 
-        private final Integer bizNo;
+        private Integer bizNo;
 
-        private final String bizName;
+        private String bizName;
 
-        private final String adminId;
+        private String adminId;
 
-        private final Integer[] depts;
+        private Integer[] depts;
 
         private Date recruitStartDt;
 
@@ -128,13 +128,13 @@ public class BizPO {
     @Getter
     @Builder
     public static class InsertResponse {
-        private final Integer bizNo;
+        private Integer bizNo;
 
-        private final String bizName;
+        private String bizName;
 
-        private final String adminId;
+        private String adminId;
 
-        private final Integer[] depts;
+        private Integer[] depts;
 
         private Date recruitStartDt;
 
@@ -191,5 +191,79 @@ public class BizPO {
         private Integer assignDepartmentNo; // 담당부서
         private String searchType; // 검색구분
         private String searchKeyword; // 검색어
+    }
+
+    @Getter
+    @Builder
+    public static class UpdateRequest {
+        @NotNull
+        private Integer bizNo;
+
+        private String bizName;
+
+        private Integer[] depts;
+
+        private Date recruitEndDt;
+
+        private Date bizStartDt;
+
+        private Date bizEndDt;
+
+        private String[] target;
+
+        private String bizContent;
+
+        private String bizSummary;
+
+        private String applicationProcess;
+
+        private String contact;
+
+        private List<BizProcess> bizProcessJson;
+
+        private List<Terms> terms;
+
+        private List<BizForm> applicationFormJson;
+
+        @NotNull
+        private Integer pageNo;
+    }
+
+    @Getter
+    @Builder
+    public static class UpdateResponse {
+        private Integer bizNo;
+
+        private String bizName;
+
+        private String adminName;
+
+        private Integer[] depts;
+
+        private Date recruitStartDt;
+
+        private Date recruitEndDt;
+
+        private Date bizStartDt;
+
+        private Date bizEndDt;
+
+        private String[] target;
+
+        private String bizContent;
+
+        private String fileName;
+
+        private String bizSummary;
+
+        private String applicationProcess;
+
+        private String contact;
+
+        private List<BizProcess> bizProcessJson;
+
+        private List<Terms> terms;
+
+        private List<BizForm> applicationFormJson;
     }
 }

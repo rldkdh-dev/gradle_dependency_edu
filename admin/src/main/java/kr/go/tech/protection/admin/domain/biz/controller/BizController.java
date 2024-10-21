@@ -36,4 +36,11 @@ public class BizController {
         List<BizPO.ListResponse> response = bizService.selectBizzesList(request);
         return ApiResult.success(response);
     }
+
+    @PutMapping(value = "")
+    public ApiResult<BizPO.UpdateResponse> updateBizzes( @Valid @RequestPart(name="json") BizPO.UpdateRequest request,
+                                                         @RequestPart(name="file") MultipartFile fileData) throws JsonProcessingException {
+        BizPO.UpdateResponse response = bizService.updateBizzes(request,fileData);
+        return ApiResult.success(response);
+    }
 }

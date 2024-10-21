@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="kr.go.tech.protection.admin.domain.biz.dao.BizDAO">
-    <update id="updateBiz" parameterType="kr.go.tech.protection.admin.domain.biz.dto.BizVO$DefaultBiz">
-        /* updateBiz [사업 공고 UPDATE 쿼리] */
+    <update id="updateBizBeforeInsert" parameterType="kr.go.tech.protection.admin.domain.biz.dto.BizVO$DefaultBiz">
+        /* updateBizBeforeInsert [사업공고 저장 전 수정 쿼리] */
         UPDATE
             "BIZ_INFO_TB"
         SET
@@ -184,6 +184,7 @@
     </insert>
 
     <select id="selectBizList" parameterType="kr.go.tech.protection.admin.domain.biz.dto.BizPO$SearchRequest" resultType="kr.go.tech.protection.admin.domain.biz.dto.BizVO$ListResponse">
+        /* selectBizList [사업공고 목록 조회 쿼리] */
         SELECT
             "BIZ_NO",
             "BIZ_NM",
@@ -240,5 +241,62 @@
             bit."BIZ_NO", bit."BIZ_NM", mmit."MNGR_NM"
         ORDER BY
             bit."BIZ_NO" DESC
+    </select>
+
+
+    <update id="updateBizAfterInsert" parameterType="kr.go.tech.protection.admin.domain.biz.dto.BizVO$UpdateBiz">
+        /* updateBizAfterInsert [사업공고 저장 후 수정 요청시 실행 쿼리] */
+        UPDATE
+            "BIZ_INFO_TB"
+        SET
+            <if test="pageNo == 1">
+                "BIZ_NM" = #{bizNm},
+                "TKCG_DEPT_CD" = #{tkcgDeptCd},
+                "RCRT_END_DT" = #{rcrtEndDt},
+                "BIZ_BGNG_DT" = #{bizBgngDt},
+                "BIZ_END_DT" = #{bizEndDt},
+                "BIZ_CN" = #{bizCn},
+                "RCRT_STTS_CD" = #{rcrtSttsCd},
+                "BIZ_STTS_CD" = #{bizSttsCd},
+                <if test="afterBizStartDt.equals('N')">
+                    "BIZ_TRGT_CD" = #{bizTrgtCd},
+                    "BIZ_SMR_CN" = #{bizSmrCn},
+                    "APLY_PRC_CN" = #{aplyPrcCn},
+                    "CNT_INF_CN" = #{cntInfCn},
+                </if>
+            </if>
+            <if test="afterBizStartDt.equals('N')">
+                <if test="pageNo == 2">
+                    "PRGRS_PRCS_JSN" = #{prgrsPrcsJsn}::json,
+                </if>
+                <if test="pageNo == 4">
+                    "APLY_FRM_JSN" = #{aplyFrmJsn}::json,
+                </if>
+            </if>
+            "LAST_MDFCN_DT" = #{lastMdfcnDt},
+            "LAST_MDFR_ID" = #{lastMdfrId}
+        WHERE
+            "BIZ_NO" = #{bizNo}
+    </update>
+
+    <select id="findBizByBizNo" parameterType="kr.go.tech.protection.admin.domain.biz.dto.BizVO$BizDetail">
+        /* findBizByBizNo [bizNo로 사업공고 조회] */
+        SELECT
+            bit."BIZ_NO",
+            bit."BIZ_NM",
+            bit."PIC_ID",
+            mmit."MNGR_NM",
+            bit."RCRT_BGNG_DT",
+            bit."RCRT_END_DT",
+            bit."BIZ_BGNG_DT",
+            bit."BIZ_END_DT"
+        FROM
+            "BIZ_INFO_TB" bit
+        JOIN
+            "MNGR_MBR_INFO_TB" mmit
+        ON
+            bit."PIC_ID" = MMIT."MNGR_ID"
+        WHERE
+            bit."BIZ_NO" = #{bizNo}
     </select>
 </mapper>
