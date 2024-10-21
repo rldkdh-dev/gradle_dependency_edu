@@ -6,6 +6,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -34,8 +35,9 @@ public class GenMemberPO {
     }
 
     @Getter
+    @AllArgsConstructor
     public static class SearchPO {
-        private String conmNm;     //사업자명
+        private String companyName;     //사업자명
         private String searchType;  //검색 조건
         private String searchKeyword;   //검색 단어
     }

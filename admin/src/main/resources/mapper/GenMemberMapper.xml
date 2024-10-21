@@ -27,8 +27,8 @@
           ON
               EPMIT."ENT_MBR_NO" = EMIT."ENT_MBR_NO"
           <where>
-              <if test="conmNm != null and conmNm != ''">
-                  AND EMIT."CONM_NM" = #{conmNm}
+              <if test="companyName != null and companyName != ''">
+                  AND EMIT."CONM_NM" = #{companyName}
               </if>
               <if test="searchType != null and searchType != '' and searchKeyword != null and searchKeyword != ''">
                   <choose>

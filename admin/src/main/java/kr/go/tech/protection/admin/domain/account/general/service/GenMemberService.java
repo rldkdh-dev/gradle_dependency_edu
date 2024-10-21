@@ -94,7 +94,7 @@ public class GenMemberService {
 	public GenMemberPO.UpdateResponsePO updateGenMember(GenMemberPO.UpdateRequestPO requestPO) {
 		BaseMemberVO admin = (BaseMemberVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-		DetailGenMemberVO genMember = genMemberDAO.selectGenMemberByNo(requestPO.getGenNo());
+		GenMemberVO.DetailGenMemberVO genMember = genMemberDAO.selectGenMemberByNo(requestPO.getGenNo());
 
 		if (ObjectUtils.isEmpty(genMember)) {
 			throw new GlobalException(ErrorCode.USER_NOT_FOUND);

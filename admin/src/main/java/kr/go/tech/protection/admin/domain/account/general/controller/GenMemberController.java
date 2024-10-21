@@ -7,6 +7,7 @@ import kr.go.tech.protection.admin.global.response.ApiResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +26,7 @@ public class GenMemberController {
 
 	// 일반 회원 목록 조회 API
 	@GetMapping("")
-	public ApiResult<GenMemberPO.ListResponsePO> selectGenMemberList(GenMemberPO.SearchPO searchPO) {
+	public ApiResult<GenMemberPO.ListResponsePO> selectGenMemberList(@ModelAttribute GenMemberPO.SearchPO searchPO) {
 		GenMemberPO.ListResponsePO data = genMemberService.selectGenMemberList(searchPO);
 
 		return ApiResult.success(data);

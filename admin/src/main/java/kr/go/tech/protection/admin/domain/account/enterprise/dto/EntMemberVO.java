@@ -101,7 +101,7 @@ public class EntMemberVO {
         private String sdgnNo;    // 자가진단번호
         private String totalScore;    // 기술보호 수준 자가진단 결과 점수 (종합)
         private String instPrtcMngFldScr;    // 제도적 보호 관리 분야 점수
-        private String psnlPrtcngFldScr;    // 인적 보호 관리 분야 점수
+        private String psnlPrtcMngFldScr;    // 인적 보호 관리 분야 점수
         private String physPrtcMngFldScr;    // 물적 보호 관리 분야 점수
         private String acdntDisMngFldScr;    // 사고재해 관리 분야 점수
         private LocalDateTime expirationDate;    // 만료일

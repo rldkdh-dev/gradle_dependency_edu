@@ -22,7 +22,7 @@ public interface EntMemberDAO {
 
     int updateEmployeesDelYnByEntNo(int no);
 
-    int insertEntMember(InsertRequestVO requestVO);
+    int insertEntMember(EntMemberVO.InsertRequestVO requestVO);
 
     EntMemberVO.DefaultEntMemberVO selectEntMemberByBusinessNumber(String businessNumber);
 }

@@ -5,6 +5,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -52,9 +53,10 @@ public class EntMemberPO {
     }
 
     @Getter
+    @AllArgsConstructor
     public static class SearchPO {
-        private String conmNm;     //사업자명
-        private String brNo;     //사업자 등록번호
+        private String companyName;     //사업자명
+        private String businessNumber;     //사업자 등록번호
         private String searchType;  //검색 조건     CMR001 : 대표자명, CMR002 : 담당자명
         private String searchKeyword;   //검색 단어
     }
