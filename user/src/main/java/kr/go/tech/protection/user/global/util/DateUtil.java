@@ -3,11 +3,67 @@ package kr.go.tech.protection.user.global.util;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Locale;
 import org.springframework.util.ObjectUtils;
 
 public class DateUtil {
+
+    private static final String DEFAULT_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
+
+
+    /**
+     * yyyyMMdd 문자열 날짜를 Timestamp로 변환하는 메서드
+     *
+     * @return 변환된 Timestamp, 변환에 실패할 경우 null 반환
+     */
+    public static Timestamp convertStringToTimestamp(String dateString) {
+        if (dateString == null || dateString.isEmpty()) {
+            return null; // null 또는 빈 문자열인 경우 null 반환
+        }
+
+        try {
+            // "yyyyMMdd" 형식으로 파싱
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            java.util.Date date = sdf.parse(dateString);
+            return new Timestamp(date.getTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null; // 파싱에 실패한 경우 null 반환
+        }
+    }
+
+
+    /**
+      * LocalDateTime을 고정된 포맷("yyyy-MM-dd HH:mm:ss")의 문자열로 변환하는 메서드
+      *
+      * @param localDateTime 변환할 LocalDateTime 객체
+      * @return 변환된 날짜 문자열, null if localDateTime이 null
+      */
+     public static String formatLocalDateTimeToString(LocalDateTime localDateTime) {
+         if (localDateTime == null) {
+             return null;
+         }
+         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DEFAULT_FORMAT);
+         return localDateTime.format(formatter);
+     }
+
+    /**
+      * LocalDateTime을 고정된 포맷("yyyy-MM-dd")의 문자열로 변환하는 메서드
+      *
+      * @param localDateTime 변환할 LocalDateTime 객체
+      * @return 변환된 날짜 문자열, null if localDateTime이 null
+      */
+     public static String formatLocalDateToString(LocalDateTime localDateTime) {
+         if (localDateTime == null) {
+             return null;
+         }
+         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
+         return localDateTime.format(formatter);
+     }
 
     /***
      * java.util.Date 시간을 Date 형식으로 변경한다.
