@@ -27,4 +27,6 @@ public interface BizDAO {
     BizVO.BizDetail findBizByBizNo(Integer bizNo);
 
     int updateBizAfterInsert(BizVO.UpdateBiz requestVO);
+
+    List<BizPO.Terms> findBizTermsByBizNo(Integer bizNo);
 }

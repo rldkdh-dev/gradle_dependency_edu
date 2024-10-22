@@ -27,7 +27,9 @@ public enum ErrorCode {
 	TEMP_SAVE_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "임시저장 데이터 삭제에 실패했습니다."),
 	TEMP_SAVE_INSERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "임시 저장 데이터 추가에 실패했습니다."),
 	BAD_REQUEST_MY_DEPT(HttpStatus.BAD_REQUEST, "자신의 담당부서 선택은 필수입니다."),
-	BIZ_INSERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "사업공고 추가에 실패했습니다.")
+	BIZ_INSERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "사업공고 추가에 실패했습니다."),
+	BAD_REQUEST_PAGE_NO(HttpStatus.BAD_REQUEST, "올바르지 않는 사업 요청 페이지 번호입니다."),
+	INVALID_DEPT_GROUP(HttpStatus.UNAUTHORIZED, "해당 공고에 대한 조회 권한이 없습니다.")
 	;
 
 

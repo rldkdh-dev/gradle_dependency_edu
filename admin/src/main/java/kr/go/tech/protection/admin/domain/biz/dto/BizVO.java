@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 public class BizVO {
 
@@ -59,10 +58,10 @@ public class BizVO {
         private String bizNm;
         private String mngrNm;
         private String deptNm;
-        private Date rcrtBgngDt;
-        private Date rcrtEndDt;
-        private Date bizBgngDt;
-        private Date bizEndDt;
+        private LocalDateTime rcrtBgngDt;
+        private LocalDateTime rcrtEndDt;
+        private LocalDateTime bizBgngDt;
+        private LocalDateTime bizEndDt;
         private String bizSttsCd;
         private Integer applicantsCount;
     }
@@ -96,10 +95,28 @@ public class BizVO {
         private Integer bizNo;
         private String bizNm;
         private String picId;
+        private String tkcgDeptCd;
         private String mngrNm;
         private LocalDateTime rcrtBgngDt;
         private LocalDateTime rcrtEndDt;
         private LocalDateTime bizBgngDt;
         private LocalDateTime bizEndDt;
+        private String bizTrgtCd;
+        private String bizCn;
+        private String bizSmrCn;
+        private String aplyPrcCn;
+        private String cntInfCn;
+        private String prgrsPrcsJsn;
+        private String aplyFrmJsn;
+    }
+
+    @Getter
+    @Builder
+    public static class Terms {
+        private Integer trmsNo;
+        private Integer bizNo;
+        private String trmsNm;
+        private String trmsCn;
+        private Integer sortNo;
     }
 }

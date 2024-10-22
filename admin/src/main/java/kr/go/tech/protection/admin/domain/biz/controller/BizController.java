@@ -43,4 +43,11 @@ public class BizController {
         BizPO.UpdateResponse response = bizService.updateBizzes(request,fileData);
         return ApiResult.success(response);
     }
+
+    @GetMapping(value = "/{bizNo}/{pageNo}")
+    public ApiResult<BizPO.BizDetail> selectBizByBizNo( @PathVariable Integer bizNo, @PathVariable Integer pageNo ) throws JsonProcessingException {
+        BizPO.BizDetail response = bizService.selectBizByBizNo(bizNo, pageNo);
+        return ApiResult.success(response);
+    }
+
 }

@@ -190,10 +190,10 @@
             "BIZ_NM",
             "MNGR_NM" ,
             ARRAY_TO_STRING(ARRAY_AGG(agi."AUTHRT_NM"), ',') as "DEPT_NM",
-            DATE(bit."RCRT_BGNG_DT") as "RCRT_BGNG_DT",
-            DATE(bit."RCRT_END_DT") as "RCRT_END_DT",
-            DATE(bit."BIZ_BGNG_DT") as "BIZ_BGNG_DT",
-            DATE(bit."BIZ_END_DT") as "BIZ_END_DT",
+            "RCRT_BGNG_DT",
+            "RCRT_END_DT",
+            "BIZ_BGNG_DT",
+            "BIZ_END_DT",
             bit."RCRT_STTS_CD",
             (select count(*) from "BIZ_APLY_TB" bat where bat."BIZ_NO" = bit."BIZ_NO") as "APPLICANTS_COUNT"
         FROM
@@ -285,11 +285,19 @@
             bit."BIZ_NO",
             bit."BIZ_NM",
             bit."PIC_ID",
+            bit."TKCG_DEPT_CD",
             mmit."MNGR_NM",
             bit."RCRT_BGNG_DT",
             bit."RCRT_END_DT",
             bit."BIZ_BGNG_DT",
-            bit."BIZ_END_DT"
+            bit."BIZ_END_DT",
+            bit."BIZ_TRGT_CD",
+            bit."BIZ_CN",
+            bit."BIZ_SMR_CN",
+            bit."APLY_PRC_CN",
+            bit."CNT_INF_CN",
+            bit."PRGRS_PRCS_JSN",
+            bit."APLY_FRM_JSN"
         FROM
             "BIZ_INFO_TB" bit
         JOIN
@@ -297,6 +305,23 @@
         ON
             bit."PIC_ID" = MMIT."MNGR_ID"
         WHERE
-            bit."BIZ_NO" = #{bizNo}
+            bit."BIZ_NO" = #{bizNo} AND
+            bit."STRG_YN" = 'Y'
+    </select>
+
+    <select id="findBizTermsByBizNo" resultType="kr.go.tech.protection.admin.domain.biz.dto.BizVO$Terms">
+        /* findBizTermsByBizNo [약관 리스트 조회 쿼리] */
+        SELECT
+            "TRMS_NO",
+            "BIZ_NO",
+            "TRMS_NM",
+            "TRMS_CN",
+            "SORT_NO"
+        FROM
+            "TRMS_INFO_TB"
+        WHERE
+            "BIZ_NO" = #{bizNo}
+        ORDER BY
+            "SORT_NO" ASC
     </select>
 </mapper>

@@ -1,7 +1,6 @@
 package kr.go.tech.protection.admin.domain.biz.dto;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -89,8 +88,10 @@ public class BizPO {
         private String tempTitle;
     }
 
-    @Getter
+    @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class BizProcess {
         private Integer order;
         private String processName;
@@ -98,12 +99,13 @@ public class BizPO {
         private Options options;
     }
 
-    @Getter
+    @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Options {
         private String assessmentYn;
         private String expertType;
-
     }
 
     @Getter
@@ -117,13 +119,13 @@ public class BizPO {
 
     @Getter
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class BizForm {
         private String componentId;
         private String title;
         private String type;
     }
-
-
 
     @Getter
     @Builder
@@ -264,6 +266,53 @@ public class BizPO {
 
         private List<Terms> terms;
 
+        private List<BizForm> applicationFormJson;
+    }
+
+    @Getter
+    @Builder
+    public static class BizDetail {
+        private Integer pageNo;
+        private Integer bizNo;
+        private BizInfoPage bizInfoPage;
+        private BizProcessPage bizProcessPage;
+        private BizTermsPage bizTermsPage;
+        private BizFormPage bizFormPage;
+    }
+
+    @Getter
+    @Builder
+    public static class BizInfoPage{
+        private Integer bizNo;
+        private String bizName;
+        private String adminName;
+        private Integer[] depts;
+        private String recruitStartDt;
+        private String recruitEndDt;
+        private String bizStartDt;
+        private String bizEndDt;
+        private String[] target;
+        private String bizContent;
+        private String bizSummary;
+        private String applicationProcess;
+        private String contact;
+    }
+
+    @Getter
+    @Builder
+    public static class BizProcessPage {
+        private List<BizProcess> bizProcessJson;
+    }
+
+    @Getter
+    @Builder
+    public static class BizTermsPage {
+        private List<Terms> terms;
+    }
+
+    @Getter
+    @Builder
+    public static class BizFormPage {
         private List<BizForm> applicationFormJson;
     }
 }

@@ -1,6 +1,7 @@
 package kr.go.tech.protection.admin.domain.biz.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.go.tech.protection.admin.domain.biz.dao.BizDAO;
 import kr.go.tech.protection.admin.domain.biz.dto.BizPO;
@@ -8,6 +9,7 @@ import kr.go.tech.protection.admin.domain.biz.dto.BizVO;
 import kr.go.tech.protection.admin.domain.member.dto.BaseMemberVO;
 import kr.go.tech.protection.admin.global.exception.ErrorCode;
 import kr.go.tech.protection.admin.global.exception.GlobalException;
+import kr.go.tech.protection.admin.global.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -227,27 +229,7 @@ public class BizService {
 
         // 약관 페이지 요청시 약관 INSERT
         if(requestPO.getPageNo().equals(3) && !requestPO.getTerms().isEmpty()) {
-            // 기존 임시저장된 약관 삭제
-            int termResult = bizDao.deleteTerms(requestVO.getBizNo());
-            if(termResult < 1) {
-                throw new GlobalException(ErrorCode.TEMP_SAVE_DELETE_FAILED);
-            }
-
-            for (BizPO.Terms term: requestPO.getTerms()) {
-                BizVO.InsertTerm data = BizVO.InsertTerm.builder()
-                        .bizNo(requestVO.getBizNo())
-                        .trmsNm(term.getTermsName())
-                        .trmsCn(term.getTermsContent())
-                        .sortNo(term.getSortNo())
-                        .build();
-                data.setFirst(admin.getMngrId());
-                data.setLast(admin.getMngrId());
-
-                int termsRst = bizDao.insertTerms(data);
-                if (termsRst < 1) {
-                    throw new GlobalException(ErrorCode.TEMP_SAVE_INSERT_FAILED);
-                }
-            }
+            insertTerms(bizNo, admin,requestPO.getTerms());
         }
 
         return BizPO.InsertResponse.builder()
@@ -283,10 +265,10 @@ public class BizService {
                 .bizName(biz.getBizNm())
                 .assignDepartment(biz.getDeptNm())
                 .picName(biz.getMngrNm())
-                .recruitmentDate(sdf.format(biz.getRcrtBgngDt())+ " ~ " +sdf.format(biz.getRcrtEndDt()))
-                .bizDate(sdf.format(biz.getBizBgngDt()) + " ~ " + sdf.format(biz.getBizEndDt()))
+                .recruitmentDate(DateUtil.formatLocalDateToString(biz.getRcrtBgngDt())+ " ~ " +DateUtil.formatLocalDateToString(biz.getRcrtEndDt()))
+                .bizDate(DateUtil.formatLocalDateToString(biz.getBizBgngDt()) + " ~ " + DateUtil.formatLocalDateToString(biz.getBizEndDt()))
                 .applicantsCount(biz.getApplicantsCount())
-                .recruitmentStatus(biz.getRcrtBgngDt().compareTo(new Date())<0?"모집 중":"대기")
+                .recruitmentStatus(biz.getRcrtBgngDt().isBefore(LocalDateTime.now()) ?"모집 중":"대기")
                 .build()
         ).collect(Collectors.toList());
     }
@@ -395,10 +377,7 @@ public class BizService {
 
     public void insertTerms(Integer bizNo, BaseMemberVO admin, List<BizPO.Terms> terms) {
         // 기존 임시저장된 약관 삭제
-        int termResult = bizDao.deleteTerms(bizNo);
-        if(termResult < 1) {
-            throw new GlobalException(ErrorCode.TERMS_DELETE_FAILED);
-        }
+        bizDao.deleteTerms(bizNo);
 
         for (BizPO.Terms term: terms) {
             BizVO.InsertTerm data = BizVO.InsertTerm.builder()
@@ -427,4 +406,72 @@ public class BizService {
                 .toLocalDate();
     }
 
+    public BizPO.BizDetail selectBizByBizNo(Integer bizNo,Integer pageNo) throws JsonProcessingException {
+        BaseMemberVO admin = (BaseMemberVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        BizVO.BizDetail biz = bizDao.findBizByBizNo(bizNo);
+        if(biz == null) {
+            throw new GlobalException(ErrorCode.NOT_FOUND_BIZ);
+        }
+
+        if(!biz.getPicId().equals(admin.getMngrId()) || !Arrays.stream(biz.getTkcgDeptCd().split("\\|")).anyMatch(dept->dept.equals(admin.getAuthrtGroupNo().toString()))) {
+            throw new GlobalException(ErrorCode.INVALID_DEPT_GROUP);
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        if(pageNo == 1) {
+            String[] deptArr = biz.getTkcgDeptCd().split("\\|");
+            BizPO.BizInfoPage bizInfoPage = BizPO.BizInfoPage.builder()
+                    .bizNo(bizNo)
+                    .bizName(biz.getBizNm())
+                    .adminName(admin.getMngrNm())
+                    .depts(Arrays.stream(deptArr)
+                            .map(Integer::parseInt)
+                            .toArray(Integer[]::new))
+                    .recruitStartDt(DateUtil.formatLocalDateToString(biz.getRcrtBgngDt()))
+                    .recruitEndDt(DateUtil.formatLocalDateToString(biz.getRcrtEndDt()))
+                    .bizStartDt(DateUtil.formatLocalDateToString(biz.getBizBgngDt()))
+                    .bizEndDt(DateUtil.formatLocalDateToString(biz.getBizEndDt()))
+                    .target(biz.getBizTrgtCd().split("\\|"))
+                    .bizContent(biz.getBizCn())
+                    .bizSummary(biz.getBizSmrCn())
+                    .applicationProcess(biz.getAplyPrcCn())
+                    .contact(biz.getCntInfCn())
+                    .build();
+
+            return BizPO.BizDetail.builder()
+                    .pageNo(pageNo)
+                    .bizNo(bizNo)
+                    .bizInfoPage(bizInfoPage)
+                    .build();
+        }else if(pageNo == 2) {
+            List<BizPO.BizProcess> processes = objectMapper.readValue(biz.getPrgrsPrcsJsn(), new TypeReference<List<BizPO.BizProcess>>() {});
+
+            return BizPO.BizDetail.builder()
+                    .bizNo(bizNo)
+                    .pageNo(pageNo)
+                    .bizProcessPage(BizPO.BizProcessPage.builder()
+                            .bizProcessJson(processes)
+                            .build())
+                    .build();
+        }else if(pageNo == 3) {
+            List<BizPO.Terms> terms = bizDao.findBizTermsByBizNo(bizNo);
+
+            return BizPO.BizDetail.builder()
+                    .bizNo(bizNo)
+                    .pageNo(pageNo)
+                    .bizTermsPage(BizPO.BizTermsPage.builder().terms(terms).build())
+                    .build();
+        }else if(pageNo == 4) {
+            List<BizPO.BizForm> bizForms = objectMapper.readValue(biz.getAplyFrmJsn(), new TypeReference<List<BizPO.BizForm>>() {});
+
+            return BizPO.BizDetail.builder()
+                    .bizNo(bizNo)
+                    .pageNo(pageNo)
+                    .bizFormPage(BizPO.BizFormPage.builder().applicationFormJson(bizForms).build())
+                    .build();
+        }else {
+            throw new GlobalException(ErrorCode.BAD_REQUEST_PAGE_NO);
+        }
+    }
 }
