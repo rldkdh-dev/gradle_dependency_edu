@@ -18,16 +18,16 @@ public class BizController {
     private final BizService bizService;
 
     @PostMapping(value = "")
-    public ApiResult<BizPO.InsertResponse> insertBiz(@Valid @RequestPart(name="json") BizPO.InsertRequest requestPO,
-                                                     @RequestPart(name="file") MultipartFile fileData) throws JsonProcessingException {
+    public ApiResult<BizPO.InsertResponse> insertBiz(@Valid @RequestPart(name="json") BizPO.InsertRequest requestPO) throws JsonProcessingException {
         
-        BizPO.InsertResponse response = bizService.insertBiz(requestPO, fileData);
+        BizPO.InsertResponse response = bizService.insertBiz(requestPO);
         return ApiResult.success(response);
     }
 
     @PostMapping(value = "/temp")
-    public ApiResult<BizPO.InsertResponse> insertTempSaveBiz(@Valid @RequestPart(name="json") BizPO.TempInsertRequest requestPO) throws JsonProcessingException {
-        BizPO.InsertResponse response = bizService.insertTempSaveBiz(requestPO);
+    public ApiResult<BizPO.InsertResponse> insertTempSaveBiz(@Valid @RequestPart(name="json") BizPO.TempInsertRequest requestPO,
+                                                             @RequestPart(name="file") MultipartFile fileData ) throws JsonProcessingException {
+        BizPO.InsertResponse response = bizService.insertTempSaveBiz(requestPO, fileData);
         return ApiResult.success(response);
     }
 

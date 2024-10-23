@@ -32,13 +32,13 @@
         </if>
         <if test="searchType != null and searchKeyword != null">
             <choose>
-                <when test="searchType == 'searchId'">
-                    AND
-                        a."MNGR_ID" LIKE '%'||#{searchKeyword}||'%'
-                </when>
-                <when test="searchType == 'searchName'">
+                <when test='searchType == "MGR001"'>
                     AND
                         a."MNGR_NM" LIKE '%'||#{searchKeyword}||'%'
+                </when>
+                <when test='searchType == "MGR002"'>
+                    AND
+                        a."MNGR_ID" LIKE '%'||#{searchKeyword}||'%'
                 </when>
             </choose>
         </if>
@@ -47,7 +47,7 @@
     </select>
 
     <select id="selectAdminMemberById" resultType="kr.go.tech.protection.admin.domain.member.dto.MemberVO$DefaultMemberVO">
-        /* selectAdminMemberById [관리자 회원 아이디 중복 체크 쿼리] */
+        /* selectAdminMemberById [아이디로 관리자 회원 조회 쿼리] */
         SELECT
             a."MNGR_NO",
             a."MNGR_NM",
@@ -57,6 +57,7 @@
             a."MNGR_TELNO",
             a."MNGR_MBL_TELNO",
             a."MNGR_EML",
+            a."PSWD_MDFR_DT",
             ag."AUTHRT_NO",
             ag."AUTHRT_NM"
         FROM
@@ -115,7 +116,8 @@
                 "FRST_REG_DT",
                 "FRST_RGTR_ID",
                 "LAST_MDFCN_DT",
-                "LAST_MDFR_ID"
+                "LAST_MDFR_ID",
+                "PSWD_MDFR_DT"
             ) VALUES (
                 #{authrtNo},
                 #{mngrNm},
@@ -129,7 +131,8 @@
                 #{frstRegDt},
                 #{frstRgtrId},
                 #{lastMdfcnDt},
-                #{lastMdfrId}
+                #{lastMdfrId},
+                NOW()
             )
     </insert>
 
@@ -141,7 +144,8 @@
             "MNGR_PSWD" = #{mngrPswd},
             "TMPR_PSWD_YN" = #{tmprPswdYn},
             "LAST_MDFCN_DT" = #{lastMdfcnDt},
-            "LAST_MDFR_ID" = #{lastMdfrId}
+            "LAST_MDFR_ID" = #{lastMdfrId},
+            "PSWD_MDFR_DT" = NOW()
         WHERE
             "MNGR_ID" = #{mngrId}
     </update>
@@ -178,7 +182,8 @@
             "MNGR_PSWD" = #{mngrPswd},
             "TMPR_PSWD_YN" = #{tmprPswdYn},
             "LAST_MDFCN_DT" = #{lastMdfcnDt},
-            "LAST_MDFR_ID" = #{lastMdfrId}
+            "LAST_MDFR_ID" = #{lastMdfrId},
+            "PSWD_MDFR_DT" = NOW()
         WHERE
             "MNGR_ID" = #{mngrId}
     </update>

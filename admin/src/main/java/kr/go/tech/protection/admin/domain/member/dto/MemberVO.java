@@ -4,6 +4,8 @@ import kr.go.tech.protection.admin.global.common.BaseColumn;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
 public class MemberVO {
 
@@ -32,6 +34,7 @@ public class MemberVO {
         private String mngrTelno;
         private String mngrMblTelno;
         private String mngrEml;
+        private LocalDateTime pswdMdfrDt;
         private Integer authrtNo;
         private String authrtNm;
     }

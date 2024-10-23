@@ -15,7 +15,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("")
-    public ApiResult<MemberPO.ListResponsePO> selectAdminMemberList(MemberPO.SearchPO searchPO) {
+    public ApiResult<MemberPO.ListResponsePO> selectAdminMemberList(@RequestBody MemberPO.SearchPO searchPO) {
         MemberPO.ListResponsePO data = memberService.selectAdminMemberList(searchPO);
 
         return ApiResult.success(data);

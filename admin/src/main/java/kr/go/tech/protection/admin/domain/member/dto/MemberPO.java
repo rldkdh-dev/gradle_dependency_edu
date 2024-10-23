@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.*;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class MemberPO {
@@ -27,11 +26,12 @@ public class MemberPO {
         private String name;
         private String phone;
         private String email;
-        private LocalDateTime regDt;
-        private LocalDateTime modDt;
+        private String regDt;
+        private String modDt;
     }
 
     @Getter
+    @Builder
     public static class SearchPO {
         private Integer authGroupNo;
         private String searchType;
