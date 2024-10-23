@@ -32,13 +32,13 @@
         </if>
         <if test="searchType != null and searchKeyword != null">
             <choose>
-                <when test="searchType == 'searchId'">
-                    AND
-                        a."MNGR_ID" LIKE '%'||#{searchKeyword}||'%'
-                </when>
-                <when test="searchType == 'searchName'">
+                <when test='searchType == "MGR001"'>
                     AND
                         a."MNGR_NM" LIKE '%'||#{searchKeyword}||'%'
+                </when>
+                <when test='searchType == "MGR002"'>
+                    AND
+                        a."MNGR_ID" LIKE '%'||#{searchKeyword}||'%'
                 </when>
             </choose>
         </if>

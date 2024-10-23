@@ -31,8 +31,14 @@ public enum ErrorCode {
 	BAD_REQUEST_PAGE_NO(HttpStatus.BAD_REQUEST, "올바르지 않는 사업 요청 페이지 번호입니다."),
 	INVALID_DEPT_GROUP(HttpStatus.UNAUTHORIZED, "해당 공고에 대한 조회 권한이 없습니다."),
 	BAD_REQUEST_PROCESS_BLOCK(HttpStatus.BAD_REQUEST, "프로세스 블록의 첫번째 블록은 신청접수, 마지막 블록은 종료 블록으로 해야 합니다."),
-	BAD_REQUEST_UPDATE_PAGE_NO(HttpStatus.BAD_REQUEST, "모집중인 공고는 사업 기본정보만 수정할 수 있습니다.")
-	;
+	BAD_REQUEST_UPDATE_PAGE_NO(HttpStatus.BAD_REQUEST, "모집중인 공고는 사업 기본정보만 수정할 수 있습니다."),
+	NOT_FOUND_ADMIN(HttpStatus.NOT_FOUND, "관리자 회원이 존재하지 않습니다."),
+	ADMIN_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "관리자 회원 삭제에 실패했습니다."),
+	DUPLICATION_ADMIN(HttpStatus.BAD_REQUEST, "이미 존재하는 관리자 회원입니다."),
+	ADMIN_INSERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "관리자 회원 추가에 실패했습니다."),
+	NOT_MATCHED_ADMIN_PASSWORD(HttpStatus.BAD_REQUEST,"비밀번호가 일치하지 않습니다."),
+	NOT_MATCHED_ADMIN_CHECK_PASSWORD(HttpStatus.BAD_REQUEST,"입력하신 비밀번호와 비밀번호 확인이 일치하지 않습니다."),
+	ADMIN_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "관리자 회원 수정에 실패했습니다.");
 
 
 
