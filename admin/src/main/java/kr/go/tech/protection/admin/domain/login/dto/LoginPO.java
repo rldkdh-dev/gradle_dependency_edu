@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 import javax.validation.constraints.NotEmpty;
-import java.util.List;
 
 public class LoginPO {
 
@@ -21,10 +20,11 @@ public class LoginPO {
     @Builder
     public static class LoginResponsePO {
         private String accessToken;
-        private String authGroupNo;
+        private Integer authGroupNo;
         private String authGroupName;
         private String adminId;
         private String adminName;
-        private List<String> menuList;
+        private boolean passwordExpiredYn;
+        private boolean tempPasswordYn;
     }
 }

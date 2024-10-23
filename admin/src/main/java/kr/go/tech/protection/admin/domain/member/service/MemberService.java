@@ -17,8 +17,6 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
-import java.security.SecureRandom;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -28,6 +26,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberDAO adminDao;
+    private final String TEMP_PASS_WORD = "ultari12#$";
 
     public MemberPO.ListResponsePO selectAdminMemberList(MemberPO.SearchPO searchPO) {
         List<MemberVO.ListResponseVO> adminList = adminDao.selectAdminMemberList(searchPO);
@@ -110,7 +109,7 @@ public class MemberService {
                 .authrtNo(responsePO.getAuthGroupNo())
                 .mngrNm(responsePO.getAdminName())
                 .mngrId(responsePO.getAdminId())
-                .mngrPswd(encoder.encode(getTempPassword()))
+                .mngrPswd(encoder.encode(TEMP_PASS_WORD))
                 .tmprPswdYn("Y")
                 .mngrTelNo(responsePO.getTelNo())
                 .mngrMblTelNo(responsePO.getPhoneNo())
@@ -141,31 +140,6 @@ public class MemberService {
                 .authGroupNo(memberVO.getAuthrtNo())
                 .authGroupNm(memberVO.getAuthrtNm())
                 .build();
-    }
-
-    // 랜덤 문자열 10자리의 임시 비밀번호 발급
-    public String getTempPassword() {
-
-        char[] charSet = new char[] {
-                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-                'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-                'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-                '!', '@', '#', '$', '%', '^', '&'
-        };
-
-        StringBuffer sb = new StringBuffer();
-        SecureRandom sr = new SecureRandom();
-        sr.setSeed(new Date().getTime());
-
-        int len = charSet.length;
-        for(int i=0; i<10; i++) {
-            int idx = sr.nextInt(len);
-            sb.append(charSet[idx]);
-        }
-
-        log.info("NEW PASSWORD : " + sb.toString());
-
-        return sb.toString();
     }
 
     @Transactional
@@ -217,7 +191,7 @@ public class MemberService {
 
         MemberVO.ResetPasswordRequestVO param = MemberVO.ResetPasswordRequestVO.builder()
                 .mngrId(requestPO.getAdminId())
-                .mngrPswd(encoder.encode(getTempPassword()))
+                .mngrPswd(encoder.encode(TEMP_PASS_WORD))
                 .tmprPswdYn("Y")
                 .build();
         param.setLast(admin.getMngrId());
