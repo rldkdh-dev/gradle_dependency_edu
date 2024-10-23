@@ -16,34 +16,6 @@ public class BizPO {
 
         private Integer bizNo;
 
-        private String bizName;
-
-        private String adminId;
-
-        private Integer[] depts;
-
-        private Date recruitStartDt;
-
-        private Date recruitEndDt;
-        
-        private Date bizStartDt;
-        
-        private Date bizEndDt;
-
-        private String[] target;
-
-        private String bizContent;
-
-        private String bizSummary;
-
-        private String applicationProcess;
-
-        private String contact;
-
-        private List<BizProcess> bizProcessJson;
-
-        private List<Terms> terms;
-
         private List<BizForm> applicationFormJson;
     }
 
@@ -56,8 +28,6 @@ public class BizPO {
         private Integer bizNo;
 
         private String bizName;
-
-        private String adminId;
 
         private Integer[] depts;
 
@@ -131,41 +101,6 @@ public class BizPO {
     @Builder
     public static class InsertResponse {
         private Integer bizNo;
-
-        private String bizName;
-
-        private String adminId;
-
-        private Integer[] depts;
-
-        private Date recruitStartDt;
-
-        private Date recruitEndDt;
-
-        private Date bizStartDt;
-
-        private Date bizEndDt;
-
-        private String[] target;
-
-        private String bizContent;
-
-        private String fileName;
-
-        private String bizSummary;
-
-        private String applicationProcess;
-
-        private String contact;
-
-        private List<BizProcess> bizProcessJson;
-//        private String bizProcessJson;
-
-        private List<Terms> terms;
-
-        private List<BizForm> applicationFormJson;
-//        private String applicationFormJson;
-
         private Integer pageNo;
     }
 
@@ -235,38 +170,7 @@ public class BizPO {
     @Builder
     public static class UpdateResponse {
         private Integer bizNo;
-
-        private String bizName;
-
-        private String adminName;
-
-        private Integer[] depts;
-
-        private Date recruitStartDt;
-
-        private Date recruitEndDt;
-
-        private Date bizStartDt;
-
-        private Date bizEndDt;
-
-        private String[] target;
-
-        private String bizContent;
-
-        private String fileName;
-
-        private String bizSummary;
-
-        private String applicationProcess;
-
-        private String contact;
-
-        private List<BizProcess> bizProcessJson;
-
-        private List<Terms> terms;
-
-        private List<BizForm> applicationFormJson;
+        private Integer pageNo;
     }
 
     @Getter

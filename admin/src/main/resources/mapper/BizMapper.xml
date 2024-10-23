@@ -258,14 +258,14 @@
                 "BIZ_CN" = #{bizCn},
                 "RCRT_STTS_CD" = #{rcrtSttsCd},
                 "BIZ_STTS_CD" = #{bizSttsCd},
-                <if test="afterBizStartDt.equals('N')">
+                <if test='afterBizStartDt == "N"'>
                     "BIZ_TRGT_CD" = #{bizTrgtCd},
                     "BIZ_SMR_CN" = #{bizSmrCn},
                     "APLY_PRC_CN" = #{aplyPrcCn},
                     "CNT_INF_CN" = #{cntInfCn},
                 </if>
             </if>
-            <if test="afterBizStartDt.equals('N')">
+            <if test='afterBizStartDt == "N"'>
                 <if test="pageNo == 2">
                     "PRGRS_PRCS_JSN" = #{prgrsPrcsJsn}::json,
                 </if>
@@ -305,8 +305,7 @@
         ON
             bit."PIC_ID" = MMIT."MNGR_ID"
         WHERE
-            bit."BIZ_NO" = #{bizNo} AND
-            bit."STRG_YN" = 'Y'
+            bit."BIZ_NO" = #{bizNo}
     </select>
 
     <select id="findBizTermsByBizNo" resultType="kr.go.tech.protection.admin.domain.biz.dto.BizVO$Terms">

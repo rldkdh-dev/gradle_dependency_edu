@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -34,22 +33,25 @@ public class BizService {
     private final BizDAO bizDao;
 
     @Transactional
-    public BizPO.InsertResponse insertBiz(BizPO.InsertRequest requestPO, MultipartFile fileData) throws JsonProcessingException {
-
+    public BizPO.InsertResponse insertBiz(BizPO.InsertRequest requestPO) throws JsonProcessingException {
         BaseMemberVO admin = (BaseMemberVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        LocalDateTime now = LocalDateTime.now();
         Integer bizNo = requestPO.getBizNo();
+        BizVO.BizDetail biz = bizDao.findBizByBizNo(bizNo);
+        if(biz == null) {
+            throw new GlobalException(ErrorCode.NOT_FOUND_BIZ);
+        }
+
+        if(!biz.getPicId().equals(admin.getMngrId())) {
+            throw new GlobalException(ErrorCode.NOT_MATCHED_PIC);
+        }
 
         // JSON to String
         ObjectMapper objectMapper = new ObjectMapper();
-        String processJsn = objectMapper.writeValueAsString(requestPO.getBizProcessJson());
         String formJsn = objectMapper.writeValueAsString(requestPO.getApplicationFormJson());
 
-        // TODO 파일 업로드 (파일 있는 경우 파일 업로드)
-        if(!fileData.isEmpty()) {
+        if(!requestPO.getPageNo().equals(4)) {
+            throw new GlobalException(ErrorCode.BAD_REQUEST_PAGE_NO);
         }
-
-        String statusCode = getStatusCode(getLocaldatetime(requestPO.getRecruitStartDt()),getLocaldatetime(requestPO.getRecruitEndDt()),now);
 
         // 임시저장 체크
         BizVO.DefaultTempSave temp = bizDao.selectTempSave(requestPO.getBizNo());
@@ -67,23 +69,6 @@ public class BizService {
         BizVO.DefaultBiz requestVO = BizVO.DefaultBiz.builder()
             .pageNo(requestPO.getPageNo())
             .bizNo(bizNo)
-            .bizNm(requestPO.getBizName())
-            .tkcgDeptCd(Arrays.stream(requestPO.getDepts())
-                    .map(String::valueOf)
-                    .collect(Collectors.joining("|")))
-            .picId(requestPO.getAdminId())
-            .rcrtBgngDt(getLocaldatetime(requestPO.getRecruitStartDt()))
-            .rcrtEndDt(getLocaldatetime(requestPO.getRecruitEndDt()))
-            .bizBgngDt(getLocaldatetime(requestPO.getBizStartDt()))
-            .bizEndDt(getLocaldatetime(requestPO.getBizEndDt()))
-            .bizTrgtCd(String.join("|",requestPO.getTarget()))
-            .bizCn(requestPO.getBizContent())
-            .rcrtSttsCd(statusCode)
-            .bizSttsCd(statusCode)
-            .bizSmrCn(requestPO.getBizSummary())
-            .aplyPrcCn(requestPO.getApplicationProcess())
-            .cntInfCn(requestPO.getContact())
-            .prgrsPrcsJsn(processJsn)
             .aplyFrmJsn(formJsn)
             .strgYn("Y")
             .tmprStrgYn("N")
@@ -97,58 +82,47 @@ public class BizService {
             throw new GlobalException(ErrorCode.BIZ_INSERT_FAILED);
         }
 
-        // 약관이 있는 경우 약관 INSERT
-        if(!requestPO.getTerms().isEmpty()) {
-            insertTerms(bizNo, admin, requestPO.getTerms());
-        }
-
         return BizPO.InsertResponse.builder()
                 .bizNo(bizNo)
-                .bizName(requestPO.getBizName())
-                .adminId(requestPO.getAdminId())
-                .depts(requestPO.getDepts())
-                .recruitStartDt(requestPO.getRecruitStartDt())
-                .recruitEndDt(requestPO.getRecruitEndDt())
-                .bizStartDt(requestPO.getBizStartDt())
-                .bizEndDt(requestPO.getBizEndDt())
-                .target(requestPO.getTarget())
-                .bizContent(requestPO.getBizContent())
-                .fileName(fileData.getName())
-                .bizSummary(requestPO.getBizSummary())
-                .applicationProcess(requestPO.getApplicationProcess())
-                .contact(requestPO.getContact())
-                .bizProcessJson(requestPO.getBizProcessJson())
-                .terms(requestPO.getTerms())
-                .applicationFormJson(requestPO.getApplicationFormJson())
                 .pageNo(requestPO.getPageNo())
                 .build();
     }
 
-    public LocalDateTime getLocaldatetime(Date date) {
-        if(date != null) {
-            return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-        }
-        return null;
-    }
-
-    public String getStatusCode(LocalDateTime startDt, LocalDateTime endDt, LocalDateTime now) {
-        if(startDt.isBefore(now) && endDt.isAfter(now)) {
-            return  "STS003"; // 모집중
-        } else if(startDt.isAfter(now)) {
-            return "STS002"; // 모집전
-        } else if(now.isAfter(endDt)) {
-            return "STS004"; // 모집종료
-        }
-        return null;
-    }
-
     @Transactional
-    public BizPO.InsertResponse insertTempSaveBiz(BizPO.TempInsertRequest requestPO) throws JsonProcessingException {
+    public BizPO.InsertResponse insertTempSaveBiz(BizPO.TempInsertRequest requestPO, MultipartFile fileData) throws JsonProcessingException {
 
         BaseMemberVO admin = (BaseMemberVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        LocalDateTime now = LocalDateTime.now();
-        String statusCode = getStatusCode(getLocaldatetime(requestPO.getRecruitStartDt()),getLocaldatetime(requestPO.getRecruitEndDt()),now);
         Integer bizNo = requestPO.getBizNo();
+
+        if(bizNo != null) {
+            BizVO.BizDetail biz = bizDao.findBizByBizNo(bizNo);
+            if(biz == null) {
+                throw new GlobalException(ErrorCode.NOT_FOUND_BIZ);
+            }
+
+            if(!admin.getMngrId().equals(biz.getPicId())){
+                throw new GlobalException(ErrorCode.NOT_MATCHED_PIC);
+            }
+        }
+
+        String statusCode = "";
+
+        // 사업 정보 페이지 요청일때만 상태값 추출
+        if(requestPO.getPageNo().equals(1)) {
+            LocalDateTime now = LocalDateTime.now();
+            statusCode = getStatusCode(getLocaldatetime(requestPO.getRecruitStartDt()),getLocaldatetime(requestPO.getRecruitEndDt()),now);
+        }
+
+        // 프로세스 설정시 첫번째 블록이 접수인지, 마지막 블록이 종료인지 확인
+        if(     requestPO.getPageNo().equals(2) &&
+                (!requestPO.getBizProcessJson().get(0).getProcessCode().equals("PRO001") ||
+                !requestPO.getBizProcessJson().get(requestPO.getBizProcessJson().size()-1).getProcessCode().equals("PRO010"))) {
+            throw new GlobalException(ErrorCode.BAD_REQUEST_PROCESS_BLOCK);
+        }
+        
+        if (!fileData.isEmpty()) {
+            // TODO 파일 업로드 추가
+        }
 
         // JSON to String
         ObjectMapper objectMapper = new ObjectMapper();
@@ -160,15 +134,16 @@ public class BizService {
                 .bizNo(bizNo)
                 .pageNo(requestPO.getPageNo())
                 .bizNm(requestPO.getBizName())
-                .tkcgDeptCd(Arrays.stream(requestPO.getDepts())
+                .tkcgDeptCd(requestPO.getDepts()==null?null:
+                        Arrays.stream(requestPO.getDepts())
                         .map(String::valueOf)
                         .collect(Collectors.joining("|")))
-                .picId(requestPO.getAdminId())
+                .picId(admin.getMngrId())
                 .rcrtBgngDt(getLocaldatetime(requestPO.getRecruitStartDt()))
                 .rcrtEndDt(getLocaldatetime(requestPO.getRecruitEndDt()))
                 .bizBgngDt(getLocaldatetime(requestPO.getBizStartDt()))
                 .bizEndDt(getLocaldatetime(requestPO.getBizEndDt()))
-                .bizTrgtCd(String.join("|",requestPO.getTarget()))
+                .bizTrgtCd(requestPO.getTarget()==null?null:String.join("|",requestPO.getTarget()))
                 .bizCn(requestPO.getBizContent())
                 .rcrtSttsCd(statusCode)
                 .bizSttsCd(statusCode)
@@ -214,10 +189,12 @@ public class BizService {
                 throw new GlobalException(ErrorCode.BIZ_INSERT_FAILED);
             }
 
+            bizNo = requestVO.getBizNo();
+
             // 임시저장 INSERT
             BizVO.DefaultTempSave param = BizVO.DefaultTempSave.builder()
                     .tmprTtl(requestPO.getTempTitle())
-                    .bizNo(requestVO.getBizNo())
+                    .bizNo(bizNo)
                     .build();
             param.setFirst(admin.getMngrId());
             param.setLast(admin.getMngrId());
@@ -234,21 +211,6 @@ public class BizService {
 
         return BizPO.InsertResponse.builder()
                 .bizNo(bizNo)
-                .bizName(requestPO.getBizName())
-                .adminId(requestPO.getAdminId())
-                .depts(requestPO.getDepts())
-                .recruitStartDt(requestPO.getRecruitStartDt())
-                .recruitEndDt(requestPO.getRecruitEndDt())
-                .bizStartDt(requestPO.getBizStartDt())
-                .bizEndDt(requestPO.getBizEndDt())
-                .target(requestPO.getTarget())
-                .bizContent(requestPO.getBizContent())
-                .bizSummary(requestPO.getBizSummary())
-                .applicationProcess(requestPO.getApplicationProcess())
-                .contact(requestPO.getContact())
-                .bizProcessJson(requestPO.getBizProcessJson())
-                .terms(requestPO.getTerms())
-                .applicationFormJson(requestPO.getApplicationFormJson())
                 .pageNo(requestPO.getPageNo())
                 .build();
     }
@@ -257,7 +219,6 @@ public class BizService {
 
         List<BizVO.ListResponse> bizList = bizDao.selectBizList(request);
         AtomicReference<Integer> rowNum = new AtomicReference<>(1);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         return bizList.stream().map(biz->BizPO.ListResponse.builder()
                 .no(rowNum.getAndSet(rowNum.get() + 1))
@@ -281,40 +242,61 @@ public class BizService {
         }
 
         BaseMemberVO admin = (BaseMemberVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        
+        Integer bizNo = biz.getBizNo();
+        LocalDate today = LocalDate.now();
+        // 모집시작 여부
+        String afterRecruitDateYn = today.equals(biz.getRcrtBgngDt().toLocalDate())?"Y":today.isAfter(biz.getRcrtBgngDt().toLocalDate())?"Y":"N";
+        // 공고상태
+        String statusCode = "";
+
         // 담당자 일치 확인
         if(!admin.getMngrId().equals(biz.getPicId())) {
             throw new GlobalException(ErrorCode.NOT_MATCHED_PIC);
         }
-        
-        // 모집종료일자가 모집시작일자보다 빠른지 확인 
-        if(request.getRecruitEndDt().before(java.sql.Timestamp.valueOf(biz.getRcrtBgngDt()))) {
-            throw new GlobalException(ErrorCode.BAD_REQUEST_RECRUIT_DATE);
+
+        if(request.getPageNo().equals(1)) {
+            // 모집종료일자가 모집시작일자보다 빠른지 확인
+            if(request.getRecruitEndDt().before(java.sql.Timestamp.valueOf(biz.getRcrtBgngDt()))) {
+                throw new GlobalException(ErrorCode.BAD_REQUEST_RECRUIT_DATE);
+            }
+
+            LocalDate recruitEndDt = getLocalDateFormat(request.getRecruitEndDt());
+
+            // 모집종료일자가 오늘 이전인지 확인
+            if(!recruitEndDt.equals(today) && request.getRecruitEndDt().before(new Date())) {
+                throw new GlobalException(ErrorCode.BAD_REQUEST_RECRUIT_DATE_FOR_TODAY);
+            }
+
+            // 본인 담당부서 포함여부 확인
+            if(!Arrays.stream(request.getDepts()).anyMatch(dept-> dept.equals(admin.getAuthrtGroupNo()))) {
+                throw new GlobalException(ErrorCode.BAD_REQUEST_MY_DEPT);
+            }
+
+            LocalDateTime now = LocalDateTime.now();
+            statusCode = getStatusCode(biz.getRcrtBgngDt(),getLocaldatetime(request.getRecruitEndDt()),now); // 상태 코드
         }
 
-        LocalDate recruitEndDt = getLocalDateFormat(request.getRecruitEndDt());
-        LocalDate today = LocalDate.now();
-
-        // 모집종료일자가 오늘 이전인지 확인
-        if(!recruitEndDt.equals(today) && request.getRecruitEndDt().before(new Date())) {
-            throw new GlobalException(ErrorCode.BAD_REQUEST_RECRUIT_DATE_FOR_TODAY);
+        if(afterRecruitDateYn.equals("Y") && !request.getPageNo().equals(1)) {
+            throw new GlobalException(ErrorCode.BAD_REQUEST_UPDATE_PAGE_NO);
         }
 
-        // 본인 담당부서 포함여부 확인
-        if(!Arrays.stream(request.getDepts()).anyMatch(dept-> dept.equals(admin.getAuthrtGroupNo()))) {
-            throw new GlobalException(ErrorCode.BAD_REQUEST_MY_DEPT);
+        // 프로세스 설정시 첫번째 블록이 접수인지, 마지막 블록이 종료인지 확인
+        if(     request.getPageNo().equals(2) &&
+                (!request.getBizProcessJson().get(0).getProcessCode().equals("PRO001") ||
+                        !request.getBizProcessJson().get(request.getBizProcessJson().size()-1).getProcessCode().equals("PRO010"))) {
+            throw new GlobalException(ErrorCode.BAD_REQUEST_PROCESS_BLOCK);
         }
-
-        // 모집시작 여부
-        String afterRecruitDateYn = today.equals(biz.getRcrtBgngDt().toLocalDate())?"Y":today.isAfter(biz.getRcrtBgngDt().toLocalDate())?"Y":"N";
-        LocalDateTime now = LocalDateTime.now();
-        String statusCode = getStatusCode(biz.getRcrtBgngDt(),getLocaldatetime(request.getRecruitEndDt()),now); // 상태 코드
-        Integer bizNo = biz.getBizNo();
 
         // JSON to String
         ObjectMapper objectMapper = new ObjectMapper();
-        String processJsn = objectMapper.writeValueAsString(request.getBizProcessJson());
-        String formJsn = objectMapper.writeValueAsString(request.getApplicationFormJson());
+        String processJsn = "";
+        String formJsn = "";
+
+        if(request.getPageNo().equals(2)) {
+            processJsn = objectMapper.writeValueAsString(request.getBizProcessJson());
+        } else if(request.getPageNo().equals(4)) {
+            formJsn = objectMapper.writeValueAsString(request.getApplicationFormJson());
+        }
 
         // 사업 UPDATE
         BizVO.UpdateBiz requestVO = BizVO.UpdateBiz.builder()
@@ -322,16 +304,17 @@ public class BizService {
                 .pageNo(request.getPageNo())
                 .bizNo(bizNo)
                 .bizNm(request.getBizName())
-                .tkcgDeptCd(Arrays.stream(request.getDepts())
-                        .map(String::valueOf)
-                        .collect(Collectors.joining("|")))
+                .tkcgDeptCd(request.getDepts()==null?null:
+                        Arrays.stream(request.getDepts())
+                                .map(String::valueOf)
+                                .collect(Collectors.joining("|")))
                 .rcrtEndDt(getLocaldatetime(request.getRecruitEndDt()))
                 .bizBgngDt(getLocaldatetime(request.getBizStartDt()))
                 .bizEndDt(getLocaldatetime(request.getBizEndDt()))
                 .bizCn(request.getBizContent())
                 .rcrtSttsCd(statusCode)
                 .bizSttsCd(statusCode)
-                .bizTrgtCd(String.join("|",request.getTarget()))
+                .bizTrgtCd(request.getTarget()==null?null:String.join("|",request.getTarget()))
                 .bizSmrCn(request.getBizSummary())
                 .aplyPrcCn(request.getApplicationProcess())
                 .cntInfCn(request.getContact())
@@ -346,7 +329,7 @@ public class BizService {
         }
 
         // 약관 페이지 수정 요청이면서 모집시작 전인 경우 약관 INSERT
-        if(!request.getTerms().isEmpty() && request.getPageNo()==3 && afterRecruitDateYn.equals("N")) {
+        if(request.getPageNo().equals(3) && !request.getTerms().isEmpty()) {
             insertTerms(bizNo, admin, request.getTerms());
         }
 
@@ -357,53 +340,8 @@ public class BizService {
         // TODO 파일 추가
         return BizPO.UpdateResponse.builder()
                 .bizNo(request.getBizNo())
-                .bizName(request.getBizName())
-                .adminName(admin.getUsername())
-                .depts(request.getDepts())
-                .recruitStartDt(getDateFormat(biz.getBizBgngDt()))
-                .recruitEndDt(request.getRecruitEndDt())
-                .bizStartDt(request.getBizStartDt())
-                .bizEndDt(request.getBizEndDt())
-                .target(request.getTarget())
-                .bizContent(request.getBizContent())
-                .bizSummary(request.getBizSummary())
-                .applicationProcess(request.getApplicationProcess())
-                .contact(request.getContact())
-                .bizProcessJson(request.getBizProcessJson())
-                .terms(request.getTerms())
-                .applicationFormJson(request.getApplicationFormJson())
+                .pageNo(request.getPageNo())
                 .build();
-    }
-
-    public void insertTerms(Integer bizNo, BaseMemberVO admin, List<BizPO.Terms> terms) {
-        // 기존 임시저장된 약관 삭제
-        bizDao.deleteTerms(bizNo);
-
-        for (BizPO.Terms term: terms) {
-            BizVO.InsertTerm data = BizVO.InsertTerm.builder()
-                    .bizNo(bizNo)
-                    .trmsNm(term.getTermsName())
-                    .trmsCn(term.getTermsContent())
-                    .sortNo(term.getSortNo())
-                    .build();
-            data.setFirst(admin.getMngrId());
-            data.setLast(admin.getMngrId());
-
-            int termsRst = bizDao.insertTerms(data);
-            if(termsRst < 1) {
-                throw new GlobalException(ErrorCode.TERMS_INSERT_FAILED);
-            }
-        }
-    }
-
-    public Date getDateFormat(LocalDateTime param) {
-        return  java.sql.Timestamp.valueOf(param);
-    }
-
-    public LocalDate getLocalDateFormat(Date param) {
-        return param.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
     }
 
     public BizPO.BizDetail selectBizByBizNo(Integer bizNo,Integer pageNo) throws JsonProcessingException {
@@ -473,5 +411,50 @@ public class BizService {
         }else {
             throw new GlobalException(ErrorCode.BAD_REQUEST_PAGE_NO);
         }
+    }
+
+    public void insertTerms(Integer bizNo, BaseMemberVO admin, List<BizPO.Terms> terms) {
+        // 기존 임시저장된 약관 삭제
+        bizDao.deleteTerms(bizNo);
+
+        for (BizPO.Terms term: terms) {
+            BizVO.InsertTerm data = BizVO.InsertTerm.builder()
+                    .bizNo(bizNo)
+                    .trmsNm(term.getTermsName())
+                    .trmsCn(term.getTermsContent())
+                    .sortNo(term.getSortNo())
+                    .build();
+            data.setFirst(admin.getMngrId());
+            data.setLast(admin.getMngrId());
+
+            int termsRst = bizDao.insertTerms(data);
+            if(termsRst < 1) {
+                throw new GlobalException(ErrorCode.TERMS_INSERT_FAILED);
+            }
+        }
+    }
+
+    public LocalDateTime getLocaldatetime(Date date) {
+        if(date != null) {
+            return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        }
+        return null;
+    }
+
+    public String getStatusCode(LocalDateTime startDt, LocalDateTime endDt, LocalDateTime now) {
+        if(startDt.isBefore(now) && endDt.isAfter(now)) {
+            return  "STS003"; // 모집중
+        } else if(startDt.isAfter(now)) {
+            return "STS002"; // 모집전
+        } else if(now.isAfter(endDt)) {
+            return "STS004"; // 모집종료
+        }
+        return null;
+    }
+
+    public LocalDate getLocalDateFormat(Date param) {
+        return param.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
     }
 }
