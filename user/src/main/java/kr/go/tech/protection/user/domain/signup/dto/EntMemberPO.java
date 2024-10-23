@@ -1,4 +1,4 @@
-package kr.go.tech.protection.admin.domain.account.enterprise.dto;
+package kr.go.tech.protection.user.domain.signup.dto;
 
 import java.util.List;
 import javax.validation.constraints.Email;
@@ -244,7 +244,7 @@ public class EntMemberPO {
     @Getter
     @Builder
     public static class SearchBusinessNumberResponsePO {
-        private Boolean businessNumberAvailableYn;
+        private Boolean isBusinessNumberAvailable;
     }
 
     @Getter

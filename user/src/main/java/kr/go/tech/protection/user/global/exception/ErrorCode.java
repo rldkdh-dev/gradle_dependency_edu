@@ -1,9 +1,8 @@
 package kr.go.tech.protection.user.global.exception;
 
-import org.springframework.http.HttpStatus;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
@@ -12,6 +11,9 @@ public enum ErrorCode {
 	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 유저는 존재하지 않습니다."),
 	NO_UPDATE(HttpStatus.NOT_FOUND, "업데이트가 취소 되었습니다."),
 	NO_BUSINESS_NUMBER(HttpStatus.NOT_FOUND, "유효하지 않은 사업자 등록번호입니다."),
+	ALREADY_REGISTERED_USER(HttpStatus.CONFLICT, "이미 가입된 회원입니다."),
+	SIGN_UP_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "회원가입에 실패했습니다."),
+	ENT_PRCPT_REGISTRATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "기업소속 회원 등록에 실패했습니다."),
 
 	NOT_FOUND_BIZ(HttpStatus.NOT_FOUND, "사업공고가 존재하지 않습니다."),
 	NOT_FOUND_TEMP_SAVE(HttpStatus.NOT_FOUND, "사업공고 임시저장 데이터가 존재하지 않습니다."),

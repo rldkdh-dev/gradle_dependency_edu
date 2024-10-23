@@ -77,14 +77,14 @@ public class EntMemberService {
 			.bplcDaddr("사업장 상세주소")
 			.coHmpgAddr(requestPO.getHomepageUrl())
 			.mainPrdctn(requestPO.getMainProduct())
-			.fctYn(requestPO.getIsFactory())
+			.fctYn(requestPO.getFactoryYn())
 			.picNm(requestPO.getManagerName())
 			.picSeCd(requestPO.getManagerTypeCode())
 			.picDeptNm(requestPO.getManagerDeptName())
 			.picJbpsCd(requestPO.getManagerPositionCode())
 			.picMblTelno(requestPO.getManagerTelNo())
 			.emlAddr(requestPO.getManagerEmail())
-			.emlRcptnAgreYn(requestPO.getIsEmailConsent())
+			.emlRcptnAgreYn(requestPO.getEmailConsentYn())
 			.build();
 
 		param.setLast(admin.getMngrId());
@@ -109,14 +109,14 @@ public class EntMemberService {
 			.companyAddress("우편번호 + 도로명 + 상세주소")
 			.homepageUrl(requestPO.getHomepageUrl())
 			.mainProduct(requestPO.getMainProduct())
-			.isFactory(requestPO.getIsFactory())
+			.factoryYn(requestPO.getFactoryYn())
 			.managerName(requestPO.getManagerName())
 			.managerTypeCode(requestPO.getManagerTypeCode())
 			.managerDeptName(requestPO.getManagerDeptName())
 			.managerPositionCode(requestPO.getManagerPositionCode())
 			.managerTelNo(requestPO.getManagerTelNo())
 			.managerEmail(requestPO.getManagerEmail())
-			.isEmailConsent(requestPO.getIsEmailConsent())
+			.emailConsentYn(requestPO.getEmailConsentYn())
 			.build();
 	}
 
@@ -152,7 +152,7 @@ public class EntMemberService {
 			.managerPositionCode(entMember.getPicJbpsCd())
 			.managerTelNo(entMember.getPicMblTelno())
 			.managerEmail(entMember.getEmlAddr())
-			.isEmailConsent(entMember.getEmlRcptnAgreYn())
+			.emailConsentYn(entMember.getEmlRcptnAgreYn())
 			.sdgnNo(entMember.getSdgnNo())
 			.technicalProtectionTotalScore(entMember.getTotalScore())
 			.institutionalProtectionScore(entMember.getInstPrtcMngFldScr())
@@ -161,7 +161,7 @@ public class EntMemberService {
 			.accidentManagementScore(entMember.getAcdntDisMngFldScr())
 			.diagnosedAt(DateUtil.formatLocalDateToString(entMember.getLastMdfcnDt()))
 			.expiryAt(DateUtil.formatLocalDateToString(entMember.getExpirationDate()))
-			.isExpiration(entMember.getExpirationYn())
+			.ExpirationYn(entMember.getExpirationYn())
 			.build();
 	}
 
@@ -226,14 +226,14 @@ public class EntMemberService {
 			.bplcDaddr("상세주소")
 			.coHmpgAddr(requestPO.getHomepageUrl())
 			.mainPrdctn(requestPO.getMainProduct())
-			.fctYn(requestPO.getIsFactory())
+			.fctYn(requestPO.getFactoryYn())
 			.picNm(requestPO.getManagerName())
 			.picSeCd(requestPO.getManagerTypeCode())
 			.picDeptNm(requestPO.getManagerDeptName())
 			.picJbpsCd(requestPO.getManagerPositionCode())
 			.picMblTelno(requestPO.getManagerTelNo())
 			.emlAddr(requestPO.getManagerEmail())
-			.emlRcptnAgreYn(requestPO.getIsEmailConsent())
+			.emlRcptnAgreYn(requestPO.getEmailConsentYn())
 			.build();
 		requestVO.setFirst(admin.getMngrId());
 
@@ -263,14 +263,14 @@ public class EntMemberService {
                .companyAddress(entMember.getBplcAddress())
                .homepageUrl(entMember.getCoHmpgAddr())
                .mainProduct(entMember.getMainPrdctn())
-               .isFactory(entMember.getFctYn())
+               .factoryYn(entMember.getFctYn())
                .managerName(entMember.getPicNm())
                .managerTypeCode(entMember.getPicSeCd())
                .managerDeptName(entMember.getPicDeptNm())
                .managerPositionCode(entMember.getPicJbpsCd())
                .managerTelNo(entMember.getPicMblTelno())
                .managerEmail(entMember.getEmlAddr())
-               .isEmailConsent(entMember.getEmlRcptnAgreYn())
+               .emailConsentYn(entMember.getEmlRcptnAgreYn())
                .build();
    }
 

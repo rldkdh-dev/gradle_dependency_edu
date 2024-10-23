@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.go.tech.protection.user.domain.signup.dao.SignUpDAO">
+
+  <!-- 일반회원 -->
+  <insert id="insertGenMember" parameterType="kr.go.tech.protection.user.domain.signup.dto.SignUpVO$GenSignUpRequestVO" useGeneratedKeys="true" keyProperty="mbrNo">
+        /* insertGenMember [일반회원 회원가입 쿼리] */
+        INSERT INTO "GEN_MBR_INFO_TB"
+            (
+                "MBR_SE_CD",
+                "MBR_NM",
+                "MBR_GNDR_CD",
+                "MBR_BRDT",
+                "MBR_MBL_TELNO",
+                "MBR_ID",
+                "MBR_PSWD",
+                "CNTN_FAIL_CNT",
+                "EML_ADDR",
+                "HOME_ZIP",
+                "HOME_ROAD_NM",
+                "HOME_DADDR",
+                "EML_RCPTN_AGRE_YN",
+                "FRST_REG_DT",
+                "FRST_RGTR_ID",
+                "LAST_MDFCN_DT",
+                "LAST_MDFR_ID"
+            ) VALUES (
+                'CFT004',       -- 일반회원
+                #{mbrNm},
+                #{mbrGndrCd},
+                #{mbrBrdt},
+                #{mbrMblTelno},
+                #{mbrId},
+                #{mbrPswd},
+                0,
+                #{emlAddr},
+                #{homeZip},
+                #{homeRoadNm},
+                #{homeDaddr},
+                #{emlRcptnAgreYn},
+                #{frstRegDt},
+                #{frstRgtrId},
+                #{lastMdfcnDt},
+                #{lastMdfrId}
+            )
+    </insert>
+
+    <select id="selectGenMemberByPassAuth" parameterType="kr.go.tech.protection.user.domain.signup.dto.SignUpPO$PassAuthRequestPO">
+            /* selectGenMemberByPassAuth [PASS 인증을 통한 일반회원 가입여부 조회 쿼리] */
+            SELECT
+                COUNT(*)
+            FROM
+                "GEN_MBR_INFO_TB" GMIT
+            WHERE
+                GMIT."MBR_NM" = #{genName}
+            AND
+                GMIT."MBR_MBL_TELNO" = #{genPhone}
+      </select>
+
+    <select id="selectEntMemberJointCertInfo" parameterType="kr.go.tech.protection.user.domain.signup.dto.SignUpPO$JointCertInfoRequestPO">
+            /* selectEntMemberJointCertInfo [공동인증서 인증을 통한 기업회원 가입여부 조회 쿼리] */
+            SELECT
+                COUNT(*)
+            FROM
+                "ENT_MBR_INFO_TB" EMIT
+            WHERE
+                EMIT."JNT_CERT_INFO" = #{jointCertInfo}
+      </select>
+
+    <select id="selectGenIdDuplicate" parameterType="String">
+            /* selectGenIdDuplicate [일반회원 아이디 중복 조회 쿼리] */
+            SELECT
+                COUNT(*)
+            FROM
+                "GEN_MBR_INFO_TB" GMIT
+            WHERE
+                GMIT."MBR_ID" = #{searchId}
+      </select>
+
+    <select id="selectEntMemberByBusinessNumber" parameterType="String" resultType="kr.go.tech.protection.user.domain.signup.dto.SignUpVO$DefaultEntMemberVO">
+            /* selectEntMemberByBusinessNumber [사업자등록번호로 기업회원 조회 쿼리] */
+            SELECT
+                 EMIT."ENT_MBR_NO",            -- 기업회원번호
+                 EMIT."MBR_SE_CD",             -- 회원구분 코드
+                 EMIT."MBR_DTL_SE_CD",         -- 회원상세구분 코드
+                 EMIT."JNT_CERT_INFO",         -- 공동인증서 정보
+                 EMIT."CONM_NM",               -- 사업자명
+                 EMIT."RPRSV_NM",              -- 대표자명
+                 EMIT."BR_NO",                 -- 사업자등록번호
+                 EMIT."INST_STTS_CD",          -- 기관 상태 코드
+                 EMIT."BZMN_TYPE_CD",          -- 사업자유형 코드
+                 EMIT."INST_TYPE_CD",          -- 기관유형 코드
+                 EMIT."BZENT_FNDN_DT",         -- 설립일
+                 EMIT."RPRS_BZSTAT_CD",        -- 대표업태 코드
+                 EMIT."RPRS_TPBIZ_CD",         -- 대표업종 코드
+                 EMIT."EMP_CNT",               -- 직원 수
+                 EMIT."FCT_YN",                -- 공장 여부
+                 EMIT."PRV_CORP_SE_CD",        -- 개인법인 구분 코드
+                 EMIT."PRV_CORP_NO",           -- 개인법인 번호
+                 EMIT."TEL_NO",                -- 연락처
+                 EMIT."BPLC_ZIP",              -- 사업장 우편번호
+                 EMIT."BPLC_ROAD_NM",          -- 사업장 도로명 주소
+                 EMIT."BPLC_DADDR",            -- 사업장 상세주소
+                 '(' ||EMIT."BPLC_ZIP" || ') ' || EMIT."BPLC_ROAD_NM" || EMIT."BPLC_DADDR" AS "BPLC_ADDRESS",   -- 사업장 주소
+                 EMIT."CO_HMPG_ADDR",          -- 홈페이지 주소
+                 EMIT."MAIN_PRDCTN",           -- 주요 생산 제품
+                 EMIT."PIC_NM",                -- 담당자명
+                 EMIT."PIC_GNDR_CD",           -- 담당자 성별 코드
+                 EMIT."PIC_BRDT",              -- 담당자 생년월일
+                 EMIT."PIC_MBL_TELNO",         -- 담당자 연락처
+                 EMIT."PIC_SE_CD",             -- 담당자 구분 코드
+                 EMIT."PIC_DEPT_NM",           -- 담당자 부서명
+                 EMIT."PIC_JBPS_CD",           -- 담당자 직위 코드
+                 EMIT."EML_ADDR",              -- 이메일 주소
+                 EMIT."EML_RCPTN_AGRE_YN",     -- 이메일 수신 동의 여부
+                 EMIT."FRST_REG_DT",           -- 최초 등록일
+                 EMIT."FRST_RGTR_ID",          -- 최초 등록자 ID
+                 EMIT."LAST_MDFCN_DT",         -- 마지막 수정일
+                 EMIT."LAST_MDFR_ID"           -- 마지막 수정자 ID
+             FROM
+                 "ENT_MBR_INFO_TB" EMIT
+             WHERE
+                 EMIT."BR_NO" = #{businessNumber}
+    </select>
+
+    <insert id="insertEntPrcpt" parameterType="kr.go.tech.protection.user.domain.signup.dto.SignUpVO$InsertEntPrcptRequestVO">
+          /* insertEntPrcpt [일반 회원 회원가입시 (사업자등록번호 검증완료 후) - 기업 소속회원 테이블에 회원추가 쿼리] */
+          INSERT INTO "ENT_PRCPT_MBR_INFO_TB" (
+              "ENT_MBR_NO",
+              "MBR_NO",
+              "SE_CD",
+              "JBPS_CD",
+              "DEPT_NM",
+              "ALW_YN",
+              "DEL_YN",
+              "FRST_REG_DT",
+              "FRST_RGTR_ID",
+              "LAST_MDFCN_DT",
+              "LAST_MDFR_ID"
+          ) VALUES (
+              #{entMbrNo},
+              #{mbrNo},
+              #{seCd},
+              #{jbpsCd},
+              #{deptNm},
+              'N',              -- 허용여부 : 사용자가 가입하므로 N으로 인서트 추후에 기업에서 Y로 변경해줘야 최종 등록
+              'N',
+              #{frstRegDt},
+              #{frstRgtrId},
+              #{lastMdfcnDt},
+              #{lastMdfrId}
+          )
+    </insert>
+
+
+    <!-- 기업회원 -->
+    <insert id="insertEntMember" parameterType="kr.go.tech.protection.user.domain.signup.dto.SignUpVO$EntSignUpRequestVO" useGeneratedKeys="true" keyProperty="entMbrNo">
+         <!-- insertEntMember [기업회원 회원가입 쿼리] -->
+        INSERT INTO "ENT_MBR_INFO_TB" (
+            "JNT_CERT_INFO",            -- 회사명
+            "CONM_NM",            -- 회사명
+            "RPRSV_NM",           -- 대표자명
+            "BR_NO",              -- 사업자등록번호
+            "BZMN_TYPE_CD",       -- 사업자유형 코드
+            "INST_TYPE_CD",       -- 기관유형 코드
+            "INST_STTS_CD",       -- 기관상태 코드
+            "RPRS_BZSTAT_CD",     -- 대표업태 코드
+            "RPRS_TPBIZ_CD",      -- 대표업종 코드
+            "PRV_CORP_SE_CD",     -- 개인/법인 구분 코드
+            "PRV_CORP_NO",        -- 개인/법인 번호
+            "EMP_CNT",            -- 직원 수
+            "FCT_YN",             -- 공장 여부
+            "TEL_NO",             -- 기업 연락처
+            "BPLC_ZIP",           -- 사업장 우편번호
+            "BPLC_ROAD_NM",       -- 사업장 도로명 주소
+            "BPLC_DADDR",         -- 사업장 상세 주소
+            "CO_HMPG_ADDR",       -- 회사 홈페이지 주소
+            "MAIN_PRDCTN",        -- 주요 생산품
+            "PIC_NM",             -- 담당자명
+            "PIC_MBL_TELNO",      -- 담당자 연락처
+            "PIC_GNDR_CD",        -- 담당자 성별 코드
+            "PIC_SE_CD",          -- 담당자 구분 코드
+            "PIC_DEPT_NM",        -- 담당자 부서명
+            "PIC_JBPS_CD",        -- 담당자 직위 코드
+            "EML_ADDR",           -- 담당자 이메일
+            "EML_RCPTN_AGRE_YN",  -- 이메일 수신 동의 여부
+            "FRST_REG_DT",        -- 최초 등록일
+            "FRST_RGTR_ID",       -- 최초 등록자 ID
+            "LAST_MDFCN_DT",      -- 최종 수정일
+            "LAST_MDFR_ID"        -- 최종 수정자 ID
+        ) VALUES (
+            #{jntCertInfo},             -- 공동인증서 정보
+            #{conmNm},             -- 회사명
+            #{rprsvNm},            -- 대표자명
+            #{brNo},               -- 사업자등록번호
+            #{bzmnTypeCd},         -- 사업자유형 코드
+            #{instTypeCd},         -- 기관유형 코드
+            #{instSttsCd},         -- 기관상태 코드
+            #{rprsBzstatCd},       -- 대표업태 코드
+            #{rprsTpbizCd},        -- 대표업종 코드
+            #{prvCorpSeCd},        -- 개인/법인 구분 코드
+            #{prvCorpNo},          -- 개인/법인 번호
+            #{empCnt},             -- 직원 수
+            #{fctYn},              -- 공장 여부
+            #{telNo},              -- 기업 연락처
+            #{bplcZip},            -- 우편번호
+            #{bplcRoadNm},         -- 도로명 주소
+            #{bplcDaddr},          -- 상세 주소
+            #{coHmpgAddr},         -- 홈페이지 주소
+            #{mainPrdctn},         -- 주요 생산품
+            #{picNm},              -- 담당자명
+            #{picMblTelno},        -- 담당자 연락처
+            #{picGndrCd},          -- 성별 코드
+            #{picSeCd},            -- 담당자 구분 코드
+            #{picDeptNm},          -- 부서명
+            #{picJbpsCd},          -- 직위 코드
+            #{emlAddr},            -- 이메일
+            #{emlRcptnAgreYn},     -- 이메일 수신 동의 여부
+            #{frstRegDt},          -- 최초 등록일
+            #{frstRgtrId},         -- 최초 등록자 ID
+            #{lastMdfcnDt},        -- 최종 수정일
+            #{lastMdfrId}          -- 최종 수정자 ID
+        )
+   </insert>
+
+
+  <!--  <select id="insertGenMember" resultType="kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO$ListResponseVO" parameterType="kr.go.tech.protection.admin.domain.account.general.dto.GenMemberPO$SearchPO">
+          /* selectGenMemberList [일반 회원 리스트 조회 쿼리] */
+          SELECT
+              GMIT."MBR_NO",
+              GMIT."MBR_NM",
+              GMIT."MBR_ID",
+              GMIT."MBR_MBL_TELNO",
+              GMIT."EML_ADDR",
+              GMIT."FRST_REG_DT",
+              GMIT."LAST_MDFCN_DT",
+              COALESCE(CASE
+                  WHEN EPMIT."ALW_YN" = 'N' OR EPMIT."DEL_YN" = 'Y' THEN NULL
+                  ELSE EMIT."CONM_NM"
+              END, '-') AS "CONM_NM" &#45;&#45; CONM_NM이 NULL일 경우 '-'로 대체
+          FROM
+              "GEN_MBR_INFO_TB" GMIT
+          LEFT JOIN
+              "ENT_PRCPT_MBR_INFO_TB" EPMIT
+          ON
+              GMIT."MBR_NO" = EPMIT."MBR_NO"
+          LEFT JOIN
+              "ENT_MBR_INFO_TB" EMIT
+          ON
+              EPMIT."ENT_MBR_NO" = EMIT."ENT_MBR_NO"
+          <where>
+              <if test="companyName != null and companyName != ''">
+                  AND EMIT."CONM_NM" = #{companyName}
+              </if>
+              <if test="searchType != null and searchType != '' and searchKeyword != null and searchKeyword != ''">
+                  <choose>
+                      <when test="searchType == 'GMR001'">
+                          AND GMIT."MBR_NM" LIKE '%'||#{searchKeyword}||'%'
+                      </when>
+                      <when test="searchType == 'GMR002'">
+                          AND GMIT."MBR_ID" LIKE '%'||#{searchKeyword}||'%'
+                      </when>
+                  </choose>
+              </if>
+          </where>
+          ORDER BY
+             GMIT."FRST_REG_DT" DESC
+  </select>-->
+
+ <!-- <select id="selectGenMemberByNo" resultType="kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO$DetailGenMemberVO" parameterType="int">
+        /* selectGenMemberByNo [일반 회원 및 소속 기업 상세 조회 쿼리] */
+        SELECT
+            GMIT."MBR_NO",
+            GMIT."MBR_GNDR_CD",
+            GMIT."MBR_BRDT",
+            GMIT."MBR_NM",
+            GMIT."MBR_ID",
+            GMIT."MBR_MBL_TELNO",
+            GMIT."EML_ADDR",
+            GMIT."EML_RCPTN_AGRE_YN",
+            GMIT."HOME_ZIP",
+            GMIT."HOME_ROAD_NM",
+            GMIT."HOME_DADDR",
+            &#45;&#45; 회원 주소를 하나의 문자열로 합침
+            '(' || GMIT."HOME_ZIP" || ') ' || GMIT."HOME_ROAD_NM" || ' ' || GMIT."HOME_DADDR" AS "ADDRESS",
+            &#45;&#45; 기업 정보
+            EMIT."CONM_NM",
+            EMIT."BR_NO",
+            EPMIT."DEPT_NM",
+            EPMIT."JBPS_CD",
+            EPMIT."ALW_YN",
+            EMIT."BPLC_ZIP",
+            EMIT."BPLC_ROAD_NM",
+            EMIT."BPLC_DADDR",
+            &#45;&#45; 회사 주소를 하나의 문자열로 합침
+            COALESCE( '(' ||EMIT."BPLC_ZIP" || ') ' || EMIT."BPLC_ROAD_NM" || ' ' || EMIT."BPLC_DADDR", '-') AS "COMPANY_ADDRESS"
+        FROM
+            "GEN_MBR_INFO_TB" GMIT
+        LEFT JOIN
+            "ENT_PRCPT_MBR_INFO_TB" EPMIT
+        ON
+            GMIT."MBR_NO" = EPMIT."MBR_NO"
+            AND EPMIT."DEL_YN" = 'N'
+        LEFT JOIN
+            "ENT_MBR_INFO_TB" EMIT
+        ON
+            EPMIT."ENT_MBR_NO" = EMIT."ENT_MBR_NO"
+        WHERE
+            GMIT."MBR_NO" = #{no}
+  </select>
+
+  <select id="selectGenMemberById" resultType="kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO$DefaultGenMemberVO" parameterType="String">
+      /* selectGenMemberById [일반 회원 아이디로 정보 조회] */
+      SELECT
+          GMIT."MBR_NO",                     &#45;&#45; 회원번호
+          GMIT."LINK_INFO",                  &#45;&#45; 연계정보
+          GMIT."MBR_GNDR_CD",                &#45;&#45; 회원 성별 코드
+          GMIT."MBR_SE_CD",                  &#45;&#45; 회원 구분 코드
+          GMIT."MBR_BRDT",                   &#45;&#45; 회원 출생일자
+          GMIT."MBR_NM",                     &#45;&#45; 회원명
+          GMIT."MBR_ID",                     &#45;&#45; 회원 아이디
+          GMIT."MBR_MBL_TELNO",              &#45;&#45; 회원 휴대전화 번호
+          GMIT."EML_ADDR",                   &#45;&#45; 이메일 주소
+          GMIT."EML_RCPTN_AGRE_YN",          &#45;&#45; 이메일 수신 동의 여부
+          GMIT."MBR_PSWD",                   &#45;&#45; 회원 비밀번호
+          GMIT."MBR_PSWD_CHG_DT",            &#45;&#45; 비밀번호 변경일
+          GMIT."CNTN_FAIL_CNT",               &#45;&#45; 접속 실패 횟수
+          GMIT."HOME_ZIP",                   &#45;&#45; 자택 우편번호
+          GMIT."HOME_ROAD_NM",               &#45;&#45; 자택 도로명
+          GMIT."HOME_DADDR",                  &#45;&#45; 자택 상세주소
+          GMIT."FRST_REG_DT",                 &#45;&#45; 최초등록일시
+          GMIT."FRST_RGTR_ID",                 &#45;&#45; 최초등록자 ID
+          GMIT."LAST_MDFCN_DT",                 &#45;&#45; 최종수정일시
+          GMIT."LAST_MDFR_ID"                &#45;&#45; 최종수정자 ID
+      FROM
+          "GEN_MBR_INFO_TB" GMIT
+      WHERE
+          GMIT."MBR_ID" = #{searchId}
+  </select>
+
+    <update id="updateEntPrcptMbrInfoDelYnByGenNo" parameterType="int">
+        /* updateEntPrcptMbrInfoDelYnByGenNo [일반회원 기업 소속 정보 테이블에서 삭제 여부 컬럼 Y 업데이트 쿼리] */
+        UPDATE
+            "ENT_PRCPT_MBR_INFO_TB"
+        SET
+            "DEL_YN" = 'Y'
+        WHERE
+            "MBR_NO" = #{no}
+    </update>
+
+  <delete id="deleteGenMember" parameterType="int">
+      /* deleteGenMember [일반 회원 삭제 쿼리] */
+      DELETE
+      FROM
+          "GEN_MBR_INFO_TB"
+      WHERE
+          "MBR_NO" = #{no}
+  </delete>
+
+  <update id="updateGenMember" parameterType="kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO$UpdateRequestVO">
+      /* updateGenMember [일반 회원 업데이트 쿼리] */
+      UPDATE
+          "GEN_MBR_INFO_TB"
+      SET
+          "MBR_NM" = #{mbrNm},
+          "MBR_GNDR_CD" = #{mbrGndrCd},
+          "MBR_BRDT" = #{mbrBrdt},
+          "MBR_ID" = #{mbrId},
+          "MBR_MBL_TELNO" = #{mbrMblTelno},
+          "EML_ADDR" = #{emlAddr},
+          "EML_RCPTN_AGRE_YN" = #{emlRcptnAgreYn},
+          "HOME_ZIP" = #{homeZip},
+          "HOME_ROAD_NM" = #{homeRoadNm},
+          "HOME_DADDR" = #{homeDaddr},
+          "LAST_MDFCN_DT" = #{lastMdfcnDt},
+          "LAST_MDFR_ID" = #{lastMdfrId}
+      WHERE
+          "MBR_NO" = #{mbrNo}
+  </update>
+
+    <select id="selectEntMemberNoByBusinessNumber">
+        /* selectEntMemberNoByBusinessNumber [일반 회원 수정 - 사업자 등록번호 유효 검증 쿼리] */
+        SELECT
+        		"ENT_MBR_NO"
+        FROM
+        		"ENT_MBR_INFO_TB"
+        WHERE
+        		"BR_NO" = #{businessNumber}
+    </select>
+
+    <update id="updateEntPrcpt" parameterType="kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO$UpdateEntPrcptRequestVO">
+        /* updateEntPrcpt [일반 회원 수정 - 기업 소속 업데이트 쿼리] */
+        UPDATE
+            "ENT_PRCPT_MBR_INFO_TB"
+        SET
+            "ENT_MBR_NO" = #{entMbrNo}
+        WHERE
+            "MBR_NO" = #{mbrNo}
+    </update>
+
+    <update id="resetPassword" parameterType="kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO$ResetPasswordRequestVO">
+        /* resetPassword [일반회원 비밀번호 초기화 쿼리] */
+        UPDATE
+            "GEN_MBR_INFO_TB"
+        SET
+            "MBR_PSWD" = #{mbrPswd},
+            "MBR_PSWD_CHG_DT" = #{mbrPswdChgDt},
+            "LAST_MDFCN_DT" = #{lastMdfcnDt},
+            "LAST_MDFR_ID" = #{lastMdfrId}
+        WHERE
+            "MBR_ID" = #{mbrId}
+    </update>
+
+  <select id="isGenIdDuplicate" resultType="int">
+    /* isGenIdDuplicate [일반회원 아이디 중복 체크 쿼리] */
+      SELECT
+        COUNT(*)
+      FROM
+        "GEN_MBR_INFO_TB"
+      WHERE
+        "MBR_ID" = #{searchId}
+  </select>
+
+
+
+    <select id="selectEntMbrNoByBusinessNumber" resultType="int">
+      /* selectEntMbrNoByBusinessNumber [사업자등록번호로 기업회원 번호 조회 쿼리] */
+        SELECT
+          EMIT."ENT_MBR_NO"
+        FROM
+          "ENT_MBR_INFO_TB" EMIT
+        WHERE
+          EMIT."BR_NO" = #{businessNumber}
+    </select>
+
+  <insert id="insertGenMemberIntoEntPrcpt" parameterType="kr.go.tech.protection.admin.domain.account.general.dto.GenMemberVO$InsertEntPrcptVO">
+        /* insertGenMemberIntoEntPrcpt [일반 회원 등록 - 기업소속 회원 정보 테이블에 추가 쿼리] */
+        INSERT INTO "ENT_PRCPT_MBR_INFO_TB" (
+            "ENT_MBR_NO",
+            "MBR_NO",
+            "SE_CD",
+            "JBPS_CD",
+            "DEPT_NM",
+            "ALW_YN",
+            "DEL_YN",
+            "FRST_REG_DT",
+            "FRST_RGTR_ID",
+            "LAST_MDFCN_DT",
+            "LAST_MDFR_ID"
+        ) VALUES (
+            #{entMbrNo},
+            #{mbrNo},
+            #{seCd},
+            #{jbpsCd},
+            #{deptNm},
+            'Y',          &#45;&#45;관리자가 등록하므로 Y로 등록
+            'N',
+            #{frstRegDt},
+            #{frstRgtrId},
+            #{lastMdfcnDt},
+            #{lastMdfrId}
+        );
+    </insert>
+-->
+
+
+</mapper>

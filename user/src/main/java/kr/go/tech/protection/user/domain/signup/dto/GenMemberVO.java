@@ -1,8 +1,8 @@
-package kr.go.tech.protection.admin.domain.account.general.dto;
+package kr.go.tech.protection.user.domain.signup.dto;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import kr.go.tech.protection.admin.global.common.BaseColumn;
+import kr.go.tech.protection.user.global.common.BaseColumn;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -10,7 +10,7 @@ import lombok.Getter;
 public class GenMemberVO {
 
     @Getter
-    public static class ListResponseVO extends BaseColumn{
+    public static class ListResponseVO extends BaseColumn {
         private Integer mbrNo;  //회원번호
         private String conmNm;   //소속기업명
         private String mbrNm;  //회원명
@@ -134,7 +134,7 @@ public class GenMemberVO {
     public static class InsertEntPrcptVO extends BaseColumn {
         private Integer mbrNo;  //일반 회원 번호
         private Integer entMbrNo;  //기업 회원 번호
-        private String seCd;  //구분 코드
+        private String seCd;  //구분 코든
         private String jbpsCd;  //직위 코드
         private String deptNm;  //부서명
     }

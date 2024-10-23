@@ -1,6 +1,5 @@
-package kr.go.tech.protection.admin.domain.account.general.dto;
+package kr.go.tech.protection.user.domain.signup.dto;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;

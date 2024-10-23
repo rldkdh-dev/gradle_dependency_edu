@@ -277,7 +277,7 @@
             #{frstRgtrId},
             #{lastMdfcnDt},
             #{lastMdfrId}
-        );
+        )
     </insert>
 
 
