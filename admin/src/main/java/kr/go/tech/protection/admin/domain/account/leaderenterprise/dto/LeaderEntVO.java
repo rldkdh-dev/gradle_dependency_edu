@@ -28,8 +28,8 @@ public class LeaderEntVO {
         private Integer ldrEntNo;   // 선도기업번호
         private Integer entMbrNo;   // 기업회원번호
         private String ldrEntSeCd;  // 선도기업 분류코드
-        private String bgngDt;      // 시작일시
-        private String endDt;       // 종료일시
+        private LocalDateTime bgngDt;      // 시작일시
+        private LocalDateTime endDt;       // 종료일시
         private String lvlIdntyScr; // 수준확인점수
         private String dsgnNo;      // 지정 번호
     }
@@ -38,14 +38,26 @@ public class LeaderEntVO {
     public static class DetailEntMemberVO extends BaseColumn {
         // 선도기업 정보
         private Integer ldrEntNo;   // 선도기업번호
-        private Integer entMbrNo;   // 기업회원번호
         private String ldrEntSeCd;  // 선도기업 분류코드
-        private String bgngDt;      // 시작일시
-        private String endDt;       // 종료일시
+        private LocalDateTime bgngDt;      // 시작일시
+        private LocalDateTime endDt;       // 종료일시
         private String lvlIdntyScr; // 수준확인점수
         private String dsgnNo;      // 지정 번호
-        
+        private String expirationYn;      // 만료 여부
+
         // 기업 정보
+        private Integer entMbrNo;   // 기업회원번호
+        private String conmNm;             // 사업자명
+        private String rprsvNm;           // 대표자명
+        private String brNo;     //사업자 등록번호
+	}
+
+    @Getter
+    public static class EntInfoResponseVO extends BaseColumn {
+        private Integer entMbrNo;   // 기업회원번호
+        private String conmNm;             // 사업자명
+        private String rprsvNm;           // 대표자명
+        private String brNo;     //사업자 등록번호
 	}
 
     @Getter
@@ -54,8 +66,8 @@ public class LeaderEntVO {
         private Integer ldrEntNo;   // 선도기업번호
         private Integer entMbrNo;   // 기업회원번호
         private String ldrEntSeCd;  // 선도기업 분류코드
-        private String bgngDt;      // 시작일시
-        private String endDt;       // 종료일시
+        private LocalDateTime bgngDt;      // 시작일시
+        private LocalDateTime endDt;       // 종료일시
         private String lvlIdntyScr; // 수준확인점수
         private String dsgnNo;      // 지정 번호
     }
@@ -66,8 +78,8 @@ public class LeaderEntVO {
         private Integer ldrEntNo;   // 선도기업번호
         private Integer entMbrNo;   // 기업회원번호
         private String ldrEntSeCd;  // 선도기업 분류코드
-        private String bgngDt;      // 시작일시
-        private String endDt;       // 종료일시
+        private LocalDateTime bgngDt;      // 시작일시
+        private LocalDateTime endDt;       // 종료일시
         private String lvlIdntyScr; // 수준확인점수
         private String dsgnNo;      // 지정 번호
     }

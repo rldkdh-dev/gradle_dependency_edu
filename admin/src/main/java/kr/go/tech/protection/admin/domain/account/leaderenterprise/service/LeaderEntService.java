@@ -5,12 +5,17 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import kr.go.tech.protection.admin.domain.account.leaderenterprise.dao.LeaderEntDAO;
 import kr.go.tech.protection.admin.domain.account.leaderenterprise.dto.LeaderEntPO;
+import kr.go.tech.protection.admin.domain.account.leaderenterprise.dto.LeaderEntPO.DetailResponsePO;
+import kr.go.tech.protection.admin.domain.account.leaderenterprise.dto.LeaderEntPO.EntInfoResponsePO;
 import kr.go.tech.protection.admin.domain.account.leaderenterprise.dto.LeaderEntPO.ListResponsePO;
 import kr.go.tech.protection.admin.domain.account.leaderenterprise.dto.LeaderEntVO;
+import kr.go.tech.protection.admin.global.exception.ErrorCode;
+import kr.go.tech.protection.admin.global.exception.GlobalException;
 import kr.go.tech.protection.admin.global.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 @Slf4j
 @Service
@@ -19,7 +24,7 @@ public class LeaderEntService {
 
 	private final LeaderEntDAO leaderEntDAO;
 
-	public ListResponsePO selectLeaderEntList(LeaderEntPO.SearchPO searchPO) {
+	public LeaderEntPO.ListResponsePO selectLeaderEntList(LeaderEntPO.SearchPO searchPO) {
 		List<LeaderEntVO.ListResponseVO> leaderEntList = leaderEntDAO.selectLeaderEntList(searchPO);
 		AtomicReference<Integer> rowNum = new AtomicReference<>(1);
 
@@ -42,6 +47,43 @@ public class LeaderEntService {
 			)
 			.build();
 	}
+
+	public LeaderEntPO.DetailResponsePO selectLeaderEntByNo(int no) {
+		 LeaderEntVO.DetailEntMemberVO leaderEnt = leaderEntDAO.selectLeaderEntByNo(no);
+
+		if (ObjectUtils.isEmpty(leaderEnt)) {
+			throw new GlobalException(ErrorCode.LEADER_ENT_NOT_FOUND);
+		}
+
+		return DetailResponsePO.builder()
+			.ldrEntNo(leaderEnt.getLdrEntNo())
+			.companyName(leaderEnt.getConmNm())
+			.representativeName(leaderEnt.getRprsvNm())
+			.businessNumber(leaderEnt.getBrNo())
+			.ldrEntCategoryCode(leaderEnt.getLdrEntSeCd())
+			.validStartAt(DateUtil.formatLocalDateToString(leaderEnt.getBgngDt()))
+			.validEndAt(DateUtil.formatLocalDateToString(leaderEnt.getEndDt()))
+			.levelIdentificationScore(leaderEnt.getLvlIdntyScr())
+			.designationNumber(leaderEnt.getDsgnNo())
+			.build();
+
+	}
+
+	public LeaderEntPO.EntInfoResponsePO selectEntInfoByBusinessNumber(String businessNumber) {
+		LeaderEntVO.EntInfoResponseVO entMember = leaderEntDAO.selectEntInfoByBusinessNumber(businessNumber);
+
+		if (ObjectUtils.isEmpty(entMember)) {
+			throw new GlobalException(ErrorCode.ENT_MBR_NOT_FOUND);
+		}
+
+		return LeaderEntPO.EntInfoResponsePO.builder()
+			.entMbrNo(entMember.getEntMbrNo())
+			.companyName(entMember.getConmNm())
+			.representativeName(entMember.getRprsvNm())
+			.businessNumber(entMember.getBrNo())
+			.build();
+	}
+
 /*
 
 

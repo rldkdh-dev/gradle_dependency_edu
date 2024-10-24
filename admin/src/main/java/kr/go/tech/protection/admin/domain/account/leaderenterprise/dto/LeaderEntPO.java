@@ -46,43 +46,24 @@ public class LeaderEntPO {
     @Getter
     @Builder
     public static class DetailResponsePO {
+        private Integer ldrEntNo;   // 선도기업번호
+        private String companyName;     //사업자명
+        private String representativeName; // 대표자명
+        private String businessNumber;     //사업자 등록번호
+        private String ldrEntCategoryCode;  // 선도기업 분류코드
+        private String validStartAt;      // 선도기업 유효기간 (시작일)
+        private String validEndAt;       // 선도기업 유효기간 (종료일)
+        private String levelIdentificationScore; // 수준확인점수
         private String designationNumber;      // 지정 번호
+    }
 
-
-
-        private Integer entNo;                      // 기업회원번호
-        private String companyName;                  // 사업자명
-        private String representativeName;           // 대표자명
-        private String businessNumber;               // 사업자등록번호
-        private String businessTypeCode;             // 사업자유형 코드
-        private String institutionTypeCode;          // 기관유형 코드
-        private String representativeBusinessCode;   // 대표업태 코드
-        private String representativeIndustryCode;   // 대표업종 코드
-        private Integer employeeCount;               // 직원수
-        private String entTelNo;                     // 기업 연락처
-        private String companyAddress;                // 사업장 주소
-        private String homepageUrl;                   // 회사 홈페이지 주소
-        private String mainProduct;                   // 주요 생산 제품
-
-        // 담당자 정보
-        private String managerName;                  // 담당자명
-        private String managerTypeCode;              // 담당자 구분 코드
-        private String managerDeptName;              // 담당자 부서명
-        private String managerPositionCode;          // 담당자 직위 코드
-        private String managerTelNo;                 // 담당자 연락처
-        private String managerEmail;                  // 담당자 이메일
-        private String emailConsentYn;               // 이메일 수신 동의 여부
-
-        //기술보호 수준 자가진단 결과
-        private String sdgnNo;                      // 자가진단번호
-        private String technicalProtectionTotalScore;    // 기술보호 수준 자가진단 결과 점수 (종합)
-        private String institutionalProtectionScore; // 제도적 보호 관리 분야 점수
-        private String personnelProtectionScore;    // 인적 보호 관리 분야 점수
-        private String physicalProtectionScore;     // 물적 보호 관리 분야 점수
-        private String accidentManagementScore;     // 사고재해 관리 분야 점수
-        private String diagnosedAt;          // 자가 진단일
-        private String expiryAt;                // 만료일
-        private String expirationYn;                // 만료 여부
+    @Getter
+    @Builder
+    public static class EntInfoResponsePO {
+        private Integer entMbrNo;     //기업회원 번호
+        private String companyName;     //사업자명
+        private String representativeName; // 대표자명
+        private String businessNumber;     //사업자 등록번호
     }
 
     @Getter

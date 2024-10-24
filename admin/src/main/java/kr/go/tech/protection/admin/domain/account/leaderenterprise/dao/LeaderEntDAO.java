@@ -3,12 +3,18 @@ package kr.go.tech.protection.admin.domain.account.leaderenterprise.dao;
 import java.util.List;
 import kr.go.tech.protection.admin.domain.account.leaderenterprise.dto.LeaderEntPO.SearchPO;
 import kr.go.tech.protection.admin.domain.account.leaderenterprise.dto.LeaderEntVO;
+import kr.go.tech.protection.admin.domain.account.leaderenterprise.dto.LeaderEntVO.DetailEntMemberVO;
+import kr.go.tech.protection.admin.domain.account.leaderenterprise.dto.LeaderEntVO.EntInfoResponseVO;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface LeaderEntDAO {
 
 	List<LeaderEntVO.ListResponseVO> selectLeaderEntList(SearchPO searchPO);
+
+	LeaderEntVO.DetailEntMemberVO selectLeaderEntByNo(int no);
+
+	LeaderEntVO.EntInfoResponseVO selectEntInfoByBusinessNumber(String businessNumber);
 
 
 

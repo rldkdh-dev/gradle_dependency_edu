@@ -6,6 +6,7 @@ import kr.go.tech.protection.admin.global.response.ApiResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,6 +25,18 @@ public class LeaderEntController {
 	}
 
 	// 선도기업 상세 조회 API
+	@GetMapping("/{no}")
+	public ApiResult<LeaderEntPO.DetailResponsePO> selectLeaderEntByNo(@PathVariable int no) {
+		LeaderEntPO.DetailResponsePO data = leaderEntService.selectLeaderEntByNo(no);
+		return ApiResult.success(data);
+	}
+
+	// 사업자 등록번호로 기업정보 조회
+	@GetMapping("/enterprise-info/{businessNumber}")
+	public ApiResult<LeaderEntPO.EntInfoResponsePO> selectEntInfoByBusinessNumber(@PathVariable String businessNumber) {
+		LeaderEntPO.EntInfoResponsePO data = leaderEntService.selectEntInfoByBusinessNumber(businessNumber);
+		return ApiResult.success(data);
+	}
 
 	// 선도기업 등록 API
 
