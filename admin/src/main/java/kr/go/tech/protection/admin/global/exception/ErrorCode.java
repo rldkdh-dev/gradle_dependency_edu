@@ -23,6 +23,7 @@ public enum ErrorCode {
 	BAD_REQUEST_RECRUIT_DATE(HttpStatus.BAD_REQUEST, "모집종료일자는 모집시작일자 이전으로 설정할 수 없습니다."),
 	BAD_REQUEST_RECRUIT_DATE_FOR_TODAY(HttpStatus.BAD_REQUEST, "모집종료일자는 오늘 날짜 이전으로 설정할 수 없습니다."),
 	BIZ_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "사업 공고 수정에 실패했습니다."),
+	BIZ_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "사업 공고 삭제에 실패했습니다."),
 	TERMS_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "약관 삭제에 실패했습니다."),
 	TERMS_INSERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "약관 추가에 실패했습니다."),
 	TEMP_SAVE_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "임시저장 데이터 삭제에 실패했습니다."),
@@ -39,7 +40,12 @@ public enum ErrorCode {
 	ADMIN_INSERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "관리자 회원 추가에 실패했습니다."),
 	NOT_MATCHED_ADMIN_PASSWORD(HttpStatus.BAD_REQUEST,"비밀번호가 일치하지 않습니다."),
 	NOT_MATCHED_ADMIN_CHECK_PASSWORD(HttpStatus.BAD_REQUEST,"입력하신 비밀번호와 비밀번호 확인이 일치하지 않습니다."),
-	ADMIN_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "관리자 회원 수정에 실패했습니다.");
+	ADMIN_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "관리자 회원 수정에 실패했습니다."),
+	ANNOUNCEMENT_INSERT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "전문가 모집 공고 등록에 실패했습니다."),
+	NOT_MATCHED_RECRUIT_DATE(HttpStatus.BAD_REQUEST, "모집년도와 모집일자의 년도가 일치하지 않습니다."),
+	BAD_REQUEST_ANN_RECRUIT_DATE(HttpStatus.BAD_REQUEST, "모집기간 날짜를 확인해주세요."),
+	BAD_REQUEST_ANN_ENTRUSTING_DATE(HttpStatus.BAD_REQUEST, "위촉기간 날짜를 확인해주세요."),
+	BAD_REQUEST_ANN_ENTRUSTING_START_DATE(HttpStatus.BAD_REQUEST, "위촉기간은 모집기간보다 빠를 수 없습니다.");
 
 
 
