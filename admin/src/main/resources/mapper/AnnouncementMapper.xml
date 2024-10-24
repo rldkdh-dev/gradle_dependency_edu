@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.go.tech.protection.admin.domain.announcement.dao.AnnouncementDAO">
+
+    <insert id="insertAnnouncement" parameterType="kr.go.tech.protection.admin.domain.announcement.dto.AnnouncementVO$InsertRequest">
+        /* insertAnnouncement [전문가 모집공고 생성 쿼리] */
+        INSERT INTO "EXPT_PBANC_INFO_TB"
+            (
+                "RCRT_YR",
+                "RCRT_FLD_CD",
+                "RCRT_CYCL",
+                "RCRT_BGNG_DT",
+                "RCRT_END_DT",
+                "ENTRST_BGNG_DT",
+                "ENTRST_END_DT",
+                "PSTG_YN",
+                "FRST_REG_DT",
+                "FRST_RGTR_ID",
+                "LAST_MDFCN_DT",
+                "LAST_MDFR_ID"
+            )
+        VALUES
+            (
+                #{rcrtYr},
+                #{rcrtFldCd},
+                #{rcrtCycl},
+                #{rcrtBgngDt},
+                #{rcrtEndDt},
+                #{entrstBgngDt},
+                #{entrstEndDt},
+                #{pstgYn},
+                #{frstRegDt},
+                #{frstRgtrId},
+                #{lastMdfcnDt},
+                #{lastMdfrId}
+            )
+    </insert>
+
+    <select id="selectAnnouncementCount" resultType="Integer">
+        SELECT
+            count(*)
+        FROM
+            "EXPT_PBANC_INFO_TB"
+        WHERE
+            "RCRT_YR" = #{recruitYear}
+    </select>
+</mapper>
