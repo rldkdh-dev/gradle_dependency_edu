@@ -457,4 +457,26 @@ public class BizService {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
     }
+
+    public void deleteBizByBizNo(Integer bizNo) {
+        BaseMemberVO admin = (BaseMemberVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        BizVO.BizDetail biz = bizDao.findBizByBizNo(bizNo);
+        if(biz == null) {
+            throw new GlobalException(ErrorCode.NOT_FOUND_BIZ);
+        }
+
+        if(!biz.getPicId().equals(admin.getMngrId())) {
+            throw new GlobalException(ErrorCode.NOT_MATCHED_PIC);
+        }
+
+        BizVO.DeleteBiz delBiz = BizVO.DeleteBiz.builder()
+                .bizNo(bizNo)
+                .build();
+        delBiz.setLast(admin.getMngrId());
+
+        int result = bizDao.deleteBiz(delBiz);
+        if(result < 1) {
+            throw new GlobalException(ErrorCode.BIZ_DELETE_FAILED);
+        }
+    }
 }

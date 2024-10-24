@@ -206,7 +206,8 @@
             "AUTHRT_GROUP_INFO_TB" agi on CAST (agi."AUTHRT_NO" as TEXT) = ANY(STRING_TO_ARRAY(bit."TKCG_DEPT_CD", '|'))
         where
             bit."BIZ_STTS_CD"  = #{bizStatus}
-
+        AND
+            bit."STRG_YN" = 'Y'
             <if test="recruitmentYear != ''">
                 AND
                     EXTRACT(YEAR FROM bit."RCRT_BGNG_DT") = CAST(#{recruitmentYear} AS INTEGER)
@@ -323,4 +324,16 @@
         ORDER BY
             "SORT_NO" ASC
     </select>
+
+    <update id="deleteBiz" parameterType="kr.go.tech.protection.admin.domain.biz.dto.BizVO$DeleteBiz">
+        /* deleteBiz [사업공고 상태 삭제 업데이트 쿼리] */
+        UPDATE
+            "BIZ_INFO_TB"
+        SET
+            "STRG_YN" = 'N',
+            "LAST_MDFCN_DT" = #{lastMdfcnDt},
+            "LAST_MDFR_ID" = #{lastMdfrId}
+        WHERE
+            "BIZ_NO" = #{bizNo}
+    </update>
 </mapper>

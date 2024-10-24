@@ -50,4 +50,10 @@ public class BizController {
         return ApiResult.success(response);
     }
 
+    @GetMapping(value = "/{bizNo}")
+    public ApiResult<String> deleteBizByBizNo(@PathVariable Integer bizNo) {
+        bizService.deleteBizByBizNo(bizNo);
+        return ApiResult.success("");
+    }
+
 }

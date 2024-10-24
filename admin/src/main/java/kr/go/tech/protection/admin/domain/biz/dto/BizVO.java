@@ -119,4 +119,10 @@ public class BizVO {
         private String trmsCn;
         private Integer sortNo;
     }
+
+    @Getter
+    @Builder
+    public static class DeleteBiz extends BaseColumn{
+        private Integer bizNo;
+    }
 }
