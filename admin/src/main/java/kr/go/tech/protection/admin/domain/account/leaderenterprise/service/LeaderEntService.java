@@ -6,15 +6,18 @@ import java.util.stream.Collectors;
 import kr.go.tech.protection.admin.domain.account.leaderenterprise.dao.LeaderEntDAO;
 import kr.go.tech.protection.admin.domain.account.leaderenterprise.dto.LeaderEntPO;
 import kr.go.tech.protection.admin.domain.account.leaderenterprise.dto.LeaderEntPO.DetailResponsePO;
-import kr.go.tech.protection.admin.domain.account.leaderenterprise.dto.LeaderEntPO.EntInfoResponsePO;
-import kr.go.tech.protection.admin.domain.account.leaderenterprise.dto.LeaderEntPO.ListResponsePO;
 import kr.go.tech.protection.admin.domain.account.leaderenterprise.dto.LeaderEntVO;
+import kr.go.tech.protection.admin.domain.account.leaderenterprise.dto.LeaderEntVO.EntInfoResponseVO;
+import kr.go.tech.protection.admin.domain.account.leaderenterprise.dto.LeaderEntVO.InsertRequestVO;
+import kr.go.tech.protection.admin.domain.member.dto.BaseMemberVO;
 import kr.go.tech.protection.admin.global.exception.ErrorCode;
 import kr.go.tech.protection.admin.global.exception.GlobalException;
 import kr.go.tech.protection.admin.global.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 @Slf4j
@@ -81,6 +84,49 @@ public class LeaderEntService {
 			.companyName(entMember.getConmNm())
 			.representativeName(entMember.getRprsvNm())
 			.businessNumber(entMember.getBrNo())
+			.build();
+	}
+
+	@Transactional
+	public LeaderEntPO.InsertResponsePO insertLeaderEnt(LeaderEntPO.InsertRequestPO requestPO) {
+		BaseMemberVO admin = (BaseMemberVO) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		EntInfoResponseVO entMember = leaderEntDAO.selectEntInfoByBusinessNumber(requestPO.getBusinessNumber());
+
+		if (ObjectUtils.isEmpty(entMember)) {
+			throw new GlobalException(ErrorCode.ENT_MBR_NOT_FOUND);
+		}
+
+		InsertRequestVO paramVO = InsertRequestVO.builder()
+			.entMbrNo(entMember.getEntMbrNo())
+			.ldrEntSeCd(requestPO.getLdrEntCategoryCode())
+			.bgngDt(requestPO.getValidStartAt().atStartOfDay())
+			.endDt(requestPO.getValidEndAt().atStartOfDay())
+			.lvlIdntyScr(requestPO.getLevelIdentificationScore())
+			.dsgnNo(requestPO.getDesignationNumber())
+			.build();
+
+		paramVO.setFirst(admin.getMngrId());
+
+		int result = leaderEntDAO.insertLeaderEnt(paramVO);
+
+		if (result < 1) {
+			throw new GlobalException(ErrorCode.INSERT_FAILED);
+		}
+
+		LeaderEntVO.DetailEntMemberVO leaderEnt = leaderEntDAO.selectLeaderEntByNo(paramVO.getLdrEntNo());
+
+		if (ObjectUtils.isEmpty(leaderEnt)) {
+			throw new GlobalException(ErrorCode.LEADER_ENT_NOT_FOUND);
+		}
+
+		return LeaderEntPO.InsertResponsePO.builder()
+			.businessNumber(leaderEnt.getBrNo())
+			.ldrEntCategoryCode(leaderEnt.getLdrEntSeCd())
+			.validStartAt(DateUtil.formatLocalDateToString(leaderEnt.getBgngDt()))
+			.validEndAt(DateUtil.formatLocalDateToString(leaderEnt.getEndDt()))
+			.levelIdentificationScore(leaderEnt.getLvlIdntyScr())
+			.designationNumber(leaderEnt.getDsgnNo())
 			.build();
 	}
 

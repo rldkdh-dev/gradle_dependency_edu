@@ -5,6 +5,7 @@ import kr.go.tech.protection.admin.domain.account.leaderenterprise.dto.LeaderEnt
 import kr.go.tech.protection.admin.domain.account.leaderenterprise.dto.LeaderEntVO;
 import kr.go.tech.protection.admin.domain.account.leaderenterprise.dto.LeaderEntVO.DetailEntMemberVO;
 import kr.go.tech.protection.admin.domain.account.leaderenterprise.dto.LeaderEntVO.EntInfoResponseVO;
+import kr.go.tech.protection.admin.domain.account.leaderenterprise.dto.LeaderEntVO.InsertRequestVO;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
@@ -15,6 +16,8 @@ public interface LeaderEntDAO {
 	LeaderEntVO.DetailEntMemberVO selectLeaderEntByNo(int no);
 
 	LeaderEntVO.EntInfoResponseVO selectEntInfoByBusinessNumber(String businessNumber);
+
+	int insertLeaderEnt(InsertRequestVO paramVO);
 
 
 

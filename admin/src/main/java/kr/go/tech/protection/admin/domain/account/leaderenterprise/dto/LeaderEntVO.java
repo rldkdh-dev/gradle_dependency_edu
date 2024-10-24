@@ -1,5 +1,6 @@
 package kr.go.tech.protection.admin.domain.account.leaderenterprise.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import kr.go.tech.protection.admin.global.common.BaseColumn;
 import lombok.Builder;
@@ -18,7 +19,7 @@ public class LeaderEntVO {
         private String brNo;     //사업자 등록번호
         private LocalDateTime bgngDt;      // 시작일시
         private LocalDateTime endDt;       // 종료일시
-        private String lvlIdntyScr; // 수준확인점수
+        private Integer lvlIdntyScr; // 수준확인점수
         private String dsgnNo;      // 지정 번호
         private String expirationYn;      // 만료 여부
     }
@@ -30,7 +31,7 @@ public class LeaderEntVO {
         private String ldrEntSeCd;  // 선도기업 분류코드
         private LocalDateTime bgngDt;      // 시작일시
         private LocalDateTime endDt;       // 종료일시
-        private String lvlIdntyScr; // 수준확인점수
+        private Integer lvlIdntyScr; // 수준확인점수
         private String dsgnNo;      // 지정 번호
     }
 
@@ -41,7 +42,7 @@ public class LeaderEntVO {
         private String ldrEntSeCd;  // 선도기업 분류코드
         private LocalDateTime bgngDt;      // 시작일시
         private LocalDateTime endDt;       // 종료일시
-        private String lvlIdntyScr; // 수준확인점수
+        private Integer lvlIdntyScr; // 수준확인점수
         private String dsgnNo;      // 지정 번호
         private String expirationYn;      // 만료 여부
 
@@ -68,7 +69,7 @@ public class LeaderEntVO {
         private String ldrEntSeCd;  // 선도기업 분류코드
         private LocalDateTime bgngDt;      // 시작일시
         private LocalDateTime endDt;       // 종료일시
-        private String lvlIdntyScr; // 수준확인점수
+        private Integer lvlIdntyScr; // 수준확인점수
         private String dsgnNo;      // 지정 번호
     }
 
@@ -80,7 +81,7 @@ public class LeaderEntVO {
         private String ldrEntSeCd;  // 선도기업 분류코드
         private LocalDateTime bgngDt;      // 시작일시
         private LocalDateTime endDt;       // 종료일시
-        private String lvlIdntyScr; // 수준확인점수
+        private Integer lvlIdntyScr; // 수준확인점수
         private String dsgnNo;      // 지정 번호
     }
 

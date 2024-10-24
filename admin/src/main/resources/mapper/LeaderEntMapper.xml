@@ -91,6 +91,33 @@
               EMIT."BR_NO" = #{businessNumber}
       </select>
 
+    <insert id="insertLeaderEnt" parameterType="kr.go.tech.protection.admin.domain.account.leaderenterprise.dto.LeaderEntVO$InsertRequestVO" useGeneratedKeys="true" keyProperty="ldrEntNo">
+        /* insertLeaderEnt [선도기업 등록 쿼리] */
+        INSERT INTO "LDR_ENT_INFO_TB" (
+              "ENT_MBR_NO",
+              "LDR_ENT_SE_CD",
+              "BGNG_DT",
+              "END_DT",
+              "LVL_IDNTY_SCR",
+              "DSGN_NO",
+              "FRST_REG_DT",
+              "FRST_RGTR_ID",
+              "LAST_MDFCN_DT",
+              "LAST_MDFR_ID"
+          ) VALUES (
+              #{entMbrNo},
+              #{ldrEntSeCd},
+              #{bgngDt},
+              #{endDt},
+              #{lvlIdntyScr},
+              #{dsgnNo},
+              #{frstRegDt},
+              #{frstRgtrId},
+              #{lastMdfcnDt},
+              #{lastMdfrId}
+          )
+      </insert>
+
   <!--
 
   <update id="updateEntMember" parameterType="kr.go.tech.protection.admin.domain.account.enterprise.dto.EntMemberVO$UpdateRequestVO">

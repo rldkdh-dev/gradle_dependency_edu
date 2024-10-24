@@ -1,5 +1,6 @@
 package kr.go.tech.protection.admin.domain.account.leaderenterprise.controller;
 
+import javax.validation.Valid;
 import kr.go.tech.protection.admin.domain.account.leaderenterprise.dto.LeaderEntPO;
 import kr.go.tech.protection.admin.domain.account.leaderenterprise.service.LeaderEntService;
 import kr.go.tech.protection.admin.global.response.ApiResult;
@@ -7,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,8 +29,7 @@ public class LeaderEntController {
 
 	// 선도기업 상세 조회 API
 	@GetMapping("/{no}")
-	public ApiResult<LeaderEntPO.DetailResponsePO> selectLeaderEntByNo(@PathVariable int no) {
-		LeaderEntPO.DetailResponsePO data = leaderEntService.selectLeaderEntByNo(no);
+	public ApiResult<LeaderEntPO.DetailResponsePO> selectLeaderEntByNo(@PathVariable int no) {LeaderEntPO.DetailResponsePO data = leaderEntService.selectLeaderEntByNo(no);
 		return ApiResult.success(data);
 	}
 
@@ -39,9 +41,17 @@ public class LeaderEntController {
 	}
 
 	// 선도기업 등록 API
+	@PostMapping("")
+	public ApiResult<LeaderEntPO.InsertResponsePO> insertLeaderEnt(@Valid @RequestBody LeaderEntPO.InsertRequestPO requestPO) {
+		LeaderEntPO.InsertResponsePO response = leaderEntService.insertLeaderEnt(requestPO);
+		return ApiResult.success(response);
+	}
 
 	// 선도기업 수정 API
 
+
+
+}
 
 
 
@@ -89,6 +99,5 @@ public class LeaderEntController {
 		return ApiResult.success(response);
 	}*/
 
-}
 
 

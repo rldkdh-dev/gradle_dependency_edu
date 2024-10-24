@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 @Slf4j
@@ -20,6 +21,7 @@ public class SignUpService {
 
 	private final SignUpDAO signUpDAO;
 
+	@Transactional
 	public SignUpPO.GenSignUpResponsePO SignUpGenMember(SignUpPO.GenSignUpRequestPO requestPO) {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
@@ -91,6 +93,7 @@ public class SignUpService {
 		return signUpDAO.selectGenIdDuplicate(searchId) > 0;
 	}
 
+	@Transactional
 	public SignUpPO.EntSignUpResponsePO SignUpEntMember(SignUpPO.EntSignUpRequestPO requestPO) {
 		SignUpVO.EntSignUpRequestVO requestVO = SignUpVO.EntSignUpRequestVO.builder()
 			.conmNm(requestPO.getCompanyName())
